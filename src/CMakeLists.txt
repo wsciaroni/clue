@@ -20,4 +20,4 @@ add_executable(clue
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
-# add_subdirectory(utility)
+add_subdirectory(ui)
