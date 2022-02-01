@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# Build Directories
+CMakeFiles/
+
+# Cmake Generated Files
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# Executable:
+clue
