@@ -5,16 +5,22 @@
 
 namespace Clue {
 
+namespace Ui { class MainWindow; }
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
-signals:
+private slots:
+    void on_actionHistory_triggered();
 
+private:
+    Ui::MainWindow *ui;
 };
 
 } // namespace Clue
-
 #endif // CLUE_MAINWINDOW_H
