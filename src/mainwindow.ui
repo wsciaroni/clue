@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1211</width>
+    <width>949</width>
     <height>651</height>
    </rect>
   </property>
@@ -17,10 +17,10 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>40</y>
-      <width>851</width>
-      <height>541</height>
+      <x>10</x>
+      <y>10</y>
+      <width>921</width>
+      <height>581</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -33,17 +33,17 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>-1</x>
-        <y>-1</y>
-        <width>851</width>
-        <height>511</height>
+        <x>9</x>
+        <y>9</y>
+        <width>901</width>
+        <height>521</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="turn_2">
+      <layout class="QVBoxLayout" name="turnLayout">
        <item>
-        <layout class="QHBoxLayout" name="player">
+        <layout class="QHBoxLayout" name="playersTurnLayout">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="playersTurnLabel">
            <property name="text">
             <string>Player's Turn:</string>
            </property>
@@ -55,23 +55,23 @@
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="line1">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="turnAction">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="makingAccusation">
            <property name="text">
-            <string>Are they/you making an acusation?</string>
+            <string>Are they/you making an accusation?</string>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="accusationMadeOrNo">
            <item>
             <widget class="QRadioButton" name="accusationMade">
              <property name="text">
@@ -97,54 +97,54 @@
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line">
+        <widget class="Line" name="line2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <layout class="QHBoxLayout" name="guessLayout">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <layout class="QHBoxLayout" name="guessLayout2">
            <item>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="whatsTheGuessLabel">
              <property name="text">
               <string>What's the Guess?</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout" name="guessLayout3">
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_2"/>
+              <widget class="QComboBox" name="personGuessedComboBox"/>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_3"/>
+              <widget class="QComboBox" name="weaponGuessedComboBox"/>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="personLabel">
                <property name="text">
                 <string>Person</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="weaponLabel">
                <property name="text">
                 <string>Weapon</string>
                </property>
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="roomLabel">
                <property name="text">
                 <string>Room</string>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QComboBox" name="comboBox_4"/>
+              <widget class="QComboBox" name="roomGuessedComboBox"/>
              </item>
             </layout>
            </item>
@@ -153,49 +153,81 @@
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line_3">
+        <widget class="Line" name="line3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <layout class="QHBoxLayout" name="whoAnsweredLayout">
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="whoAnsweredLabel">
            <property name="text">
             <string>Who Answered?</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBox"/>
+          <widget class="QComboBox" name="whoAnsweredComboBox"/>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <widget class="Line" name="line4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="cardShownLayout">
          <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QDialogButtonBox" name="buttonBox">
-           <property name="standardButtons">
-            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          <widget class="QLabel" name="cardShownToLabel">
+           <property name="text">
+            <string>You saw or showed a card?</string>
            </property>
           </widget>
          </item>
+         <item>
+          <layout class="QGridLayout" name="cardComboLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="playerShownComboBox">
+             <property name="text">
+              <string>Card</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="cardShownComboBox"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="playerShownLabel">
+             <property name="text">
+              <string>Player</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="cardShownLabel"/>
+           </item>
+          </layout>
+         </item>
         </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="submitTurn">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -204,15 +236,53 @@
      <attribute name="title">
       <string>Known Info</string>
      </attribute>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableWidget" name="knownInfoTableWidget">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>851</width>
-        <height>511</height>
+        <x>10</x>
+        <y>10</y>
+        <width>891</width>
+        <height>521</height>
        </rect>
       </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Turns</string>
+     </attribute>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>821</width>
+        <height>471</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>819</width>
+         <height>469</height>
+        </rect>
+       </property>
+       <widget class="QListView" name="turnListView">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>821</width>
+          <height>471</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
    </widget>
@@ -222,7 +292,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1211</width>
+     <width>949</width>
      <height>22</height>
     </rect>
    </property>
@@ -243,46 +313,6 @@
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockWidget_3">
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_4">
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="geometry">
-      <rect>
-       <x>-1</x>
-       <y>-1</y>
-       <width>241</width>
-       <height>581</height>
-      </rect>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>239</width>
-        <height>579</height>
-       </rect>
-      </property>
-      <widget class="QListWidget" name="listWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>221</width>
-         <height>571</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-    </widget>
-   </widget>
-  </widget>
   <action name="actionReset">
    <property name="text">
     <string>Reset</string>
@@ -296,6 +326,9 @@
   <action name="actionHistory">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>History</string>
