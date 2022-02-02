@@ -41,7 +41,7 @@ Makefile
 cmake_install.cmake
 *.user
 # Executable:
-clue
+src/clue
 
 # Qt Build Directories
 /build-*/
