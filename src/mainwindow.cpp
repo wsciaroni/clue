@@ -16,4 +16,10 @@ MainWindow::~MainWindow()
 }
 
 
+void MainWindow::on_actionHistory_triggered()
+{
+
+}
+
+
 } // namespace Clue
