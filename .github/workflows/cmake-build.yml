@@ -33,7 +33,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       env:
         CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
-      run: cmake -B ${{github.workspace}}/build -S ${{github.workspace}}/src --DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{github.workspace}}/build -S ${{github.workspace}}/src -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
