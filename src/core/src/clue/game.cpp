@@ -39,6 +39,7 @@ Game::~Game()
 bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     // @TODO Check to make sure that this turn doesn't contradict any knowledge that we already have
     return (whosTurnIsIt == turn->getPlayersTurn());
+    // return true;
 }
 
 void Game::incrementWhosTurnItIs() {
@@ -54,7 +55,7 @@ void Game::incrementWhosTurnItIs() {
         if(player == whosTurnIsIt) {
             if (players.back() == player)
             {
-                whosTurnIsIt = players.back();
+                whosTurnIsIt = players.front();
                 return;
             } else {
                 getNextPlayer = true;
@@ -80,6 +81,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
     {
         turns.push_back(turn);
         incrementWhosTurnItIs();
+        return;
     }
     throw std::logic_error("Turn is not consistent");
 }
@@ -99,6 +101,7 @@ void Game::createGame(std::vector<std::string> names) {
     auto playerNumber = static_cast<u_int8_t>(PlayerId::PLAYER_0);
     // players.resize(names.size());
     QStringList nameList;
+    bool firstPlayer = true;
     for (auto playerName : names) {
         auto player = std::make_shared<Player>();
         player->setName(playerName);
@@ -106,6 +109,10 @@ void Game::createGame(std::vector<std::string> names) {
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
+        if(firstPlayer) {
+            firstPlayer = false;
+            whosTurnIsIt = player;
+        }
     }
     playersQStringListModel->setStringList(nameList);
 }
