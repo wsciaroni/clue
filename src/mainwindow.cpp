@@ -35,6 +35,18 @@ void MainWindow::on_submitTurn_accepted()
 {
     // Attempt to create a Turn
     // @TODO
+    //ui->whoAnsweredComboBox->currentTest().toStdString();
+
+    auto turn = std::make_shared<Turn>();
+    // turn(gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString()),
+    //      ui->accusationMade->isChecked()||!ui->accusationNotMade->isChecked(),
+    //      ui->personGuessedComboBox->currentText().toStdString(),
+    //      ui->weaponGuessedComboBox->currentText().toStdString(),
+    //      ui->roomGuessedComboBox->currentText().toStdString(),
+    //      gamePtr->getPlayerByName(ui->whoAnsweredComboBox->currentText().toStdString()),
+    //      ui->cardShownComboBox->currentText().toStdString(),
+    //      gamePtr->getPlayerByName(ui->playerShownComboBox->currentText().toStdString()));
+    gamePtr->submitTurn(turn);
 }
 
 
