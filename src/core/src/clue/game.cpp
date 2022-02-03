@@ -81,6 +81,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
     {
         turns.push_back(turn);
         incrementWhosTurnItIs();
+        regenerateTurnStringList();
         return;
     }
     throw std::logic_error("Turn is not consistent");

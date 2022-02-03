@@ -55,9 +55,7 @@ std::string Turn::toString() {
         oss << "accused " << accusationSuspect.ToString() << " " << accusationWeapon.ToString() << " " << accusationRoom;
         // if 
     }
-    
-    
-    
+    return oss.str();
 }
 
 bool Turn::getIsMyTurn() {

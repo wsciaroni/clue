@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
     ui->personGuessedComboBox->setModel(gamePtr->getCharactersQStringListModel().get());
     ui->roomGuessedComboBox->setModel(gamePtr->getRoomsQStringListModel().get());
     ui->cardShownComboBox->setModel(gamePtr->getCardQStringListModel().get());
+    ui->turnListView->setModel(gamePtr->getTurnsStringListModel().get());
 }
 
 MainWindow::~MainWindow()
