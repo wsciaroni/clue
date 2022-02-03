@@ -9,6 +9,14 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // Ui::playersTurnComboBox->setModel(gamePtr->getPlayersQStringListModel);
+    ui->playersTurnComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
+    ui->playerShownComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
+    ui->whoAnsweredComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
+    ui->weaponGuessedComboBox->setModel(gamePtr->getWeaponsQStringListModel().get());
+    ui->personGuessedComboBox->setModel(gamePtr->getCharactersQStringListModel().get());
+    ui->roomGuessedComboBox->setModel(gamePtr->getRoomsQStringListModel().get());
+    ui->cardShownComboBox->setModel(gamePtr->getCardQStringListModel().get());
 }
 
 MainWindow::~MainWindow()

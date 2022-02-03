@@ -25,7 +25,6 @@
         <location filename="mainwindow.ui" line="69"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="361"/>
         <source>Are they/you making an accusation?</source>
-        <oldsource>Are they/you making an acusation?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
