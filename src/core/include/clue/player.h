@@ -26,6 +26,8 @@ public:
     void setName(std::string);
     std::string getName();
 
+    void setPlayerId(PlayerId);
+
     bool isMaster();
 
     bool hasCard (const Card);

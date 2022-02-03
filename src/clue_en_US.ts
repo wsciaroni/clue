@@ -79,13 +79,13 @@
     <message>
         <location filename="mainwindow.ui" line="197"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="370"/>
-        <source>Card</source>
+        <source>Card you showed OR card you saw</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="207"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="371"/>
-        <source>Player</source>
+        <source>Player you showed OR who showed you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

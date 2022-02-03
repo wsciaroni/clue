@@ -22,4 +22,18 @@ void MainWindow::on_actionHistory_triggered()
 }
 
 
+void MainWindow::on_submitTurn_accepted()
+{
+    // Attempt to create a Turn
+    // @TODO
+}
+
+
+void MainWindow::on_submitTurn_rejected()
+{
+  // Reset all the input boxes
+  // @TODO
+}
+
+
 } // namespace Clue

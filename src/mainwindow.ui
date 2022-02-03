@@ -194,7 +194,7 @@
            <item row="0" column="0">
             <widget class="QLabel" name="playerShownComboBox">
              <property name="text">
-              <string>Card</string>
+              <string>Card you showed OR card you saw</string>
              </property>
             </widget>
            </item>
@@ -204,7 +204,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="playerShownLabel">
              <property name="text">
-              <string>Player</string>
+              <string>Player you showed OR who showed you</string>
              </property>
             </widget>
            </item>

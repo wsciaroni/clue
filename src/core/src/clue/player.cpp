@@ -17,6 +17,10 @@ std::string Player::getName() {
     return this->name;
 }
 
+void Player::setPlayerId(PlayerId playerId_in) {
+    playerId = playerId_in;
+}
+
 bool Player::isMaster() {
     return PlayerId::PLAYER_0 == playerId;
 }

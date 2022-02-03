@@ -41,5 +41,16 @@ namespace Clue
         ~Turn();
         
         std::string toString();
+
+        bool getIsMyTurn();
+        std::shared_ptr<Player> getPlayersTurn();
+        std::vector<std::shared_ptr<Player>> getPlayersWithoutCards();
+        Suspect getAccusationSuspect();
+        Weapon getAccusationWeapon();
+        Room getAccusationRoom();
+        std::shared_ptr<Player> getPlayerAnswered();
+        Card getCardShown();
+        std::shared_ptr<Player> getPlayerShowed();
+        
     };
 } // namespace Clue

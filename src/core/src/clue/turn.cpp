@@ -56,4 +56,41 @@ std::string Turn::toString() {
     
 }
 
+bool Turn::getIsMyTurn() {
+    return isMyTurn;
+}
+
+std::shared_ptr<Player> Turn::getPlayersTurn() {
+    return playersTurn;
+}
+
+std::vector<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
+    return playersWithoutCards;
+}
+
+Suspect Turn::getAccusationSuspect() {
+    return accusationSuspect;
+}
+
+Weapon Turn::getAccusationWeapon() {
+    return accusationWeapon;
+}
+
+Room Turn::getAccusationRoom() {
+    return accusationRoom;
+}
+
+std::shared_ptr<Player> Turn::getPlayerAnswered() {
+    return playerAnswered;
+}
+
+Card Turn::getCardShown() {
+    return cardShown;
+}
+
+std::shared_ptr<Player> Turn::getPlayerShowed() {
+    return playerShowed;
+}
+
+
 } // namespace Clue

@@ -18,6 +18,10 @@ public:
 private slots:
     void on_actionHistory_triggered();
 
+    void on_submitTurn_accepted();
+
+    void on_submitTurn_rejected();
+
 private:
     Ui::MainWindow *ui;
 };
