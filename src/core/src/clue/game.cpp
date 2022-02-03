@@ -41,6 +41,16 @@ void Game::incrementWhosTurnItIs() {
     throw std::logic_error("Unable to determine the next player");
 }
 
+void Game::regenerateTurnStringList() {
+    static QStringList strings;
+    strings.clear();
+    for (auto turn : turns)
+    {
+        strings.append(QString::fromStdString(turn->toString()));
+    }
+    turnsStringList->setStringList(strings);
+}
+
 void Game::submitTurn(std::shared_ptr<Turn> turn) {
     if (isTurnConsistent(turn))
     {

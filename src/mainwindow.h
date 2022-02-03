@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "clue/game.h"
+
 namespace Clue {
 
 namespace Ui { class MainWindow; }
@@ -12,7 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr, std::shared_ptr<Clue::Game> gamePtr_in = nullptr);
     ~MainWindow();
 
 private slots:
@@ -24,6 +26,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    std::shared_ptr<Clue::Game> gamePtr;
 };
 
 } // namespace Clue

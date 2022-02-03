@@ -3,8 +3,9 @@
 
 namespace Clue {
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
     : QMainWindow(parent)
+    , gamePtr(gamePtr_in)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);

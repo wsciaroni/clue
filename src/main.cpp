@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
         "Abby",
         "Buddy The Elf"
     };
-    Clue::Game clueGame;
-    clueGame.createGame(players);
+    auto clueGame = std::make_shared<Clue::Game>();
+    clueGame->createGame(players);
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    Clue::MainWindow w;
+    Clue::MainWindow w(nullptr, clueGame);
     w.show();
     return a.exec();
 }
