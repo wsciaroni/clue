@@ -33,11 +33,15 @@
 
 # Build Directories
 CMakeFiles/
+*_autogen/
 
 # Cmake Generated Files
 CMakeCache.txt
 Makefile
 cmake_install.cmake
-
+*.user
 # Executable:
-clue
+src/clue
+
+# Qt Build Directories
+/build-*/

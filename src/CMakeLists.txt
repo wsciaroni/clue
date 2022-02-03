@@ -1,23 +1,70 @@
-cmake_minimum_required(VERSION 3.16.3)
+cmake_minimum_required(VERSION 3.16)
 
-project(clue_proj VERSION 0.0.0 LANGUAGES CXX)
+project(clue VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#Qt applications typically make use of the Meta-Object Compiler (moc), Resource Compiler (rcc), and User Interface Compiler (uic) that come with Qt. Setting the CMAKE_AUTOMOC, CMAKE_AUTORCC, and CMAKE_AUTOUIC variables to ON will let CMake automatically set up rules so that the respective compilers are called transparently, when required.
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_FIND_DEBUG_MODE ON)
-find_package(Qt6 6.2.3 EXACT REQUIRED COMPONENTS Widgets
-    PATH_SUFFIXES
-        6.2.3/gcc_64
-)
-set(CMAKE_FIND_DEBUG_MODE OFF)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
-add_executable(clue
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+set(TS_FILES clue_en_US.ts)
+
+set(PROJECT_SOURCES
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        ${TS_FILES}
 )
 
-# add_subdirectory(utility)
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(clue
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET clue APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+
+    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+else()
+    if(ANDROID)
+        add_library(clue SHARED
+            ${PROJECT_SOURCES}
+        )
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(clue
+            ${PROJECT_SOURCES}
+        )
+    endif()
+
+    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+endif()
+
+target_link_libraries(clue PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+set_target_properties(clue PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+# Add libraries
+add_subdirectory(utility)
+add_subdirectory(core)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(clue)
+endif()
