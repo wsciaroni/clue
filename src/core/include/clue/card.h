@@ -1,193 +1,91 @@
 #pragma once
 
 #include <string>
+#include "SmartEnum.h"
 
 namespace Clue
 {
 
-enum class Card : __UINT8_TYPE__ {
-    NONE = 0,
+BEGIN_SMART_ENUM(Card)
+    ENUM_MEMBER(NONE)
+    ENUM_MEMBER(MISS_SCARLET)
+    ENUM_MEMBER(COLONEL_MUSTARD)
+    ENUM_MEMBER(MRS_WHITE)
+    ENUM_MEMBER(MR_GREEN)
+    ENUM_MEMBER(MRS_PEACOCK)
+    ENUM_MEMBER(PROFESSOR_PLUM)
+    ENUM_MEMBER(CANDLESTICK)
+    ENUM_MEMBER(DAGGER)
+    ENUM_MEMBER(LEAD_PIPE)
+    ENUM_MEMBER(REVOLVER)
+    ENUM_MEMBER(ROPE)
+    ENUM_MEMBER(WRENCH)
+    ENUM_MEMBER(KITCHEN)
+    ENUM_MEMBER(BALLROOM)
+    ENUM_MEMBER(CONSERVATORY)
+    ENUM_MEMBER(BILLIARD_ROOM)
+    ENUM_MEMBER(LIBRARY)
+    ENUM_MEMBER(STUDY)
+    ENUM_MEMBER(HALL)
+    ENUM_MEMBER(LOUNGE)
+    ENUM_MEMBER(DINING_ROO)
+END_SMART_ENUM(Card)
 
-    MISS_SCARLET,
-    COLONEL_MUSTARD,
-    MRS_WHITE,
-    MR_GREEN,
-    MRS_PEACOCK,
-    PROFESSOR_PLUM,
+BEGIN_SMART_ENUM(Suspect)
+    ENUM_MEMBER(NONE)
+    ENUM_MEMBER(MISS_SCARLET)
+    ENUM_MEMBER(COLONEL_MUSTARD)
+    ENUM_MEMBER(MRS_WHITE)
+    ENUM_MEMBER(MR_GREEN)
+    ENUM_MEMBER(MRS_PEACOCK)
+    ENUM_MEMBER(PROFESSOR_PLU)
+END_SMART_ENUM(Suspect)
 
-    CANDLESTICK,
-    DAGGER,
-    LEAD_PIPE,
-    REVOLVER,
-    ROPE,
-    WRENCH,
+BEGIN_SMART_ENUM(Weapon)
+    ENUM_MEMBER(NONE)
+    ENUM_MEMBER(CANDLESTICK)
+    ENUM_MEMBER(DAGGER)
+    ENUM_MEMBER(LEAD_PIPE)
+    ENUM_MEMBER(REVOLVER)
+    ENUM_MEMBER(ROPE)
+    ENUM_MEMBER(WRENCH)
+END_SMART_ENUM(Weapon)
 
-    KITCHEN,
-    BALLROOM,
-    CONSERVATORY,
-    BILLIARD_ROOM,
-    LIBRARY,
-    STUDY,
-    HALL,
-    LOUNGE,
-    DINING_ROOM
-};
+BEGIN_SMART_ENUM(Room)
+    ENUM_MEMBER(NONE)
+    ENUM_MEMBER(KITCHEN)
+    ENUM_MEMBER(BALLROOM)
+    ENUM_MEMBER(CONSERVATORY)
+    ENUM_MEMBER(BILLIARD_ROOM)
+    ENUM_MEMBER(LIBRARY)
+    ENUM_MEMBER(STUDY)
+    ENUM_MEMBER(HALL)
+    ENUM_MEMBER(LOUNGE)
+    ENUM_MEMBER(DINING_ROO)
+END_SMART_ENUM(Room)
 
-enum class Suspect : __UINT8_TYPE__
-{
-    NONE = static_cast<__UINT8_TYPE__>(Card::NONE),
-    MISS_SCARLET = static_cast<__UINT8_TYPE__>(Card::MISS_SCARLET),
-    COLONEL_MUSTARD,
-    MRS_WHITE,
-    MR_GREEN,
-    MRS_PEACOCK,
-    PROFESSOR_PLUM
-};
-
-enum class Weapon : __UINT8_TYPE__
-{
-    NONE = static_cast<__UINT8_TYPE__>(Card::NONE),
-    CANDLESTICK = static_cast<__UINT8_TYPE__>(Card::CANDLESTICK),
-    DAGGER,
-    LEAD_PIPE,
-    REVOLVER,
-    ROPE,
-    WRENCH
-};
-
-enum class Room : __UINT8_TYPE__
-{
-    NONE = static_cast<__UINT8_TYPE__>(Card::NONE),
-    KITCHEN = static_cast<__UINT8_TYPE__>(Card::KITCHEN),
-    BALLROOM,
-    CONSERVATORY,
-    BILLIARD_ROOM,
-    LIBRARY,
-    STUDY,
-    HALL,
-    LOUNGE,
-    DINING_ROOM
-};
-
-// Functions for printing out enums
-static std::string toString(Card card) {
-    switch (card)
+template<class T>
+Card toCard(T suspect) {
+    for (Card i = Card::FIRST; i < Card::LAST; ++i)
     {
-    case Card::MISS_SCARLET:
-        return "MISS_SCARLET";
-    case Card::COLONEL_MUSTARD:
-        return "COLONEL_MUSTARD";
-    case Card::MRS_WHITE:
-        return "MRS_WHITE";
-    case Card::MR_GREEN:
-        return "MR_GREEN";
-    case Card::MRS_PEACOCK:
-        return "MRS_PEACOCK";
-    case Card::PROFESSOR_PLUM:
-        return "PROFESSOR_PLUM";
-    
-    case Card::CANDLESTICK:
-        return "CANDLESTICK";
-    case Card::DAGGER:
-        return "DAGGER";
-    case Card::LEAD_PIPE:
-        return "LEAD_PIPE";
-    case Card::REVOLVER:
-        return "REVOLVER";
-    case Card::ROPE:
-        return "ROPE";
-    case Card::WRENCH:
-        return "WRENCH";
-
-    case Card::KITCHEN:
-        return "KITCHEN";
-    case Card::BALLROOM:
-        return "BALLROOM";
-    case Card::CONSERVATORY:
-        return "CONSERVATORY";
-    case Card::BILLIARD_ROOM:
-        return "BILLIARD_ROOM";
-    case Card::LIBRARY:
-        return "LIBRARY";
-    case Card::STUDY:
-        return "STUDY";
-    case Card::HALL:
-        return "HALL";
-    case Card::LOUNGE:
-        return "LOUNGE";
-    case Card::DINING_ROOM:
-        return "DINING_ROOM";
-    case Card::NONE:
-    default:
-        return "NONE";
+        if (i.ToString() == suspect.ToString())
+        {
+            return i;
+        }
     }
+    return Card::INVALID;
 }
 
-static std::string toString(Suspect suspect) {
-    switch (suspect)
+template<class T>
+Suspect fromCard (Card card) {
+    for (T i = T::FIRST; i < T::LAST; ++i)
     {
-    case Suspect::MISS_SCARLET:
-        return "MISS_SCARLET";
-    case Suspect::COLONEL_MUSTARD:
-        return "COLONEL_MUSTARD";
-    case Suspect::MRS_WHITE:
-        return "MRS_WHITE";
-    case Suspect::MR_GREEN:
-        return "MR_GREEN";
-    case Suspect::MRS_PEACOCK:
-        return "MRS_PEACOCK";
-    case Suspect::PROFESSOR_PLUM:
-        return "PROFESSOR_PLUM";
-    case Suspect::NONE:
-    default:
-        return "NONE";
+        if (i.ToString() == card.ToString())
+        {
+            return i;
+        }
     }
+    return T::INVALID;
 }
 
-static std::string toString(Weapon weapon) {
-    switch (weapon)
-    {
-    case Weapon::CANDLESTICK:
-        return "CANDLESTICK";
-    case Weapon::DAGGER:
-        return "DAGGER";
-    case Weapon::LEAD_PIPE:
-        return "LEAD_PIPE";
-    case Weapon::REVOLVER:
-        return "REVOLVER";
-    case Weapon::ROPE:
-        return "ROPE";
-    case Weapon::WRENCH:
-        return "WRENCH";
-    case Weapon::NONE:
-    default:
-        return "NONE";
-    }
-}
-
-static std::string toString(Room room) {
-    switch (room) {
-    case Room::KITCHEN:
-        return "KITCHEN";
-    case Room::BALLROOM:
-        return "BALLROOM";
-    case Room::CONSERVATORY:
-        return "CONSERVATORY";
-    case Room::BILLIARD_ROOM:
-        return "BILLIARD_ROOM";
-    case Room::LIBRARY:
-        return "LIBRARY";
-    case Room::STUDY:
-        return "STUDY";
-    case Room::HALL:
-        return "HALL";
-    case Room::LOUNGE:
-        return "LOUNGE";
-    case Room::DINING_ROOM:
-        return "DINING_ROOM";
-    case Room::NONE:
-    default:
-        return "NONE";
-    }
-}
 } // namespace Clue

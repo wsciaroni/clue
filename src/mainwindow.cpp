@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    // Ui::playersTurnComboBox->setModel(gamePtr->getPlayersQStringListModel);
     ui->playersTurnComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
     ui->playerShownComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
     ui->whoAnsweredComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
@@ -35,8 +34,6 @@ void MainWindow::on_submitTurn_accepted()
 {
     // Attempt to create a Turn
     // @TODO
-    //ui->whoAnsweredComboBox->currentTest().toStdString();
-
     auto turn = std::make_shared<Turn>();
     // turn(gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString()),
     //      ui->accusationMade->isChecked()||!ui->accusationNotMade->isChecked(),

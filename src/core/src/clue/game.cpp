@@ -7,36 +7,21 @@ namespace Clue
 Game::Game(/* args */)
 {
     QStringList charactersQStringList;
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::NONE)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::MISS_SCARLET)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::COLONEL_MUSTARD)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::MRS_WHITE)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::MR_GREEN)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::MRS_PEACOCK)));
-    charactersQStringList.append(QString::fromStdString(toString(Suspect::PROFESSOR_PLUM)));
+    for (Suspect i=Suspect::FIRST; i<Suspect::LAST; ++i) {
+        charactersQStringList.append(QString::fromStdString(i.ToString()));
+    }
     charactersQStringListModel->setStringList(charactersQStringList);
 
     QStringList weaponsQStringList;
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::NONE)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::CANDLESTICK)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::DAGGER)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::LEAD_PIPE)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::REVOLVER)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::ROPE)));
-    weaponsQStringList.append(QString::fromStdString(toString(Weapon::WRENCH)));
+    for (Weapon i=Weapon::FIRST; i<Weapon::LAST; ++i) {
+        weaponsQStringList.append(QString::fromStdString(i.ToString()));
+    }
     weaponsQStringListModel->setStringList(weaponsQStringList);
 
     QStringList roomsQStringList;
-    roomsQStringList.append(QString::fromStdString(toString(Room::NONE)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::KITCHEN)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::BALLROOM)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::CONSERVATORY)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::BILLIARD_ROOM)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::LIBRARY)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::STUDY)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::HALL)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::LOUNGE)));
-    roomsQStringList.append(QString::fromStdString(toString(Room::DINING_ROOM)));
+    for (Room i=Room::FIRST; i<Room::LAST; ++i) {
+        roomsQStringList.append(QString::fromStdString(i.ToString()));
+    }
     roomsQStringListModel->setStringList(roomsQStringList);
 
     QStringList cardQStringList;

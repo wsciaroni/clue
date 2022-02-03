@@ -62,6 +62,7 @@ set_target_properties(clue PROPERTIES
 )
 
 # Add libraries
+add_subdirectory(utility)
 add_subdirectory(core)
 
 if(QT_VERSION_MAJOR EQUAL 6)

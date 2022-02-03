@@ -51,7 +51,7 @@ void Player::removeCardFromHand(Card card) {
 }
 
 void Player::showedOneOfThese(Suspect suspect, Weapon weapon, Room room) {
-    std::set<Card> shown = {static_cast<Card>(suspect), static_cast<Card>(weapon), static_cast<Card>(room)};
+    std::set<Card> shown = {toCard(suspect), toCard(weapon), toCard(room)};
     __uint8_t count = 0;
     Card cardInHand = Card::NONE;
     for (auto card : shown)

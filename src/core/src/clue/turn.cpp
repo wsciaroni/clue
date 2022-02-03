@@ -1,5 +1,7 @@
 #include "clue/turn.h"
 
+#include <iomanip>
+
 namespace Clue
 {
 
@@ -46,12 +48,14 @@ Turn::Turn(
 Turn::~Turn() {}
 
 std::string Turn::toString() {
-    // std::ostringstream oss;
-    // oss << playersTurn->getName() << " ";
-    // if (accusationMade)
-    // {
-    //     oss << "accused " << accusationSuspect.toString() << " " << accusationWeapon.toString() << " " << accusationRoom;
-    // }
+    std::ostringstream oss;
+    oss << playersTurn->getName() << " ";
+    if (accusationMade)
+    {
+        oss << "accused " << accusationSuspect.ToString() << " " << accusationWeapon.ToString() << " " << accusationRoom;
+        // if 
+    }
+    
     
     
 }
