@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Install Qt
-      uses: jurpel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v2
       with:
         version: '6.2.3'
         target: 'desktop'
