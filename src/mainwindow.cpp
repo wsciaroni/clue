@@ -35,7 +35,6 @@ void MainWindow::on_actionHistory_triggered()
 void MainWindow::on_submitTurn_accepted()
 {
     // Attempt to create a Turn
-    // @TODO
     try
     {
         auto turn = std::make_shared<Turn>(

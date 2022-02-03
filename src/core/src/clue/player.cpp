@@ -66,8 +66,7 @@ void Player::showedOneOfThese(Suspect suspect, Weapon weapon, Room room) {
     {
         addCardToHand(cardInHand);
     } else {
-        // showedOneOfTheseVect.insert(shown);
-        // @TODO
+        showedOneOfTheseVect.push_back(shown);
     }
 }
 
