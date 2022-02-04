@@ -1,7 +1,7 @@
 #pragma once
 
 #include "clue/player.h"
-#include "clue/card.h"
+#include "clue/constants.h"
 #include <memory>
 #include <vector>
 

@@ -15,6 +15,8 @@ class Game
 private:
     std::vector<std::shared_ptr<Player>> players;
     std::shared_ptr<QStringListModel> playersQStringListModel = std::make_shared<QStringListModel>();
+    std::shared_ptr<QStringListModel> playerShownQStringListModel = std::make_shared<QStringListModel>();
+    std::shared_ptr<QStringListModel> whoAnsweredQStringListModel = std::make_shared<QStringListModel>();
     
     std::shared_ptr<Player> whosTurnIsIt = nullptr;
     
@@ -30,6 +32,9 @@ private:
     void incrementWhosTurnItIs();
 
     void regenerateTurnStringList();
+
+    bool needsAnalysis = false;
+    void playerHasCard(std::shared_ptr<Player> , Card);
 
 public:
     Game(/* args */);
@@ -47,6 +52,9 @@ public:
     std::shared_ptr<QStringListModel> getWeaponsQStringListModel();
     std::shared_ptr<QStringListModel> getRoomsQStringListModel();
     std::shared_ptr<QStringListModel> getCardQStringListModel();
+
+    void runAnalysis();
+    // void updateOptional
 };
 
 } // namespace Clue

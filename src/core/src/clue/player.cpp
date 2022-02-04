@@ -26,11 +26,11 @@ bool Player::isMaster() {
 }
 
 bool Player::hasCard(const Card card) {
-    return (hand.end() != hand.find(card));
+    return (hand->end() != hand->find(card));
 }
 
 bool Player::doesntHaveCard(const Card card) {
-    return (!hasCard(card) && (notInHand.end() != notInHand.find(card)));
+    return (!hasCard(card) && (notInHand->end() != notInHand->find(card)));
 }
 
 void Player::addCardToHand (Card card) {
@@ -38,7 +38,7 @@ void Player::addCardToHand (Card card) {
         if(doesntHaveCard(card)) {
             throw std::__throw_logic_error;
         }
-        hand.insert(card);
+        hand->insert(card);
     } else {
         // Card is already in hand
     }
@@ -46,7 +46,7 @@ void Player::addCardToHand (Card card) {
 
 void Player::removeCardFromHand(Card card) {
     if(hasCard(card)) {
-        hand.erase(hand.find(card));
+        hand->erase(hand->find(card));
     }
 }
 
@@ -75,9 +75,24 @@ void Player::cardDefinitelyNotInHand(Card card) {
     {
         throw std::__throw_logic_error;
     } else {
-        notInHand.insert(card);
+        notInHand->insert(card);
     }
 }
 
+std::shared_ptr<std::set<Card>> Player::getHand() {
+    return hand;
+}
+
+std::shared_ptr<std::set<Card>> Player::getNotInHand() {
+    return notInHand;
+}
+
+bool Player::isPlayerSolved() {
+    if (!playerSolved && this->hand->size() >= 3)
+    {
+        this->playerSolved = true;
+    }
+    return this->playerSolved;
+}
 
 } // namespace Clue

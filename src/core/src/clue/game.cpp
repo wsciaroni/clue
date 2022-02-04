@@ -141,4 +141,71 @@ std::shared_ptr<QStringListModel> Game::getCardQStringListModel() {
     return cardQStringListModel;
 }
 
+void Game::runAnalysis() {
+    while (needsAnalysis)
+    {
+        needsAnalysis = false;
+        for (auto turn : turns)
+        {
+            auto playerAnswered = turn->getPlayerAnswered();
+            if (
+                playerAnswered->hasCard(toCard(turn->getAccusationRoom())) || playerAnswered->hasCard(toCard(turn->getAccusationSuspect())) || playerAnswered->hasCard(toCard(turn->getAccusationWeapon())))
+            {
+                // We already know that they have one of the cards, hence we can known nothing else
+            }
+            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationSuspect())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationWeapon())))
+            {
+                playerHasCard(playerAnswered,toCard(turn->getAccusationRoom()));
+            }
+            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationRoom())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationWeapon())))
+            {
+                playerHasCard(playerAnswered,toCard(turn->getAccusationSuspect()));
+            }
+            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationRoom())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationSuspect())))
+            {
+                playerHasCard(playerAnswered,toCard(turn->getAccusationWeapon()));
+            }
+
+            // For players between player accusing and player answering.
+            // If No one answered && the card is either the answer or in that players hand. We can't be sure.
+            for (auto player : turn->getPlayersWithoutCards())
+            {
+                // @TODO Move this into the part where the turn is created.
+                player->cardDefinitelyNotInHand(toCard(turn->getAccusationRoom()));
+                player->cardDefinitelyNotInHand(toCard(turn->getAccusationSuspect()));
+                player->cardDefinitelyNotInHand(toCard(turn->getAccusationWeapon()));
+            }
+        }
+
+        for (auto player : players) {
+            // If they have three cards, they definitely don't have the rest of the cards
+            auto hand = player->getHand();
+            auto notInHand = player->getNotInHand();
+            if(player->isPlayerSolved()) {
+                // This player is solved.
+            } else if (notInHand->size() >= (NUMBER_OF_CARDS-NUMBER_OF_CARDS_IN_PLAYERS_HAND)) {
+                // We know the player doesn't have the rest of the cards, so, deduce that they do have the rest of the cards.
+                for (Card i=Card::FIRST; i<Card::LAST; ++i) {
+                    if (!player->doesntHaveCard(i))
+                    {
+                        playerHasCard(player, i);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
+    for(auto player : players) {
+        if (player_in == player)
+        {
+            player->addCardToHand(card);
+        } else {
+            player->cardDefinitelyNotInHand(card);
+        }
+    }
+    needsAnalysis = true;
+}
+
 } // namespace Clue
