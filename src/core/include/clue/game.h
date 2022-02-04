@@ -54,7 +54,8 @@ public:
     std::shared_ptr<QStringListModel> getCardQStringListModel();
 
     void runAnalysis();
-    // void updateOptional
+
+    std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
 };
 
 } // namespace Clue

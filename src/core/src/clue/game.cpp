@@ -208,4 +208,22 @@ void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
     needsAnalysis = true;
 }
 
+std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player> current, std::shared_ptr<Player> end) {
+    std::set<std::shared_ptr<Player>> playersBetween;
+    // if(current == end) {
+    //     return playersBetween;
+    // } else {
+        for(auto it = std::find(players.begin(), players.end(), current); it != std::find(players.begin(), players.end(), end); ++it) {
+            if (std::end(players) == it)
+            {
+                it = std::begin(players);
+                it++;
+            }
+            if(current != *it && end != *it) {
+                playersBetween.insert(*it);
+            }
+        }
+    // }
+    return playersBetween;
+}
 } // namespace Clue
