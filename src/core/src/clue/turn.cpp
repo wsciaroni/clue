@@ -18,7 +18,7 @@ Turn::Turn(
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
     std::shared_ptr<Player> playerShowedIn,
-    std::set<std::shared_ptr<Player>> playersWithoutCards
+    std::set<std::shared_ptr<Player>> playersWithoutCardsIn
     ) {
     this->playersTurn = playersTurnIn;
     this->playerAnswered = playerAnsweredIn;
@@ -47,7 +47,7 @@ Turn::Turn(
         } else {
             playerShowedIn->showedOneOfThese(suspectAccusedIn, weaponAccusedIn, roomAccusedIn);
         }
-        
+        this->playersWithoutCards = playersWithoutCardsIn;
     }    
     
 }
