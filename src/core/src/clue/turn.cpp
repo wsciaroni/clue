@@ -17,11 +17,13 @@ Turn::Turn(
     Room roomAccusedIn,
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
-    std::shared_ptr<Player> playerShowedIn
+    std::shared_ptr<Player> playerShowedIn,
+    std::set<std::shared_ptr<Player>> playersWithoutCards
     ) {
     this->playersTurn = playersTurnIn;
     this->playerAnswered = playerAnsweredIn;
     this->playerShowed = playerShowedIn;
+    this->cardShown = cardShownIn;
 
     if (this->playersTurn->isMaster())
     {
@@ -94,7 +96,7 @@ std::shared_ptr<Player> Turn::getPlayersTurn() {
     return playersTurn;
 }
 
-std::vector<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
+std::set<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
     return playersWithoutCards;
 }
 

@@ -216,20 +216,59 @@ void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
 
 std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player> current, std::shared_ptr<Player> end) {
     std::set<std::shared_ptr<Player>> playersBetween;
-    // if(current == end) {
-    //     return playersBetween;
-    // } else {
-        for(auto it = std::find(players.begin(), players.end(), current); it != std::find(players.begin(), players.end(), end); ++it) {
-            if (std::end(players) == it)
-            {
-                it = std::begin(players);
-                it++;
-            }
-            if(current != *it && end != *it) {
-                playersBetween.insert(*it);
+
+    // If the person who accused and the person who answered are the same, that means no one else had the card.
+    if(current == end) {
+        for(auto player : players) {
+            if(player != current) {
+                playersBetween.insert(player);
             }
         }
-    // }
+        return playersBetween;
+    }
+
+    // auto currentPlayerIterator = std::find(players.begin(), players.end(), current);
+    // auto lastPlayerIterantor = std::find(players.begin(), players.end(), end);
+//        for(auto it = currentPlayerIterator; *it != *lastPlayerIterantor; it++) {
+//            if (it == players.end())
+//            {
+//                it = players.front();
+////                it++;
+//            } else if(current != *it && end != *it) {
+//                playersBetween.insert(*it);
+//            }
+//        }
+
+    bool haveEncounteredStart = false;
+    bool haveEncounteredEnd = false;
+    bool encounteredStartFirst = false;
+    for(auto player : players) {
+        if(player == current) {
+            haveEncounteredStart = true;
+            if(!haveEncounteredEnd) {
+                playersBetween.clear();
+                encounteredStartFirst = true;
+            }
+        } else if (player == end) {
+            haveEncounteredEnd = true;
+            if(!haveEncounteredStart) {
+                encounteredStartFirst = false;
+            }
+        } else if (!haveEncounteredStart && !haveEncounteredEnd) {
+            playersBetween.insert(player);
+        } else if (haveEncounteredEnd && !haveEncounteredStart) {
+            // don't add this person to the list
+        } else if (haveEncounteredStart && !haveEncounteredEnd) {
+            playersBetween.insert(player);
+        } else if (haveEncounteredStart && haveEncounteredEnd) {
+            if(encounteredStartFirst) {
+                // Don't add this person to the list. We've already seen both the start and the end
+            } else {
+                // We saw the end first, so we want the people before and after
+                playersBetween.insert(player);
+            }
+        }
+    }
     return playersBetween;
 }
 } // namespace Clue

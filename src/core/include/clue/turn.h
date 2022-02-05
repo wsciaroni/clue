@@ -16,7 +16,7 @@ namespace Clue
         std::shared_ptr<Player> playersTurn = nullptr;
         bool accusationMade = false;
 
-        std::vector<std::shared_ptr<Player>> playersWithoutCards;
+        std::set<std::shared_ptr<Player>> playersWithoutCards;
 
         Suspect accusationSuspect = Suspect::NONE;
         Weapon accusationWeapon = Weapon::NONE;
@@ -37,7 +37,8 @@ namespace Clue
             Room roomAccusedIn,
             std::shared_ptr<Player> playerAnsweredIn,
             Card cardShownIn,
-            std::shared_ptr<Player> playerShowedIn
+            std::shared_ptr<Player> playerShowedIn,
+            std::set<std::shared_ptr<Player>> playersWithoutCards
             );
         ~Turn();
         
@@ -46,7 +47,7 @@ namespace Clue
         bool getIsMyTurn();
         bool getIAnswered();
         std::shared_ptr<Player> getPlayersTurn();
-        std::vector<std::shared_ptr<Player>> getPlayersWithoutCards();
+        std::set<std::shared_ptr<Player>> getPlayersWithoutCards();
         Suspect getAccusationSuspect();
         Weapon getAccusationWeapon();
         Room getAccusationRoom();
