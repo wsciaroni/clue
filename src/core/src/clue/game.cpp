@@ -69,9 +69,11 @@ void Game::incrementWhosTurnItIs() {
 void Game::regenerateTurnStringList() {
     QStringList strings;
     strings.clear();
+    uint64_t turnNumber = 1;
     for (auto turn : turns)
     {
-        strings.append(QString::fromStdString(turn->toString()));
+        strings.append(QString::number(turnNumber) + "\t| " + QString::fromStdString(turn->toString()));
+        turnNumber++;
     }
     turnsStringListModel->setStringList(strings);
 }

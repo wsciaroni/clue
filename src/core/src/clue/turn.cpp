@@ -57,18 +57,27 @@ std::string Turn::toString() {
     oss << this->playersTurn->getName() << " ";
     if (accusationMade)
     {
-        oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom;
+        oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom.ToString();
         if (this->playersTurn == this->playerShowed)
         {
-            oss << ", but no-one answered. ";
+            oss << ", and no-one answered.";
         } else {
-            oss << ", and " << this->playerAnswered->getName() << " answered. ";
+            oss << ", and " << this->playerAnswered->getName() << " answered.";
             if(this->isMyTurn) {
-                oss << "They showed me " << this->cardShown.ToString();
+                oss << " They showed me " << this->cardShown.ToString();
             } else if(this->iAnswered) {
-                oss << "I showed them " << this->cardShown.ToString();
+                oss << " I showed them " << this->cardShown.ToString();
             }
         }
+        if(0 != playersWithoutCards.size()) {
+            oss << " We learned that the following players don't have these three cards:";
+            for(auto player : this->playersWithoutCards) {
+                oss << " " << player->getName();
+            }
+            oss << ".";
+        }
+    } else {
+        oss << "did not make an accusation.";
     }
     return oss.str();
 }
