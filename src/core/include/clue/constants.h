@@ -3,6 +3,8 @@
 #include <string>
 #include "SmartEnum.h"
 
+#include <memory>
+
 namespace Clue
 {
 

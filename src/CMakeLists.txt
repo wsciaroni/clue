@@ -21,6 +21,9 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        configuregame.cpp
+        configuregame.h
+        configuregame.ui
         ${TS_FILES}
 )
 
