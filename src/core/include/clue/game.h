@@ -36,6 +36,8 @@ private:
     bool needsAnalysis = false;
     void playerHasCard(std::shared_ptr<Player> , Card);
 
+    std::string whoGoesFirst = "NONE";
+
 public:
     Game(/* args */);
     ~Game();
@@ -45,6 +47,7 @@ public:
     std::shared_ptr<Player> getPlayerByName(const std::string);
 
     void createGame(std::vector<std::string>);
+    void setWhoGoesFirst(std::string);
 
     std::shared_ptr<QStringListModel> getPlayersQStringListModel();
     std::shared_ptr<QStringListModel> getTurnsStringListModel();

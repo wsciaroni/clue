@@ -110,12 +110,16 @@ void Game::createGame(std::vector<std::string> names) {
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
-        if(firstPlayer) {
-            firstPlayer = false;
+        if((firstPlayer && "NONE" == whoGoesFirst) || playerName == whoGoesFirst) {
             whosTurnIsIt = player;
         }
+        firstPlayer = false;
     }
     playersQStringListModel->setStringList(nameList);
+}
+
+void Game::setWhoGoesFirst(std::string firstPlayer) {
+    whoGoesFirst = firstPlayer;
 }
 
 std::shared_ptr<QStringListModel> Game::getPlayersQStringListModel() {

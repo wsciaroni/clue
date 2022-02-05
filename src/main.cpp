@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
         "Buddy The Elf"
     };
     auto clueGame = std::make_shared<Clue::Game>();
+    clueGame->setWhoGoesFirst("Abby");
     clueGame->createGame(players);
 
     QTranslator translator;
