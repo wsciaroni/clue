@@ -46,7 +46,7 @@ public:
 
     std::shared_ptr<Player> getPlayerByName(const std::string);
 
-    void createGame(std::vector<std::string>);
+    void createGame(std::vector<std::string> names, std::set<Card> myHand);
     void setWhoGoesFirst(std::string);
 
     std::shared_ptr<QStringListModel> getPlayersQStringListModel();

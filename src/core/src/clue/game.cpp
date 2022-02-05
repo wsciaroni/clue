@@ -101,7 +101,7 @@ std::shared_ptr<Player> Game::getPlayerByName(const std::string name) {
     return nullptr;
 }
 
-void Game::createGame(std::vector<std::string> names) {
+void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     auto playerNumber = static_cast<u_int8_t>(PlayerId::PLAYER_0);
     // players.resize(names.size());
     QStringList nameList;
@@ -130,6 +130,12 @@ void Game::createGame(std::vector<std::string> names) {
         firstPlayer = false;
     }
     playersQStringListModel->setStringList(nameList);
+
+    for(auto card : myHand) {
+        playerHasCard(players.front(), card);
+    }
+    runAnalysis();
+    getTableInfo();
 }
 
 void Game::setWhoGoesFirst(std::string firstPlayer) {

@@ -14,6 +14,13 @@ namespace Clue
         this->setModal(true);
         ui->setupUi(this);
         on_numPlayers_valueChanged(3);
+
+        ui->card0->setModel(clueGame->getCardQStringListModel().get());
+        ui->card1->setModel(clueGame->getCardQStringListModel().get());
+        ui->card2->setModel(clueGame->getCardQStringListModel().get());
+        ui->card3->setModel(clueGame->getCardQStringListModel().get());
+        ui->card4->setModel(clueGame->getCardQStringListModel().get());
+        ui->card5->setModel(clueGame->getCardQStringListModel().get());
     }
 
     ConfigureGame::~ConfigureGame()
@@ -90,6 +97,8 @@ namespace Clue
     void ConfigureGame::on_buttonBox_accepted()
     {
         clueGame->setWhoGoesFirst(ui->whosFirst->currentText().toStdString());
+
+        // Players
         std::vector<std::string> players;
         players.push_back(ui->p0Name->displayText().toStdString());
         players.push_back(ui->p1Name->displayText().toStdString());
@@ -107,7 +116,23 @@ namespace Clue
         {
             players.push_back(ui->p5Name->displayText().toStdString()); // 6 players
         }
-        clueGame->createGame(players);
+
+        // Hand
+        std::set<Card> myHand;
+        myHand.insert(Card::FromString(ui->card0->currentText().toStdString().c_str()));
+        myHand.insert(Card::FromString(ui->card1->currentText().toStdString().c_str()));
+        myHand.insert(Card::FromString(ui->card2->currentText().toStdString().c_str()));
+        if(ui->card3->isEnabled()) {
+            myHand.insert(Card::FromString(ui->card3->currentText().toStdString().c_str()));
+        }
+        if(ui->card4->isEnabled()) {
+            myHand.insert(Card::FromString(ui->card4->currentText().toStdString().c_str()));
+        }
+        if(ui->card5->isEnabled()) {
+            myHand.insert(Card::FromString(ui->card5->currentText().toStdString().c_str()));
+        }
+
+        clueGame->createGame(players, myHand);
         this->hide();
         // this->accept();
     }
@@ -115,5 +140,17 @@ namespace Clue
     std::shared_ptr<Clue::Game> ConfigureGame::getGame() {
         return clueGame;
     }
+
+
+void ConfigureGame::on_numCardsInHand_valueChanged(int arg1)
+{
+    ui->card0->setEnabled(true);
+    ui->card1->setEnabled(true);
+    ui->card2->setEnabled(true);
+
+    ui->card3->setEnabled(3 < arg1); // at least 4 players
+    ui->card4->setEnabled(4 < arg1); // at least 5 players
+    ui->card5->setEnabled(5 < arg1); // 6 players
+}
 
 } // namespace Clue

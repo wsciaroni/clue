@@ -37,6 +37,8 @@ private slots:
 
     void on_buttonBox_accepted();
 
+    void on_numCardsInHand_valueChanged(int arg1);
+
 private:
     Ui::ConfigureGame *ui;
 
