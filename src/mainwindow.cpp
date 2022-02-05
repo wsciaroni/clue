@@ -46,6 +46,24 @@ void MainWindow::setPossiblePlayers() {
     ui->playerShownComboBox->setModel(&listModel);
 }
 
+void MainWindow::updateTableInfo() {
+//    ui->knownInfoTableWidget->clearContents();
+    ui->knownInfoTableWidget->setColumnCount(NUMBER_OF_PLAYERS+1);
+    ui->knownInfoTableWidget->setRowCount(NUMBER_OF_CARDS+1);
+
+    auto tableInfo = gamePtr->getTableInfo();
+    int i = 0;
+    for(auto row : (*tableInfo)) {
+        int j = 0;
+        for( auto column : row) {
+            // std::cout << i << "," << j << (*tableInfo)[i][j] << std::endl;
+            ui->knownInfoTableWidget->setItem(i,j,new QTableWidgetItem(QString::fromStdString((*tableInfo)[i][j])));
+            j++;
+        }
+        i++;
+    }
+}
+
 void MainWindow::on_actionHistory_triggered()
 {
     std::cout << "on_actionHistory_triggered" << std::endl;
@@ -74,6 +92,7 @@ void MainWindow::on_submitTurn_accepted()
         gamePtr->getPlayersBetween(playersTurn,playerWhoAnswered)
     );
     gamePtr->submitTurn(turn);
+    updateTableInfo();
     }
     catch(const std::exception& e)
     {

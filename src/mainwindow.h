@@ -20,6 +20,7 @@ public:
 private:
     void setPossibleCards();
     void setPossiblePlayers();
+    void updateTableInfo();
 
 private slots:
     void on_actionHistory_triggered();

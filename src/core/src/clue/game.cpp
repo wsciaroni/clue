@@ -271,4 +271,52 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
     }
     return playersBetween;
 }
+
+std::shared_ptr<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF_CARDS+1>> Game::getTableInfo() {
+    auto tableInfo = std::make_shared<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF_CARDS+1>>();
+
+    // Add headers
+    {
+        uint64_t row = 0;
+        for (Card card=Card::FIRST; card<Card::LAST; ++card) {
+            if(0 < row) {
+                (*tableInfo)[row][0] = card.ToString();
+            }
+            row++;
+        }
+
+        uint64_t column = 1;
+        for (auto player : players)
+        {
+            (*tableInfo)[0][column] = player->getName();
+            column++;
+        }
+    }
+
+    // For each card, for each player. Determine the state
+    uint64_t row = 0;
+    for (Card card=Card::FIRST; card<Card::LAST; ++card)
+    {
+        if( 0 < row ) {
+            uint64_t column = 1;
+            for (auto player : players)
+            {
+                if (player->doesntHaveCard(card)) {
+                    // Doesn't have card
+                    (*tableInfo)[row][column] = "O";
+                } else if (player->hasCard(card)) {
+                    // Player has Card
+                    (*tableInfo)[row][column] = "X";
+                } else {
+                    // We don't know
+                    (*tableInfo)[row][column] = "?";
+                }
+                column++;
+            }
+        }
+        row++;
+    }
+    return tableInfo;
+}
+
 } // namespace Clue
