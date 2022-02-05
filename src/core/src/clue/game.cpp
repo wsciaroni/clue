@@ -211,11 +211,19 @@ void Game::runAnalysis() {
                     }
                 }
             }
+
+            // Make sure the card isn't in any of the other players hands
+            for(auto card : *hand) {
+                playerHasCard(player, card);
+            }
         }
     }
 }
 
 void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
+    if(!player_in->hasCard(card)) {
+        needsAnalysis = true;
+    }
     for(auto player : players) {
         if (player_in == player)
         {
@@ -224,7 +232,6 @@ void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
             player->cardDefinitelyNotInHand(card);
         }
     }
-    needsAnalysis = true;
 }
 
 std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player> current, std::shared_ptr<Player> end) {
@@ -314,7 +321,7 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
         }
     }
 
-    // For each card, for each player. Determine the state
+    // For each card, for each  Determine the state
     uint64_t row = 0;
     for (Card card=Card::FIRST; card<Card::LAST; ++card)
     {
