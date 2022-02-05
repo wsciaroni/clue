@@ -84,6 +84,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
         turns.push_back(turn);
         incrementWhosTurnItIs();
         regenerateTurnStringList();
+        runAnalysis();
         return;
     }
     throw std::logic_error("Turn is not consistent");
@@ -148,6 +149,7 @@ std::shared_ptr<QStringListModel> Game::getCardQStringListModel() {
 }
 
 void Game::runAnalysis() {
+    needsAnalysis = true;
     while (needsAnalysis)
     {
         needsAnalysis = false;
