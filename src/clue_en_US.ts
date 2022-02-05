@@ -34,97 +34,97 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="88"/>
+        <location filename="mainwindow.ui" line="91"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="363"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="113"/>
+        <location filename="mainwindow.ui" line="116"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="364"/>
         <source>What&apos;s the Guess?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="128"/>
+        <location filename="mainwindow.ui" line="131"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="365"/>
         <source>Person</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="135"/>
+        <location filename="mainwindow.ui" line="138"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="366"/>
         <source>Weapon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="142"/>
+        <location filename="mainwindow.ui" line="145"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="367"/>
         <source>Room</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="167"/>
+        <location filename="mainwindow.ui" line="170"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="368"/>
         <source>Who Answered?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="188"/>
+        <location filename="mainwindow.ui" line="191"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="369"/>
         <source>You saw or showed a card?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="197"/>
+        <location filename="mainwindow.ui" line="200"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="370"/>
         <source>Card you showed OR card you saw</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="207"/>
+        <location filename="mainwindow.ui" line="210"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="371"/>
         <source>Player you showed OR who showed you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="237"/>
+        <location filename="mainwindow.ui" line="240"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="373"/>
         <source>Known Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="252"/>
+        <location filename="mainwindow.ui" line="255"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="374"/>
         <source>Turns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="301"/>
+        <location filename="mainwindow.ui" line="304"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="375"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="308"/>
+        <location filename="mainwindow.ui" line="311"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="376"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="318"/>
+        <location filename="mainwindow.ui" line="321"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="357"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="323"/>
+        <location filename="mainwindow.ui" line="326"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="358"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="334"/>
+        <location filename="mainwindow.ui" line="337"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="359"/>
         <source>History</source>
         <translation type="unfinished"></translation>

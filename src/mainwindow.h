@@ -17,12 +17,30 @@ public:
     MainWindow(QWidget *parent = nullptr, std::shared_ptr<Clue::Game> gamePtr_in = nullptr);
     ~MainWindow();
 
+private:
+    void setPossibleCards();
+    void setPossiblePlayers();
+
 private slots:
     void on_actionHistory_triggered();
 
     void on_submitTurn_accepted();
 
     void on_submitTurn_rejected();
+
+    void on_personGuessedComboBox_currentTextChanged(const QString &arg1);
+
+    void on_weaponGuessedComboBox_currentTextChanged(const QString &arg1);
+
+    void on_roomGuessedComboBox_currentTextChanged(const QString &arg1);
+
+    void on_whoAnsweredComboBox_currentTextChanged(const QString &arg1);
+
+    void on_playersTurnComboBox_currentTextChanged(const QString &arg1);
+
+    void on_accusationMade_clicked();
+
+    void on_accusationNotMade_clicked();
 
 private:
     Ui::MainWindow *ui;
