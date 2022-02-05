@@ -20,9 +20,14 @@ Turn::Turn(
     std::shared_ptr<Player> playerShowedIn
     ) {
     this->playersTurn = playersTurnIn;
+    this->playerAnswered = playerAnsweredIn;
+    this->playerShowed = playerShowedIn;
+
     if (this->playersTurn->isMaster())
     {
         this->isMyTurn = true;
+    } else if(this->playerAnswered->isMaster()) {
+        this->iAnswered = true;
     }
 
     this->accusationMade = accusationMadeIn;
@@ -49,17 +54,31 @@ Turn::~Turn() {}
 
 std::string Turn::toString() {
     std::ostringstream oss;
-    oss << playersTurn->getName() << " ";
+    oss << this->playersTurn->getName() << " ";
     if (accusationMade)
     {
-        oss << "accused " << accusationSuspect.ToString() << " " << accusationWeapon.ToString() << " " << accusationRoom;
-        // if 
+        oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom;
+        if (this->playersTurn == this->playerShowed)
+        {
+            oss << ", but no-one answered. ";
+        } else {
+            oss << ", and " << this->playerAnswered->getName() << " answered. ";
+            if(this->isMyTurn) {
+                oss << "They showed me " << this->cardShown.ToString();
+            } else if(this->iAnswered) {
+                oss << "I showed them " << this->cardShown.ToString();
+            }
+        }
     }
     return oss.str();
 }
 
 bool Turn::getIsMyTurn() {
     return isMyTurn;
+}
+
+bool Turn::getIAnswered() {
+    return iAnswered;
 }
 
 std::shared_ptr<Player> Turn::getPlayersTurn() {

@@ -11,6 +11,7 @@ namespace Clue
     {
     private:
         bool isMyTurn = false;
+        bool iAnswered = false;
 
         std::shared_ptr<Player> playersTurn = nullptr;
         bool accusationMade = false;
@@ -43,6 +44,7 @@ namespace Clue
         std::string toString();
 
         bool getIsMyTurn();
+        bool getIAnswered();
         std::shared_ptr<Player> getPlayersTurn();
         std::vector<std::shared_ptr<Player>> getPlayersWithoutCards();
         Suspect getAccusationSuspect();
