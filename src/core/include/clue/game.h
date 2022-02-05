@@ -60,7 +60,9 @@ public:
 
     std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
 
-    std::shared_ptr<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF_CARDS+1>> getTableInfo();
+    std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
+
+    u_int8_t getNumberOfPlayers();
 };
 
 } // namespace Clue

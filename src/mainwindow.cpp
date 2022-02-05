@@ -48,7 +48,7 @@ void MainWindow::setPossiblePlayers() {
 
 void MainWindow::updateTableInfo() {
 //    ui->knownInfoTableWidget->clearContents();
-    ui->knownInfoTableWidget->setColumnCount(NUMBER_OF_PLAYERS+1);
+    ui->knownInfoTableWidget->setColumnCount(gamePtr->getNumberOfPlayers()+1);
     ui->knownInfoTableWidget->setRowCount(NUMBER_OF_CARDS+1);
 
     auto tableInfo = gamePtr->getTableInfo();

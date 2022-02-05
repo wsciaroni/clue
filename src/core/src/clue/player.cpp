@@ -95,4 +95,12 @@ bool Player::isPlayerSolved() {
     return this->playerSolved;
 }
 
+void Player::setNumCardsInHand(u_int8_t numCards) {
+    numCardsInHand = numCards;
+}
+
+u_int8_t Player::getNumCardsInHand() {
+    return numCardsInHand;
+}
+
 } // namespace Clue

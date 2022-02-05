@@ -22,6 +22,8 @@ private:
 
     bool playerSolved = false;
 
+    u_int8_t numCardsInHand;
+
 public:
     Player(/* args */);
     ~Player();
@@ -47,6 +49,10 @@ public:
     std::shared_ptr<std::set<Card>> getNotInHand();
 
     bool isPlayerSolved();
+
+    void setNumCardsInHand(u_int8_t numCards);
+    u_int8_t getNumCardsInHand();
+
 };
 
 } // namespace Clue

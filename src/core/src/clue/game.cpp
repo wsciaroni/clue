@@ -110,6 +110,17 @@ void Game::createGame(std::vector<std::string> names) {
         auto player = std::make_shared<Player>();
         player->setName(playerName);
         player->setPlayerId(static_cast<PlayerId>(playerNumber));
+
+        /*
+         * If there are 3 players : 6, 6, 6
+         * If there are 4 players : 5, 5, 4, 4
+         * If there are 5 players : 4, 4, 4, 3, 3
+         * If there are 6 players : 3, 3, 3, 3, 3
+         */
+        u_int8_t numCards = std::floor(names.size()/float(NUMBER_OF_CARDS-3));
+        u_int8_t numCardsInHand = (playerNumber <= (names.size()-2)) ? numCards+1 : numCards;
+        player->setNumCardsInHand(numCardsInHand);
+
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
@@ -191,7 +202,7 @@ void Game::runAnalysis() {
             auto notInHand = player->getNotInHand();
             if(player->isPlayerSolved()) {
                 // This player is solved.
-            } else if (notInHand->size() >= (NUMBER_OF_CARDS-NUMBER_OF_CARDS_IN_PLAYERS_HAND)) {
+            } else if (notInHand->size() >= (NUMBER_OF_CARDS - player->getNumCardsInHand())) {
                 // We know the player doesn't have the rest of the cards, so, deduce that they do have the rest of the cards.
                 for (Card i=Card::FIRST; i<Card::LAST; ++i) {
                     if (!player->doesntHaveCard(i))
@@ -274,9 +285,17 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
     return playersBetween;
 }
 
-std::shared_ptr<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF_CARDS+1>> Game::getTableInfo() {
-    auto tableInfo = std::make_shared<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF_CARDS+1>>();
-
+std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
+    auto tableInfo = std::make_shared<std::vector<std::vector<std::string>>>();
+    // Number of cards
+    for(int i = 0; i <= NUMBER_OF_CARDS; i++) {
+        std::vector<std::string> row;
+        for(int j = 0; j <= getNumberOfPlayers(); j++) {
+            std::string column = "";
+            row.push_back(column);
+        }
+        tableInfo->push_back(row);
+    }
     // Add headers
     {
         uint64_t row = 0;
@@ -319,6 +338,10 @@ std::shared_ptr<std::array<std::array<std::string,NUMBER_OF_PLAYERS+1>,NUMBER_OF
         row++;
     }
     return tableInfo;
+}
+
+u_int8_t Game::getNumberOfPlayers() {
+    return players.size();
 }
 
 } // namespace Clue
