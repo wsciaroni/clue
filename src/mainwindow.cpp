@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include <iostream>
+#include <glog/logging.h>
 
 namespace Clue {
 
@@ -58,7 +58,7 @@ void MainWindow::updateTableInfo() {
     for(auto row : (*tableInfo)) {
         int j = 0;
         for( auto column : row) {
-            // std::cout << i << "," << j << (*tableInfo)[i][j] << std::endl;
+            LOG(INFO) << i << "," << j << (*tableInfo)[i][j] << std::endl;
             ui->knownInfoTableWidget->setItem(i,j,new QTableWidgetItem(QString::fromStdString((*tableInfo)[i][j])));
             j++;
         }
@@ -68,13 +68,13 @@ void MainWindow::updateTableInfo() {
 
 void MainWindow::on_actionHistory_triggered()
 {
-    std::cout << "on_actionHistory_triggered" << std::endl;
+    LOG(INFO) << "on_actionHistory_triggered" << std::endl;
 }
 
 
 void MainWindow::on_submitTurn_accepted()
 {
-    std::cout << "on_submitTurn_accepted" << std::endl;
+    LOG(INFO) << "on_submitTurn_accepted" << std::endl;
     // Attempt to create a Turn
     try
     {
@@ -98,7 +98,7 @@ void MainWindow::on_submitTurn_accepted()
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        LOG(WARNING) << e.what();
     }
 }
 
@@ -107,48 +107,48 @@ void MainWindow::on_submitTurn_rejected()
 {
   // Reset all the input boxes
   // @TODO
-    std::cout << "on_submitTurn_rejected" << std::endl;
+    LOG(INFO) << "on_submitTurn_rejected" << std::endl;
 }
 
 
 void MainWindow::on_personGuessedComboBox_currentTextChanged(const QString &arg1)
 {
-    std::cout << "on_personGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_personGuessedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_weaponGuessedComboBox_currentTextChanged(const QString &arg1)
 {
-    std::cout << "on_weaponGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_weaponGuessedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_roomGuessedComboBox_currentTextChanged(const QString &arg1)
 {
-    std::cout << "on_roomGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_roomGuessedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_whoAnsweredComboBox_currentTextChanged(const QString &arg1)
 {
-    std::cout << "on_whoAnsweredComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_whoAnsweredComboBox_currentTextChanged" << std::endl;
     setPossiblePlayers();
 }
 
 
 void MainWindow::on_playersTurnComboBox_currentTextChanged(const QString &arg1)
 {
-    std::cout << "on_playersTurnComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_playersTurnComboBox_currentTextChanged" << std::endl;
     setPossiblePlayers();
 }
 
 
 void MainWindow::on_accusationMade_clicked()
 {
-    std::cout << "on_accusationMade_clicked" << std::endl;
+    LOG(INFO) << "on_accusationMade_clicked" << std::endl;
 
     ui->personGuessedComboBox->setEnabled(true);
     ui->weaponGuessedComboBox->setEnabled(true);
@@ -161,7 +161,7 @@ void MainWindow::on_accusationMade_clicked()
 
 void MainWindow::on_accusationNotMade_clicked()
 {
-    std::cout << "on_accusationNotMade_clicked" << std::endl;
+    LOG(INFO) << "on_accusationNotMade_clicked" << std::endl;
 
     ui->personGuessedComboBox->setCurrentText("NONE");
     ui->personGuessedComboBox->setEnabled(false);

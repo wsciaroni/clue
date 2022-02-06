@@ -40,8 +40,17 @@ CMakeCache.txt
 Makefile
 cmake_install.cmake
 *.user
+/src/CPackConfig.cmake
+/src/CPackSourceConfig.cmake
+/src/clue_en_US.ts
+
 # Executable:
 src/clue
 
+# Logging directory:
+output
+
 # Qt Build Directories
 /build-*/
+/build/
+/build*/

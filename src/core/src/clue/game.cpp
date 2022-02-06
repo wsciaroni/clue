@@ -2,6 +2,7 @@
 #include "clue/turn.h"
 
 #include <iostream>
+#include <glog/logging.h>
 
 namespace Clue
 {
@@ -81,8 +82,8 @@ void Game::regenerateTurnStringList() {
 }
 
 void Game::submitTurn(std::shared_ptr<Turn> turn) {
+    LOG(INFO) << "Turn submitted to game: " << turn->toString();
     try {
-        std::cout << "Turn:\t" << turn->toString();
         if (isTurnConsistent(turn))
         {
             turns.push_back(turn);
@@ -93,7 +94,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
         }
     } catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        LOG(WARNING) << e.what();
         return;
     }
     throw std::logic_error("Turn is not consistent");
