@@ -17,12 +17,19 @@ Turn::Turn(
     Room roomAccusedIn,
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
-    std::shared_ptr<Player> playerShowedIn
+    std::shared_ptr<Player> playerShowedIn,
+    std::set<std::shared_ptr<Player>> playersWithoutCardsIn
     ) {
     this->playersTurn = playersTurnIn;
+    this->playerAnswered = playerAnsweredIn;
+    this->playerShowed = playerShowedIn;
+    this->cardShown = cardShownIn;
+
     if (this->playersTurn->isMaster())
     {
         this->isMyTurn = true;
+    } else if(this->playerAnswered->isMaster()) {
+        this->iAnswered = true;
     }
 
     this->accusationMade = accusationMadeIn;
@@ -40,7 +47,7 @@ Turn::Turn(
         } else {
             playerShowedIn->showedOneOfThese(suspectAccusedIn, weaponAccusedIn, roomAccusedIn);
         }
-        
+        this->playersWithoutCards = playersWithoutCardsIn;
     }    
     
 }
@@ -49,26 +56,47 @@ Turn::~Turn() {}
 
 std::string Turn::toString() {
     std::ostringstream oss;
-    oss << playersTurn->getName() << " ";
+    oss << this->playersTurn->getName() << " ";
     if (accusationMade)
     {
-        oss << "accused " << accusationSuspect.ToString() << " " << accusationWeapon.ToString() << " " << accusationRoom;
-        // if 
+        oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom.ToString();
+        if (this->playersTurn == this->playerShowed)
+        {
+            oss << ", and no-one answered.";
+        } else {
+            oss << ", and " << this->playerAnswered->getName() << " answered.";
+            if(this->isMyTurn) {
+                oss << " They showed me " << this->cardShown.ToString();
+            } else if(this->iAnswered) {
+                oss << " I showed them " << this->cardShown.ToString();
+            }
+        }
+        if(0 != playersWithoutCards.size()) {
+            oss << " We learned that the following players don't have these three cards:";
+            for(auto player : this->playersWithoutCards) {
+                oss << " " << player->getName();
+            }
+            oss << ".";
+        }
+    } else {
+        oss << "did not make an accusation.";
     }
-    
-    
-    
+    return oss.str();
 }
 
 bool Turn::getIsMyTurn() {
     return isMyTurn;
 }
 
+bool Turn::getIAnswered() {
+    return iAnswered;
+}
+
 std::shared_ptr<Player> Turn::getPlayersTurn() {
     return playersTurn;
 }
 
-std::vector<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
+std::set<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
     return playersWithoutCards;
 }
 

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) Istvan Pasztor
  * This source has been published on www.codeproject.com under the CPOL license.
+ * https://www.codeproject.com/articles/127233/typesafe-c-enum-with-tostring-and-fromstring
  */
 #ifndef __SMART_ENUM_H__
 #define __SMART_ENUM_H__
