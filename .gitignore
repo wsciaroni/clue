@@ -52,3 +52,5 @@ output
 
 # Qt Build Directories
 /build-*/
+/build/
+/build*/
