@@ -36,7 +36,7 @@ bool Player::doesntHaveCard(const Card card) {
 void Player::addCardToHand (Card card) {
     if(!hasCard(card)) {
         if(doesntHaveCard(card)) {
-            throw std::__throw_logic_error;
+            // throw std::__throw_logic_error;
         }
         hand->insert(card);
     } else {
@@ -73,7 +73,7 @@ void Player::showedOneOfThese(Suspect suspect, Weapon weapon, Room room) {
 void Player::cardDefinitelyNotInHand(Card card) {
     if (hasCard(card))
     {
-        throw std::__throw_logic_error;
+        // throw std::__throw_logic_error;
     } else {
         notInHand->insert(card);
     }
