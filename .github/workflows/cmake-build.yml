@@ -19,6 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
     
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
