@@ -82,6 +82,7 @@ void Game::regenerateTurnStringList() {
 
 void Game::submitTurn(std::shared_ptr<Turn> turn) {
     try {
+        std::cout << "Turn:\t" << turn->toString();
         if (isTurnConsistent(turn))
         {
             turns.push_back(turn);
