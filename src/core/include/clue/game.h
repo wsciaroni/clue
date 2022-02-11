@@ -49,6 +49,7 @@ public:
 
     std::shared_ptr<QStringListModel> getPlayersQStringListModel();
     std::shared_ptr<QStringListModel> getTurnsStringListModel();
+
     std::shared_ptr<QStringListModel> getCharactersQStringListModel();
     std::shared_ptr<QStringListModel> getWeaponsQStringListModel();
     std::shared_ptr<QStringListModel> getRoomsQStringListModel();
@@ -57,6 +58,7 @@ public:
     void runAnalysis();
 
     std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
+    QStringList getWholePlayerListStrings();
 
     std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
 

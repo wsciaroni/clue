@@ -47,6 +47,16 @@ void MainWindow::setPossiblePlayers() {
     ui->playerShownComboBox->setModel(&listModel);
 }
 
+void MainWindow::setWhoAnswered() {
+    if (gamePtr != nullptr)
+    {
+        static QStringListModel whoAnsweredModel;
+        whoAnsweredModel.setStringList(gamePtr->getWholePlayerListStrings());
+        ui->whoAnsweredComboBox->setModel(&whoAnsweredModel);
+    }
+    LOG(WARNING) << "gamePtr == nullptr";
+}
+
 void MainWindow::updateTableInfo() {
 //    ui->knownInfoTableWidget->clearContents();
     gamePtr->runAnalysis();
@@ -143,6 +153,7 @@ void MainWindow::on_playersTurnComboBox_currentTextChanged(const QString &arg1)
 {
     LOG(INFO) << "on_playersTurnComboBox_currentTextChanged" << std::endl;
     setPossiblePlayers();
+    setWhoAnswered();
 }
 
 
@@ -156,6 +167,8 @@ void MainWindow::on_accusationMade_clicked()
     ui->whoAnsweredComboBox->setEnabled(true);
     ui->cardShownComboBox->setEnabled(true);
     ui->playerShownComboBox->setEnabled(true);
+    setPossiblePlayers();
+    setWhoAnswered();
 }
 
 

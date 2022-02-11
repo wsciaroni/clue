@@ -20,6 +20,7 @@ public:
 private:
     void setPossibleCards();
     void setPossiblePlayers();
+    void setWhoAnswered();
     void updateTableInfo();
 
 private slots:

@@ -96,8 +96,7 @@ std::shared_ptr<Player> Game::getPlayerByName(const std::string name) {
             return player;
         }
     }
-    // throw std::range_error("Player not found");
-    return nullptr;
+    throw std::range_error("Player not found");
 }
 
 void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
@@ -308,6 +307,14 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
         }
     }
     return playersBetween;
+}
+
+QStringList Game::getWholePlayerListStrings() {
+    QStringList list;
+    for(auto player : players) {
+        list.append(QString::fromStdString(player->getName()));
+    }
+    return list;
 }
 
 std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
