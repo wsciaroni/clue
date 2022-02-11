@@ -15,8 +15,6 @@ class Game
 private:
     std::vector<std::shared_ptr<Player>> players;
     std::shared_ptr<QStringListModel> playersQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> playerShownQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> whoAnsweredQStringListModel = std::make_shared<QStringListModel>();
     
     std::vector<std::shared_ptr<Turn>> turns;
     std::shared_ptr<QStringListModel> turnsStringListModel = std::make_shared<QStringListModel>();
@@ -30,6 +28,7 @@ private:
     void incrementWhosTurnItIs();
 
     void regenerateTurnStringList();
+    void regeneratePlayersTurnList();
 
     bool needsAnalysis = false;
     void playerHasCard(std::shared_ptr<Player> , Card);

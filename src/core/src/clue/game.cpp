@@ -48,6 +48,7 @@ bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
 
 void Game::incrementWhosTurnItIs() {
     std::rotate(players.begin(), players.begin() + 1, players.end());
+    regeneratePlayersTurnList();
 }
 
 void Game::regenerateTurnStringList() {
@@ -60,6 +61,13 @@ void Game::regenerateTurnStringList() {
         turnNumber++;
     }
     turnsStringListModel->setStringList(strings);
+}
+
+void Game::regeneratePlayersTurnList() {
+    QStringList strings;
+    strings.clear();
+    strings.append(QString::fromStdString(players.front()->getName()));
+    playersQStringListModel->setStringList(strings);
 }
 
 void Game::submitTurn(std::shared_ptr<Turn> turn) {
@@ -115,12 +123,21 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
-        if((firstPlayer && "NONE" == whoGoesFirst) || playerName == whoGoesFirst) {
-            whosTurnIsIt() = player;
-        }
         firstPlayer = false;
     }
+
     playersQStringListModel->setStringList(nameList);
+    if ("NONE" != whoGoesFirst)
+    {
+        for(auto playerName : names) {
+            if (players.front()->getName() == whoGoesFirst)
+            {
+                break;
+            } else {
+                incrementWhosTurnItIs();
+            }
+        }
+    }
 
     for(auto card : myHand) {
         playerHasCard(players.front(), card);
