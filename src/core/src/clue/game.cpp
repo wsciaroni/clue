@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <algorithm>
 
 namespace Clue
 {
@@ -41,32 +42,12 @@ Game::~Game()
 
 bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     // @TODO Check to make sure that this turn doesn't contradict any knowledge that we already have
-    return (whosTurnIsIt == turn->getPlayersTurn());
+    return (whosTurnIsIt() == turn->getPlayersTurn());
     // return true;
 }
 
 void Game::incrementWhosTurnItIs() {
-    bool getNextPlayer = false;
-
-    for(auto player : players) {
-        if (getNextPlayer)
-        {
-            whosTurnIsIt = player;
-            return;
-        }
-        
-        if(player == whosTurnIsIt) {
-            if (players.back() == player)
-            {
-                whosTurnIsIt = players.front();
-                return;
-            } else {
-                getNextPlayer = true;
-            }
-        }
-    }
-
-    throw std::logic_error("Unable to determine the next player");
+    std::rotate(players.begin(), players.begin() + 1, players.end());
 }
 
 void Game::regenerateTurnStringList() {
@@ -135,7 +116,7 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
         if((firstPlayer && "NONE" == whoGoesFirst) || playerName == whoGoesFirst) {
-            whosTurnIsIt = player;
+            whosTurnIsIt() = player;
         }
         firstPlayer = false;
     }
@@ -150,6 +131,10 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
 
 void Game::setWhoGoesFirst(std::string firstPlayer) {
     whoGoesFirst = firstPlayer;
+}
+
+std::shared_ptr<Player> Game::whosTurnIsIt() {
+    return players.front();
 }
 
 std::shared_ptr<QStringListModel> Game::getPlayersQStringListModel() {

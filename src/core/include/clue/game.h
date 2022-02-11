@@ -18,8 +18,6 @@ private:
     std::shared_ptr<QStringListModel> playerShownQStringListModel = std::make_shared<QStringListModel>();
     std::shared_ptr<QStringListModel> whoAnsweredQStringListModel = std::make_shared<QStringListModel>();
     
-    std::shared_ptr<Player> whosTurnIsIt = nullptr;
-    
     std::vector<std::shared_ptr<Turn>> turns;
     std::shared_ptr<QStringListModel> turnsStringListModel = std::make_shared<QStringListModel>();
 
@@ -48,6 +46,7 @@ public:
 
     void createGame(std::vector<std::string> names, std::set<Card> myHand);
     void setWhoGoesFirst(std::string);
+    std::shared_ptr<Player> whosTurnIsIt();
 
     std::shared_ptr<QStringListModel> getPlayersQStringListModel();
     std::shared_ptr<QStringListModel> getTurnsStringListModel();
