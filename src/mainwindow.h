@@ -32,19 +32,19 @@ private slots:
 
     void on_submitTurn_rejected();
 
-    void on_suspectGuessedComboBox_currentTextChanged(const QString &arg1);
+    void on_suspectSuggestedComboBox_currentTextChanged(const QString &arg1);
 
-    void on_weaponGuessedComboBox_currentTextChanged(const QString &arg1);
+    void on_weaponSuggestedComboBox_currentTextChanged(const QString &arg1);
 
-    void on_roomGuessedComboBox_currentTextChanged(const QString &arg1);
+    void on_roomSuggestedComboBox_currentTextChanged(const QString &arg1);
 
     void on_whoAnsweredComboBox_currentTextChanged(const QString &arg1);
 
     void on_playersTurnComboBox_currentTextChanged(const QString &arg1);
 
-    void on_accusationMade_clicked();
+    void on_suggestionMade_clicked();
 
-    void on_accusationNotMade_clicked();
+    void on_suggestionNotMade_clicked();
 
 private:
     Ui::MainWindow *ui;

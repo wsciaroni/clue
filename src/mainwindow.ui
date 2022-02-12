@@ -66,14 +66,14 @@
          <item>
           <widget class="QLabel" name="makingAccusation">
            <property name="text">
-            <string>Are they/you making an accusation?</string>
+            <string>Are they/you making a Suggestion?</string>
            </property>
           </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" name="accusationMadeOrNo">
            <item>
-            <widget class="QRadioButton" name="accusationMade">
+            <widget class="QRadioButton" name="suggestionMade">
              <property name="text">
               <string>Yes</string>
              </property>
@@ -86,7 +86,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="accusationNotMade">
+            <widget class="QRadioButton" name="suggestionNotMade">
              <property name="text">
               <string>No</string>
              </property>
@@ -111,19 +111,19 @@
          <item>
           <layout class="QHBoxLayout" name="guessLayout2">
            <item>
-            <widget class="QLabel" name="whatsTheGuessLabel">
+            <widget class="QLabel" name="whatsTheSuggestionLabel">
              <property name="text">
-              <string>What's the Guess?</string>
+              <string>What's the suggestion?</string>
              </property>
             </widget>
            </item>
            <item>
             <layout class="QGridLayout" name="guessLayout3">
              <item row="0" column="1">
-              <widget class="QComboBox" name="suspectGuessedComboBox"/>
+              <widget class="QComboBox" name="suspectSuggestedComboBox"/>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="weaponGuessedComboBox"/>
+              <widget class="QComboBox" name="weaponSuggestedComboBox"/>
              </item>
              <item row="0" column="0">
               <widget class="QLabel" name="suspectLabel">
@@ -147,7 +147,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QComboBox" name="roomGuessedComboBox"/>
+              <widget class="QComboBox" name="roomSuggestedComboBox"/>
              </item>
             </layout>
            </item>
@@ -167,7 +167,7 @@
          <item>
           <widget class="QLabel" name="whoAnsweredLabel">
            <property name="text">
-            <string>Who Answered?</string>
+            <string>Who proved the suggestion false?</string>
            </property>
           </widget>
          </item>

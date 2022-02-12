@@ -13,9 +13,9 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
     ui->setupUi(this);
     ui->playersTurnComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
     ui->whoAnsweredComboBox->setModel(gamePtr->getPlayersQStringListModel().get());
-    ui->weaponGuessedComboBox->setModel(gamePtr->getWeaponsQStringListModel().get());
-    ui->suspectGuessedComboBox->setModel(gamePtr->getSuspectsQStringListModel().get());
-    ui->roomGuessedComboBox->setModel(gamePtr->getRoomsQStringListModel().get());
+    ui->weaponSuggestedComboBox->setModel(gamePtr->getWeaponsQStringListModel().get());
+    ui->suspectSuggestedComboBox->setModel(gamePtr->getSuspectsQStringListModel().get());
+    ui->roomSuggestedComboBox->setModel(gamePtr->getRoomsQStringListModel().get());
     ui->cardShownComboBox->setModel(gamePtr->getCardQStringListModel().get());
     ui->turnListView->setModel(gamePtr->getTurnsStringListModel().get());
     updateTableInfo();
@@ -36,9 +36,9 @@ void MainWindow::setPossibleCards() {
             if (iSawOrShowedACard())
             {
                 // I showed the card or I was showed the card
-                list.append(ui->suspectGuessedComboBox->currentText());
-                list.append(ui->weaponGuessedComboBox->currentText());
-                list.append(ui->roomGuessedComboBox->currentText());
+                list.append(ui->suspectSuggestedComboBox->currentText());
+                list.append(ui->weaponSuggestedComboBox->currentText());
+                list.append(ui->roomSuggestedComboBox->currentText());
                 ui->cardShownComboBox->setEnabled(true);
             }
             else
@@ -138,10 +138,10 @@ void MainWindow::on_submitTurn_accepted()
 
         auto turn = std::make_shared<Turn>(
         playersTurn,
-        ui->accusationMade->isChecked()||!ui->accusationNotMade->isChecked(),
-        Suspect::FromString(ui->suspectGuessedComboBox->currentText().toStdString().c_str()),
-        Weapon::FromString(ui->weaponGuessedComboBox->currentText().toStdString().c_str()),
-        Room::FromString(ui->roomGuessedComboBox->currentText().toStdString().c_str()),
+        ui->suggestionMade->isChecked()||!ui->suggestionNotMade->isChecked(),
+        Suspect::FromString(ui->suspectSuggestedComboBox->currentText().toStdString().c_str()),
+        Weapon::FromString(ui->weaponSuggestedComboBox->currentText().toStdString().c_str()),
+        Room::FromString(ui->roomSuggestedComboBox->currentText().toStdString().c_str()),
         playerWhoAnswered,
         Card::FromString(ui->cardShownComboBox->currentText().toStdString().c_str()),
         gamePtr->getPlayersBetween(playersTurn,playerWhoAnswered)
@@ -164,23 +164,23 @@ void MainWindow::on_submitTurn_rejected()
 }
 
 
-void MainWindow::on_suspectGuessedComboBox_currentTextChanged(const QString &arg1)
+void MainWindow::on_suspectSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_suspectGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_suspectSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
-void MainWindow::on_weaponGuessedComboBox_currentTextChanged(const QString &arg1)
+void MainWindow::on_weaponSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_weaponGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_weaponSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
-void MainWindow::on_roomGuessedComboBox_currentTextChanged(const QString &arg1)
+void MainWindow::on_roomSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_roomGuessedComboBox_currentTextChanged" << std::endl;
+    LOG(INFO) << "on_roomSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
@@ -199,13 +199,13 @@ void MainWindow::on_playersTurnComboBox_currentTextChanged(const QString &arg1)
 }
 
 
-void MainWindow::on_accusationMade_clicked()
+void MainWindow::on_suggestionMade_clicked()
 {
-    LOG(INFO) << "on_accusationMade_clicked" << std::endl;
+    LOG(INFO) << "on_suggestionMade_clicked" << std::endl;
 
-    ui->suspectGuessedComboBox->setEnabled(true);
-    ui->weaponGuessedComboBox->setEnabled(true);
-    ui->roomGuessedComboBox->setEnabled(true);
+    ui->suspectSuggestedComboBox->setEnabled(true);
+    ui->weaponSuggestedComboBox->setEnabled(true);
+    ui->roomSuggestedComboBox->setEnabled(true);
     ui->whoAnsweredComboBox->setEnabled(true);
     ui->cardShownComboBox->setEnabled(true);
     setWhoAnswered();
@@ -213,18 +213,18 @@ void MainWindow::on_accusationMade_clicked()
 }
 
 
-void MainWindow::on_accusationNotMade_clicked()
+void MainWindow::on_suggestionNotMade_clicked()
 {
-    LOG(INFO) << "on_accusationNotMade_clicked" << std::endl;
+    LOG(INFO) << "on_suggestionNotMade_clicked" << std::endl;
 
-    ui->suspectGuessedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
-    ui->suspectGuessedComboBox->setEnabled(false);
+    ui->suspectSuggestedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
+    ui->suspectSuggestedComboBox->setEnabled(false);
 
-    ui->weaponGuessedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
-    ui->weaponGuessedComboBox->setEnabled(false);
+    ui->weaponSuggestedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
+    ui->weaponSuggestedComboBox->setEnabled(false);
 
-    ui->roomGuessedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
-    ui->roomGuessedComboBox->setEnabled(false);
+    ui->roomSuggestedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
+    ui->roomSuggestedComboBox->setEnabled(false);
 
     ui->whoAnsweredComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
     ui->whoAnsweredComboBox->setEnabled(false);
