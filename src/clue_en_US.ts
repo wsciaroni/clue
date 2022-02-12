@@ -145,9 +145,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="131"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="354"/>
         <source>Person</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="131"/>
+        <source>Suspect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

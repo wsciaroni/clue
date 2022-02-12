@@ -32,7 +32,7 @@ private slots:
 
     void on_submitTurn_rejected();
 
-    void on_personGuessedComboBox_currentTextChanged(const QString &arg1);
+    void on_suspectGuessedComboBox_currentTextChanged(const QString &arg1);
 
     void on_weaponGuessedComboBox_currentTextChanged(const QString &arg1);
 
