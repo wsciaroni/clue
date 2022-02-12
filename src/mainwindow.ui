@@ -194,25 +194,15 @@
          </item>
          <item>
           <layout class="QGridLayout" name="cardComboLayout">
+           <item row="0" column="1">
+            <widget class="QComboBox" name="cardShownComboBox"/>
+           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="cardShownLabel">
              <property name="text">
               <string>Card you showed OR card you saw</string>
              </property>
             </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="cardShownComboBox"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="playerShownLabel">
-             <property name="text">
-              <string>Player you showed OR who showed you</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="playerShownComboBox"/>
            </item>
           </layout>
          </item>

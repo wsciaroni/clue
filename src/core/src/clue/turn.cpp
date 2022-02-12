@@ -17,12 +17,10 @@ Turn::Turn(
     Room roomAccusedIn,
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
-    std::shared_ptr<Player> playerShowedIn,
     std::set<std::shared_ptr<Player>> playersWithoutCardsIn
     ) {
     this->playersTurn = playersTurnIn;
     this->playerAnswered = playerAnsweredIn;
-    this->playerShowed = playerShowedIn;
     this->cardShown = cardShownIn;
 
     if (this->playersTurn->isMaster())
@@ -37,15 +35,12 @@ Turn::Turn(
         this->accusationSuspect = suspectAccusedIn;
         this->accusationWeapon = weaponAccusedIn;
         this->accusationRoom = roomAccusedIn;
-        
-        // For each player in between playersTurn and playerShowed, 
-        // @TODO
 
         if (this->isMyTurn)
         {
-            playerShowedIn->addCardToHand(cardShownIn);
+            playerAnswered->addCardToHand(cardShownIn);
         } else {
-            playerShowedIn->showedOneOfThese(suspectAccusedIn, weaponAccusedIn, roomAccusedIn);
+            playerAnswered->showedOneOfThese(suspectAccusedIn, weaponAccusedIn, roomAccusedIn);
         }
         this->playersWithoutCards = playersWithoutCardsIn;
     }    
@@ -60,7 +55,7 @@ std::string Turn::toString() {
     if (accusationMade)
     {
         oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom.ToString();
-        if (this->playersTurn == this->playerShowed)
+        if (this->playersTurn == this->playerAnswered)
         {
             oss << ", and no-one answered.";
         } else {
@@ -119,10 +114,5 @@ std::shared_ptr<Player> Turn::getPlayerAnswered() {
 Card Turn::getCardShown() {
     return cardShown;
 }
-
-std::shared_ptr<Player> Turn::getPlayerShowed() {
-    return playerShowed;
-}
-
 
 } // namespace Clue

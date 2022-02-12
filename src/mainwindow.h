@@ -20,7 +20,10 @@ public:
 private:
     void setPossibleCards();
     void setPossiblePlayers();
+    void setWhoAnswered();
     void updateTableInfo();
+
+    bool iSawOrShowedACard();
 
 private slots:
     void on_actionHistory_triggered();

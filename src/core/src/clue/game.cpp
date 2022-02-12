@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <algorithm>
 
 namespace Clue
 {
@@ -41,32 +42,13 @@ Game::~Game()
 
 bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     // @TODO Check to make sure that this turn doesn't contradict any knowledge that we already have
-    return (whosTurnIsIt == turn->getPlayersTurn());
+    return (whosTurnIsIt() == turn->getPlayersTurn());
     // return true;
 }
 
 void Game::incrementWhosTurnItIs() {
-    bool getNextPlayer = false;
-
-    for(auto player : players) {
-        if (getNextPlayer)
-        {
-            whosTurnIsIt = player;
-            return;
-        }
-        
-        if(player == whosTurnIsIt) {
-            if (players.back() == player)
-            {
-                whosTurnIsIt = players.front();
-                return;
-            } else {
-                getNextPlayer = true;
-            }
-        }
-    }
-
-    throw std::logic_error("Unable to determine the next player");
+    std::rotate(players.begin(), players.begin() + 1, players.end());
+    regeneratePlayersTurnList();
 }
 
 void Game::regenerateTurnStringList() {
@@ -79,6 +61,13 @@ void Game::regenerateTurnStringList() {
         turnNumber++;
     }
     turnsStringListModel->setStringList(strings);
+}
+
+void Game::regeneratePlayersTurnList() {
+    QStringList strings;
+    strings.clear();
+    strings.append(QString::fromStdString(players.front()->getName()));
+    playersQStringListModel->setStringList(strings);
 }
 
 void Game::submitTurn(std::shared_ptr<Turn> turn) {
@@ -107,8 +96,7 @@ std::shared_ptr<Player> Game::getPlayerByName(const std::string name) {
             return player;
         }
     }
-    // throw std::range_error("Player not found");
-    return nullptr;
+    throw Game::PlayerNotFoundByName();
 }
 
 void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
@@ -134,12 +122,22 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
-        if((firstPlayer && "NONE" == whoGoesFirst) || playerName == whoGoesFirst) {
-            whosTurnIsIt = player;
-        }
         firstPlayer = false;
     }
+    playersStatic = players;
+
     playersQStringListModel->setStringList(nameList);
+    if ("NONE" != whoGoesFirst)
+    {
+        for(const auto& playerName : names) {
+            if (players.front()->getName() == whoGoesFirst)
+            {
+                break;
+            } else {
+                incrementWhosTurnItIs();
+            }
+        }
+    }
 
     for(auto card : myHand) {
         playerHasCard(players.front(), card);
@@ -150,6 +148,10 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
 
 void Game::setWhoGoesFirst(std::string firstPlayer) {
     whoGoesFirst = firstPlayer;
+}
+
+std::shared_ptr<Player> Game::whosTurnIsIt() {
+    return players.front();
 }
 
 std::shared_ptr<QStringListModel> Game::getPlayersQStringListModel() {
@@ -308,6 +310,14 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
     return playersBetween;
 }
 
+QStringList Game::getWholePlayerListStrings() {
+    QStringList list;
+    for(auto player : players) {
+        list.append(QString::fromStdString(player->getName()));
+    }
+    return list;
+}
+
 std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
     auto tableInfo = std::make_shared<std::vector<std::vector<std::string>>>();
     // Number of cards
@@ -330,7 +340,7 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
         }
 
         uint64_t column = 1;
-        for (auto player : players)
+        for (auto player : playersStatic)
         {
             (*tableInfo)[0][column] = player->getName();
             column++;
@@ -343,7 +353,7 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
     {
         if( 0 < row ) {
             uint64_t column = 1;
-            for (auto player : players)
+            for (auto player : playersStatic)
             {
                 if (player->doesntHaveCard(card)) {
                     // Doesn't have card
@@ -365,6 +375,10 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
 
 u_int8_t Game::getNumberOfPlayers() {
     return players.size();
+}
+
+const char*  Game::PlayerNotFoundByName::what() noexcept {
+    return "Player not found by name";
 }
 
 } // namespace Clue

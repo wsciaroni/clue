@@ -14,11 +14,9 @@ class Game
 {
 private:
     std::vector<std::shared_ptr<Player>> players;
+    std::vector<std::shared_ptr<Player>> playersStatic;
+
     std::shared_ptr<QStringListModel> playersQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> playerShownQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> whoAnsweredQStringListModel = std::make_shared<QStringListModel>();
-    
-    std::shared_ptr<Player> whosTurnIsIt = nullptr;
     
     std::vector<std::shared_ptr<Turn>> turns;
     std::shared_ptr<QStringListModel> turnsStringListModel = std::make_shared<QStringListModel>();
@@ -32,6 +30,7 @@ private:
     void incrementWhosTurnItIs();
 
     void regenerateTurnStringList();
+    void regeneratePlayersTurnList();
 
     bool needsAnalysis = false;
     void playerHasCard(std::shared_ptr<Player> , Card);
@@ -48,9 +47,11 @@ public:
 
     void createGame(std::vector<std::string> names, std::set<Card> myHand);
     void setWhoGoesFirst(std::string);
+    std::shared_ptr<Player> whosTurnIsIt();
 
     std::shared_ptr<QStringListModel> getPlayersQStringListModel();
     std::shared_ptr<QStringListModel> getTurnsStringListModel();
+
     std::shared_ptr<QStringListModel> getCharactersQStringListModel();
     std::shared_ptr<QStringListModel> getWeaponsQStringListModel();
     std::shared_ptr<QStringListModel> getRoomsQStringListModel();
@@ -59,10 +60,16 @@ public:
     void runAnalysis();
 
     std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
+    QStringList getWholePlayerListStrings();
 
     std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
 
     u_int8_t getNumberOfPlayers();
+
+    class PlayerNotFoundByName : std::exception {
+        public:
+        const char* what() noexcept;
+    };
 };
 
 } // namespace Clue
