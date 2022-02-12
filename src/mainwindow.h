@@ -23,6 +23,8 @@ private:
     void setWhoAnswered();
     void updateTableInfo();
 
+    bool iSawOrShowedACard();
+
 private slots:
     void on_actionHistory_triggered();
 

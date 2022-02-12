@@ -14,6 +14,8 @@ class Game
 {
 private:
     std::vector<std::shared_ptr<Player>> players;
+    std::vector<std::shared_ptr<Player>> playersStatic;
+
     std::shared_ptr<QStringListModel> playersQStringListModel = std::make_shared<QStringListModel>();
     
     std::vector<std::shared_ptr<Turn>> turns;
@@ -63,6 +65,11 @@ public:
     std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
 
     u_int8_t getNumberOfPlayers();
+
+    class PlayerNotFoundByName : std::exception {
+        public:
+        const char* what() noexcept;
+    };
 };
 
 } // namespace Clue

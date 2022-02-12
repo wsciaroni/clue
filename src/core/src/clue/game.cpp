@@ -96,7 +96,7 @@ std::shared_ptr<Player> Game::getPlayerByName(const std::string name) {
             return player;
         }
     }
-    throw std::range_error("Player not found");
+    throw Game::PlayerNotFoundByName();
 }
 
 void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
@@ -124,11 +124,12 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
         playerNumber++;
         firstPlayer = false;
     }
+    playersStatic = players;
 
     playersQStringListModel->setStringList(nameList);
     if ("NONE" != whoGoesFirst)
     {
-        for(auto playerName : names) {
+        for(const auto& playerName : names) {
             if (players.front()->getName() == whoGoesFirst)
             {
                 break;
@@ -339,7 +340,7 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
         }
 
         uint64_t column = 1;
-        for (auto player : players)
+        for (auto player : playersStatic)
         {
             (*tableInfo)[0][column] = player->getName();
             column++;
@@ -352,7 +353,7 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
     {
         if( 0 < row ) {
             uint64_t column = 1;
-            for (auto player : players)
+            for (auto player : playersStatic)
             {
                 if (player->doesntHaveCard(card)) {
                     // Doesn't have card
@@ -374,6 +375,10 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
 
 u_int8_t Game::getNumberOfPlayers() {
     return players.size();
+}
+
+const char*  Game::PlayerNotFoundByName::what() noexcept {
+    return "Player not found by name";
 }
 
 } // namespace Clue

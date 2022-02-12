@@ -25,7 +25,6 @@ namespace Clue
         std::shared_ptr<Player> playerAnswered = nullptr;
         
         Card cardShown = Card::NONE;
-        std::shared_ptr<Player> playerShowed = nullptr;
 
     public:
         Turn();
@@ -37,7 +36,6 @@ namespace Clue
             Room roomAccusedIn,
             std::shared_ptr<Player> playerAnsweredIn,
             Card cardShownIn,
-            std::shared_ptr<Player> playerShowedIn,
             std::set<std::shared_ptr<Player>> playersWithoutCards
             );
         ~Turn();
@@ -53,7 +51,5 @@ namespace Clue
         Room getAccusationRoom();
         std::shared_ptr<Player> getPlayerAnswered();
         Card getCardShown();
-        std::shared_ptr<Player> getPlayerShowed();
-        
     };
 } // namespace Clue
