@@ -11,10 +11,10 @@ Turn::Turn() {
 
 Turn::Turn(
     std::shared_ptr<Player> playersTurnIn,
-    bool accusationMadeIn,
-    Suspect suspectAccusedIn,
-    Weapon weaponAccusedIn,
-    Room roomAccusedIn,
+    bool suggestionMadeIn,
+    Suspect suspectSuggestedIn,
+    Weapon weaponSuggestedIn,
+    Room roomSuggestedIn,
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
     std::set<std::shared_ptr<Player>> playersWithoutCardsIn
@@ -30,17 +30,17 @@ Turn::Turn(
         this->iAnswered = true;
     }
 
-    this->accusationMade = accusationMadeIn;
-    if(this->accusationMade) {
-        this->accusationSuspect = suspectAccusedIn;
-        this->accusationWeapon = weaponAccusedIn;
-        this->accusationRoom = roomAccusedIn;
+    this->suggestionMade = suggestionMadeIn;
+    if(this->suggestionMade) {
+        this->suggestionSuspect = suspectSuggestedIn;
+        this->suggestionWeapon = weaponSuggestedIn;
+        this->suggestionRoom = roomSuggestedIn;
 
         if (this->isMyTurn)
         {
             playerAnswered->addCardToHand(cardShownIn);
         } else {
-            playerAnswered->showedOneOfThese(suspectAccusedIn, weaponAccusedIn, roomAccusedIn);
+            playerAnswered->showedOneOfThese(suspectSuggestedIn, weaponSuggestedIn, roomSuggestedIn);
         }
         this->playersWithoutCards = playersWithoutCardsIn;
     }    
@@ -52,9 +52,9 @@ Turn::~Turn() {}
 std::string Turn::toString() {
     std::ostringstream oss;
     oss << this->playersTurn->getName() << " ";
-    if (accusationMade)
+    if (suggestionMade)
     {
-        oss << "accused " << this->accusationSuspect.ToString() << " " << this->accusationWeapon.ToString() << " " << this->accusationRoom.ToString();
+        oss << "accused " << this->suggestionSuspect.ToString() << " " << this->suggestionWeapon.ToString() << " " << this->suggestionRoom.ToString();
         if (this->playersTurn == this->playerAnswered)
         {
             oss << ", and no-one answered.";
@@ -96,15 +96,15 @@ std::set<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
 }
 
 Suspect Turn::getAccusationSuspect() {
-    return accusationSuspect;
+    return suggestionSuspect;
 }
 
 Weapon Turn::getAccusationWeapon() {
-    return accusationWeapon;
+    return suggestionWeapon;
 }
 
 Room Turn::getAccusationRoom() {
-    return accusationRoom;
+    return suggestionRoom;
 }
 
 std::shared_ptr<Player> Turn::getPlayerAnswered() {

@@ -14,7 +14,7 @@ Game::Game(/* args */)
     for (Suspect i=Suspect::FIRST; i<Suspect::LAST; ++i) {
         charactersQStringList.append(QString::fromStdString(i.ToString()));
     }
-    charactersQStringListModel->setStringList(charactersQStringList);
+    suspectsQStringListModel->setStringList(charactersQStringList);
 
     QStringList weaponsQStringList;
     for (Weapon i=Weapon::FIRST; i<Weapon::LAST; ++i) {
@@ -162,8 +162,8 @@ std::shared_ptr<QStringListModel> Game::getTurnsStringListModel() {
     return turnsStringListModel;
 }
 
-std::shared_ptr<QStringListModel> Game::getCharactersQStringListModel() {
-    return charactersQStringListModel;
+std::shared_ptr<QStringListModel> Game::getSuspectsQStringListModel() {
+    return suspectsQStringListModel;
 }
 
 std::shared_ptr<QStringListModel> Game::getWeaponsQStringListModel() {

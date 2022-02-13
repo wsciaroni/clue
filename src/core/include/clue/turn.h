@@ -14,13 +14,13 @@ namespace Clue
         bool iAnswered = false;
 
         std::shared_ptr<Player> playersTurn = nullptr;
-        bool accusationMade = false;
+        bool suggestionMade = false;
 
         std::set<std::shared_ptr<Player>> playersWithoutCards;
 
-        Suspect accusationSuspect = Suspect::NONE;
-        Weapon accusationWeapon = Weapon::NONE;
-        Room accusationRoom = Room::NONE;
+        Suspect suggestionSuspect = Suspect::NONE;
+        Weapon suggestionWeapon = Weapon::NONE;
+        Room suggestionRoom = Room::NONE;
 
         std::shared_ptr<Player> playerAnswered = nullptr;
         

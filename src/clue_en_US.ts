@@ -123,7 +123,8 @@
     <message>
         <location filename="mainwindow.ui" line="69"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="350"/>
-        <source>Are they/you making an accusation?</source>
+        <source>Are they/you making a Suggestion?</source>
+        <oldsource>Are they/you making an accusation?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -141,13 +142,14 @@
     <message>
         <location filename="mainwindow.ui" line="116"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="353"/>
-        <source>What&apos;s the Guess?</source>
+        <source>What&apos;s the suggestion?</source>
+        <oldsource>What&apos;s the Guess?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="131"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="354"/>
-        <source>Person</source>
+        <source>Suspect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -165,7 +167,7 @@
     <message>
         <location filename="mainwindow.ui" line="170"/>
         <location filename="clue_autogen/include/ui_mainwindow.h" line="357"/>
-        <source>Who Answered?</source>
+        <source>Who proved the suggestion false?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
