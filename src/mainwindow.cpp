@@ -107,7 +107,7 @@ bool MainWindow::iSawOrShowedACard() {
     }
     catch(Game::PlayerNotFoundByName e)
     {
-        LOG(WARNING) << e.what();
+        LOG(WARNING) << e.what() << " " << ui->playersTurnComboBox->currentText().toStdString() << " or " << ui->whoAnsweredComboBox->currentText().toStdString();
         return false;
     }
 }
@@ -132,7 +132,7 @@ void MainWindow::on_submitTurn_accepted()
         }
         catch(Game::PlayerNotFoundByName e)
         {
-            LOG(WARNING) << e.what();
+            LOG(WARNING) << e.what() << " " << ui->whoAnsweredComboBox->currentText().toStdString();
             playerWhoAnswered = playersTurn;
         }
 
