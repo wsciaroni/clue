@@ -226,6 +226,13 @@ void Game::runAnalysis() {
                         playerHasCard(player, i);
                     }
                 }
+            } else if (hand->size() >= player->getNumCardsInHand()) {
+                // We know all of the players cards. So, they don't have the rest of the cards
+                for (Card i=Card::FIRST; i<Card::LAST; i++) {
+                    if(!player->hasCard(i)) {
+                        player->cardDefinitelyNotInHand(i);
+                    }
+                }
             }
 
             // Make sure the card isn't in any of the other players hands
