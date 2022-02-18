@@ -140,7 +140,7 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     }
 
     for(auto card : myHand) {
-        playerHasCard(players.front(), card);
+        playerHasCard(playersStatic.front(), card);
     }
     runAnalysis();
     getTableInfo();
