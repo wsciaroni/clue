@@ -114,7 +114,7 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
          * If there are 5 players : 4, 4, 4, 3, 3
          * If there are 6 players : 3, 3, 3, 3, 3
          */
-        u_int8_t numCards = std::floor(names.size()/float(NUMBER_OF_CARDS-3));
+        u_int8_t numCards = std::floor(float(NUMBER_OF_CARDS-3)/float(names.size()));
         u_int8_t numCardsInHand = (playerNumber <= (names.size()-2)) ? numCards+1 : numCards;
         player->setNumCardsInHand(numCardsInHand);
 
