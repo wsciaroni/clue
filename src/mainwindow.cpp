@@ -3,6 +3,9 @@
 #include "clue/constants.h"
 #include <glog/logging.h>
 
+#include <iostream>
+#include <iomanip>
+
 namespace Clue {
 
 MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
@@ -86,15 +89,24 @@ void MainWindow::updateTableInfo() {
 
     auto tableInfo = gamePtr->getTableInfo();
     int i = 0;
-    for(auto row : (*tableInfo)) {
+    std::stringstream logRow;
+    logRow << "Table Info:" << std::endl;
+    for(const auto& row : (*tableInfo)) {
         int j = 0;
-        for( auto column : row) {
-            LOG(INFO) << i << "," << j << (*tableInfo)[i][j] << std::endl;
+        for(const auto& column : row) {
             ui->knownInfoTableWidget->setItem(i,j,new QTableWidgetItem(QString::fromStdString((*tableInfo)[i][j])));
+            if(0 == j) {
+                logRow << std::setw(16);
+            } else {
+                logRow << std::setw(2);
+            }
+            logRow << ((*tableInfo)[i][j]);
             j++;
         }
+        logRow << std::endl;
         i++;
     }
+    LOG(INFO) << logRow.str();
 }
 
 bool MainWindow::iSawOrShowedACard() {
