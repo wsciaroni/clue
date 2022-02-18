@@ -11,6 +11,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Have cmake create a compile database
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Allow the use of custom modules
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
+set(CPPCHECK_EXCLUDES "${CMAKE_CURRENT_LIST_DIR}/utility/external;${CMAKE_CURRENT_LIST_DIR}/clue_autogen;${CMAKE_CURRENT_LIST_DIR}/utility/UTILITYlib_autogen;${CMAKE_CURRENT_LIST_DIR}/core/CORElib_autogen;")
+find_package(CppCheck)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 

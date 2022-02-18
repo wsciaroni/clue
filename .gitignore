@@ -43,6 +43,8 @@ cmake_install.cmake
 /src/CPackConfig.cmake
 /src/CPackSourceConfig.cmake
 /src/clue_en_US.ts
+/src/compile_commands.json
+/src/analysis/
 
 # Executable:
 src/clue
