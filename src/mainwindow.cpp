@@ -101,9 +101,9 @@ bool MainWindow::iSawOrShowedACard() {
     try
     {
         // True if (it's my turn and someone answered), or I showed a card
-        return (((QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)) != ui->whoAnsweredComboBox->currentText())
-                && (gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString())->isMaster()))
-                || (gamePtr->getPlayerByName(ui->whoAnsweredComboBox->currentText().toStdString())->isMaster()));
+        return ((QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)) != ui->whoAnsweredComboBox->currentText())
+                && ((gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString())->isMaster())
+                || (gamePtr->getPlayerByName(ui->whoAnsweredComboBox->currentText().toStdString())->isMaster())));
     }
     catch(Game::PlayerNotFoundByName e)
     {
