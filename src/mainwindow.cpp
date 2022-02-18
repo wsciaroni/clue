@@ -3,6 +3,9 @@
 #include "clue/constants.h"
 #include <glog/logging.h>
 
+#include <iostream>
+#include <iomanip>
+
 namespace Clue {
 
 MainWindow::MainWindow(QWidget *parent, std::shared_ptr<Clue::Game> gamePtr_in)
@@ -86,41 +89,50 @@ void MainWindow::updateTableInfo() {
 
     auto tableInfo = gamePtr->getTableInfo();
     int i = 0;
-    for(auto row : (*tableInfo)) {
+    std::stringstream logTable;
+    logTable << "Table Info:" << std::endl;
+    for(const auto& row : (*tableInfo)) {
         int j = 0;
-        for( auto column : row) {
-            LOG(INFO) << i << "," << j << (*tableInfo)[i][j] << std::endl;
+        for(const auto& column : row) {
             ui->knownInfoTableWidget->setItem(i,j,new QTableWidgetItem(QString::fromStdString((*tableInfo)[i][j])));
+            if(0 == j) {
+                logTable << std::setw(16);
+            } else {
+                logTable << std::setw(2);
+            }
+            logTable << ((*tableInfo)[i][j]);
             j++;
         }
+        logTable << std::endl;
         i++;
     }
+    LOG(INFO) << logTable.str();
 }
 
 bool MainWindow::iSawOrShowedACard() {
     try
     {
         // True if (it's my turn and someone answered), or I showed a card
-        return (((QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)) != ui->whoAnsweredComboBox->currentText())
-                && (gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString())->isMaster()))
-                || (gamePtr->getPlayerByName(ui->whoAnsweredComboBox->currentText().toStdString())->isMaster()));
+        return ((QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)) != ui->whoAnsweredComboBox->currentText())
+                && ((gamePtr->getPlayerByName(ui->playersTurnComboBox->currentText().toStdString())->isMaster())
+                || (gamePtr->getPlayerByName(ui->whoAnsweredComboBox->currentText().toStdString())->isMaster())));
     }
     catch(Game::PlayerNotFoundByName e)
     {
-        LOG(WARNING) << e.what();
+        LOG(WARNING) << e.what() << " " << ui->playersTurnComboBox->currentText().toStdString() << " or " << ui->whoAnsweredComboBox->currentText().toStdString();
         return false;
     }
 }
 
 void MainWindow::on_actionHistory_triggered()
 {
-    LOG(INFO) << "on_actionHistory_triggered" << std::endl;
+    DLOG(INFO) << "on_actionHistory_triggered" << std::endl;
 }
 
 
 void MainWindow::on_submitTurn_accepted()
 {
-    LOG(INFO) << "on_submitTurn_accepted" << std::endl;
+    DLOG(INFO) << "on_submitTurn_accepted" << std::endl;
     // Attempt to create a Turn
     try
     {
@@ -132,7 +144,7 @@ void MainWindow::on_submitTurn_accepted()
         }
         catch(Game::PlayerNotFoundByName e)
         {
-            LOG(WARNING) << e.what();
+            LOG(WARNING) << e.what() << " " << ui->whoAnsweredComboBox->currentText().toStdString();
             playerWhoAnswered = playersTurn;
         }
 
@@ -160,48 +172,48 @@ void MainWindow::on_submitTurn_rejected()
 {
   // Reset all the input boxes
   // @TODO
-    LOG(INFO) << "on_submitTurn_rejected" << std::endl;
+    DLOG(INFO) << "on_submitTurn_rejected" << std::endl;
 }
 
 
 void MainWindow::on_suspectSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_suspectSuggestedComboBox_currentTextChanged" << std::endl;
+    DLOG(INFO) << "on_suspectSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_weaponSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_weaponSuggestedComboBox_currentTextChanged" << std::endl;
+    DLOG(INFO) << "on_weaponSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_roomSuggestedComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_roomSuggestedComboBox_currentTextChanged" << std::endl;
+    DLOG(INFO) << "on_roomSuggestedComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_whoAnsweredComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_whoAnsweredComboBox_currentTextChanged" << std::endl;
+    DLOG(INFO) << "on_whoAnsweredComboBox_currentTextChanged" << std::endl;
     setPossibleCards();
 }
 
 
 void MainWindow::on_playersTurnComboBox_currentTextChanged(const QString &arg1)
 {
-    LOG(INFO) << "on_playersTurnComboBox_currentTextChanged" << std::endl;
+    DLOG(INFO) << "on_playersTurnComboBox_currentTextChanged" << std::endl;
     setWhoAnswered();
 }
 
 
 void MainWindow::on_suggestionMade_clicked()
 {
-    LOG(INFO) << "on_suggestionMade_clicked" << std::endl;
+    DLOG(INFO) << "on_suggestionMade_clicked" << std::endl;
 
     ui->suspectSuggestedComboBox->setEnabled(true);
     ui->weaponSuggestedComboBox->setEnabled(true);
@@ -215,7 +227,7 @@ void MainWindow::on_suggestionMade_clicked()
 
 void MainWindow::on_suggestionNotMade_clicked()
 {
-    LOG(INFO) << "on_suggestionNotMade_clicked" << std::endl;
+    DLOG(INFO) << "on_suggestionNotMade_clicked" << std::endl;
 
     ui->suspectSuggestedComboBox->setCurrentText(QString::fromStdString(Clue::Card::ToString(Clue::Card::NONE)));
     ui->suspectSuggestedComboBox->setEnabled(false);
