@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     google::InitGoogleLogging(argv[0]);
     FLAGS_log_dir = "./output/";
-    LOG(INFO) << "Applicatino Initialized";
+    LOG(INFO) << "Application Initialized";
      QTranslator translator;
      const QStringList uiLanguages = QLocale::system().uiLanguages();
      for (const QString &locale : uiLanguages) {
