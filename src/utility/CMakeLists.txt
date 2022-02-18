@@ -1,6 +1,6 @@
 set(WITH_GFLAGS OFF)
 set(WITH_GTEST OFF)
-set(WITH_UNWIND OFF)
+set(WITH_UNWIND ON) # May need to be off if you don't have libunwind or are on Windows
 set(BUILD_TESTING OFF)
 add_subdirectory(external/glog)
 
