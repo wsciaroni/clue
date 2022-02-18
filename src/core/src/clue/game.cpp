@@ -270,18 +270,6 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
         return playersBetween;
     }
 
-    // auto currentPlayerIterator = std::find(players.begin(), players.end(), current);
-    // auto lastPlayerIterantor = std::find(players.begin(), players.end(), end);
-//        for(auto it = currentPlayerIterator; *it != *lastPlayerIterantor; it++) {
-//            if (it == players.end())
-//            {
-//                it = players.front();
-////                it++;
-//            } else if(current != *it && end != *it) {
-//                playersBetween.insert(*it);
-//            }
-//        }
-
     bool haveEncounteredStart = false;
     bool haveEncounteredEnd = false;
     bool encounteredStartFirst = false;
