@@ -103,7 +103,6 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     auto playerNumber = static_cast<u_int8_t>(PlayerId::PLAYER_0);
     // players.resize(names.size());
     QStringList nameList;
-    bool firstPlayer = true;
     for (auto playerName : names) {
         auto player = std::make_shared<Player>();
         player->setName(playerName);
@@ -122,7 +121,6 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
-        firstPlayer = false;
     }
     playersStatic = players;
 
