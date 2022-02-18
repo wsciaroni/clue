@@ -89,24 +89,24 @@ void MainWindow::updateTableInfo() {
 
     auto tableInfo = gamePtr->getTableInfo();
     int i = 0;
-    std::stringstream logRow;
-    logRow << "Table Info:" << std::endl;
+    std::stringstream logTable;
+    logTable << "Table Info:" << std::endl;
     for(const auto& row : (*tableInfo)) {
         int j = 0;
         for(const auto& column : row) {
             ui->knownInfoTableWidget->setItem(i,j,new QTableWidgetItem(QString::fromStdString((*tableInfo)[i][j])));
             if(0 == j) {
-                logRow << std::setw(16);
+                logTable << std::setw(16);
             } else {
-                logRow << std::setw(2);
+                logTable << std::setw(2);
             }
-            logRow << ((*tableInfo)[i][j]);
+            logTable << ((*tableInfo)[i][j]);
             j++;
         }
-        logRow << std::endl;
+        logTable << std::endl;
         i++;
     }
-    LOG(INFO) << logRow.str();
+    LOG(INFO) << logTable.str();
 }
 
 bool MainWindow::iSawOrShowedACard() {
