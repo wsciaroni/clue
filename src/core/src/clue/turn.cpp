@@ -43,6 +43,12 @@ Turn::Turn(
             playerAnswered->showedOneOfThese(suspectSuggestedIn, weaponSuggestedIn, roomSuggestedIn);
         }
         this->playersWithoutCards = playersWithoutCardsIn;
+
+        for(auto player : playersWithoutCards) {
+            player->cardDefinitelyNotInHand(toCard(suggestionSuspect));
+            player->cardDefinitelyNotInHand(toCard(suggestionWeapon));
+            player->cardDefinitelyNotInHand(toCard(suggestionRoom));
+        }
     }    
     
 }
