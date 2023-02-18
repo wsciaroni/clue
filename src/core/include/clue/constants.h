@@ -84,7 +84,7 @@ Card toCard(T suspect) {
 }
 
 template<class T>
-Suspect fromCard (Card card) {
+T fromCard (Card card) {
     for (T i = T::FIRST; i < T::LAST; ++i)
     {
         if (i.ToString() == card.ToString())
