@@ -88,8 +88,13 @@ std::shared_ptr<std::set<Card>> Player::getNotInHand() {
 }
 
 bool Player::isPlayerSolved() {
-    if (!playerSolved && this->hand->size() >= 3)
+    if (!playerSolved && (this->hand->size() >= this->getNumCardsInHand()))
     {
+        for(Card i = Card::FIRST; i < Card::LAST; ++i) {
+            if(!hasCard(i)) {
+                this->cardDefinitelyNotInHand(i);
+            }
+        }
         this->playerSolved = true;
     }
     return this->playerSolved;
