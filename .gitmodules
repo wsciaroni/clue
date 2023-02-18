@@ -1,3 +1,0 @@
-[submodule "src/utility/external/glog"]
-	path = src/utility/external/glog
-	url = https://github.com/google/glog.git
