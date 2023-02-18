@@ -46,6 +46,8 @@ cmake_install.cmake
 /src/compile_commands.json
 /src/analysis/
 
+/Testing
+
 # Executable:
 src/clue
 
