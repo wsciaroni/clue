@@ -45,3 +45,4 @@ src/clue
 
 # Qt Build Directories
 /build-*/
+/build/
