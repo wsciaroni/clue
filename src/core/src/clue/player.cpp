@@ -1,14 +1,6 @@
 #include "clue/player.h"
 namespace Clue
 {
-Player::Player(/* args */)
-{
-}
-
-Player::~Player()
-{
-}
-
 void Player::setName(std::string newName) {
     this->name = newName;
 }

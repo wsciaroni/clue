@@ -13,7 +13,7 @@ namespace Clue
 class Player
 {
 private:
-    std::string name;
+    std::string name = "";
     PlayerId playerId = PlayerId::UNKNOWN;
     std::shared_ptr<std::set<Card>> hand = std::make_shared<std::set<Card>>();
     std::shared_ptr<std::set<Card>> notInHand = std::make_shared<std::set<Card>>();
@@ -25,9 +25,6 @@ private:
     u_int8_t numCardsInHand;
 
 public:
-    Player(/* args */);
-    ~Player();
-
     void setName(std::string);
     std::string getName();
 
