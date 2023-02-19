@@ -26,15 +26,21 @@ TEST(PlayerTest, solveHand) {
     p.setNumCardsInHand(3);
     EXPECT_EQ(p.getNumCardsInHand(), 3);
 
+    EXPECT_FALSE(p.isPlayerSolved());
+
     Clue::Card c = Clue::Card::MISS_SCARLET;
     EXPECT_FALSE(p.hasCard(c));
     p.addCardToHand(c);
     EXPECT_TRUE(p.hasCard(c));
 
+    EXPECT_FALSE(p.isPlayerSolved());
+
     c = Clue::Card::CANDLESTICK;
     EXPECT_FALSE(p.hasCard(c));
     p.addCardToHand(c);
     EXPECT_TRUE(p.hasCard(c));
+
+    EXPECT_FALSE(p.isPlayerSolved());
 
     c = Clue::Card::KITCHEN;
     EXPECT_FALSE(p.hasCard(c));
@@ -53,4 +59,42 @@ TEST(PlayerTest, solveHand) {
             EXPECT_TRUE(p.hasCard(i));
         }
     }
+}
+
+TEST(PlayerTest, ExclusionLogic) {
+    Clue::Player p;
+    p.cardDefinitelyNotInHand(Clue::Card::MISS_SCARLET);
+    p.cardDefinitelyNotInHand(Clue::Card::CANDLESTICK);
+    EXPECT_FALSE(p.hasCard(Clue::Card::KITCHEN));
+    p.showedOneOfThese(Clue::Suspect::MISS_SCARLET, Clue::Weapon::CANDLESTICK, Clue::Room::KITCHEN);
+    EXPECT_TRUE(p.hasCard(Clue::Card::KITCHEN));
+}
+
+TEST(PlayerTest, NotInHand) {
+    Clue::Player p;
+
+    std::set<Clue::Card> st;
+
+    EXPECT_EQ(*(p.getNotInHand()), st);
+
+    p.cardDefinitelyNotInHand(Clue::Card::MISS_SCARLET);
+
+    st.insert(Clue::Card::MISS_SCARLET);
+
+    EXPECT_EQ(*(p.getNotInHand()), st);
+}
+
+TEST(PlayerTest, InHand) {
+    Clue::Player p;
+
+    std::set<Clue::Card> st;
+
+    EXPECT_EQ(*(p.getHand()), st);
+    EXPECT_FALSE(p.hasCard(Clue::Card::MISS_SCARLET));
+    p.addCardToHand(Clue::Card::MISS_SCARLET);
+    EXPECT_TRUE(p.hasCard(Clue::Card::MISS_SCARLET));
+    st.insert(Clue::Card::MISS_SCARLET);
+    EXPECT_EQ(*(p.getHand()), st);
+
+    EXPECT_FALSE(p.isPlayerSolved());
 }
