@@ -57,7 +57,8 @@
         "hash_set": "cpp",
         "slist": "cpp",
         "cinttypes": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.o": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/src"
 }
