@@ -16,8 +16,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Allow the use of custom modules
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
-set(CPPCHECK_EXCLUDES "${CMAKE_CURRENT_LIST_DIR}/utility/external;${CMAKE_CURRENT_LIST_DIR}/clue_autogen;${CMAKE_CURRENT_LIST_DIR}/utility/UTILITYlib_autogen;${CMAKE_CURRENT_LIST_DIR}/core/CORElib_autogen;")
+set(CPPCHECK_EXCLUDES "_deps;glog;test;\*_autogen;${CMAKE_CURRENT_LIST_DIR}/utility/external;${CMAKE_CURRENT_LIST_DIR}/clue_autogen;${CMAKE_CURRENT_LIST_DIR}/utility/UTILITYlib_autogen;${CMAKE_CURRENT_LIST_DIR}/core/CORElib_autogen;")
+set(CPPCHECK_OTHER_ARGS "-Dlinux -DQ_MOC_OUTPUT_REVISION")
 find_package(CppCheck)
+if(CppCheck_FOUND)
+    set(CMAKE_CXX_CPPCHECK ${CPPCHECK_BIN})
+endif(CppCheck_FOUND)
 
 include(FetchContent)
     FetchContent_Declare(
