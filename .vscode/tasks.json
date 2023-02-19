@@ -56,11 +56,14 @@
                 "--exclude",
                 "*9*",
                 "--exclude",
-                "*test*"
+                "*test*",
+                "--exclude",
+                "*_deps*",
+                "--exclude",
+                "*QtCore*"
             ],
             "type": "shell",
-            "problemMatcher": [],
-            "dependsOn":["Test"]
+            "problemMatcher": []
         },
         {
             "label": "Generate Coverage Report",
