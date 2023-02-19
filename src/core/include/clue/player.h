@@ -18,11 +18,14 @@ private:
     std::shared_ptr<std::set<Card>> hand = std::make_shared<std::set<Card>>();
     std::shared_ptr<std::set<Card>> notInHand = std::make_shared<std::set<Card>>();
 
-    std::vector<std::set<Card>> showedOneOfTheseVect;
-
     bool playerSolved = false;
 
     u_int8_t numCardsInHand = UINT8_MAX;
+
+    /// @brief Holds arrays of Suspect, Weapon, Room that this player showed one of in the Past
+    std::set<std::array<Card,3>> setOfThreesThisPlayerShowed = {};
+
+    void deduceFromPriorTurns();
 
 public:
     void setName(std::string);

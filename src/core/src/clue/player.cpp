@@ -1,7 +1,52 @@
 #include "clue/player.h"
+
+#include <algorithm>
 namespace Clue
 {
-void Player::setName(std::string newName) {
+
+void Player::deduceFromPriorTurns()
+{
+    std::set<Card> cardsWeLearnedWeHave = {};
+    std::set<std::array<Card,3>> pastTurnsToRemove = {};
+    for(auto it = setOfThreesThisPlayerShowed.begin(); it != setOfThreesThisPlayerShowed.end(); it++) {
+        bool haveACard = false;
+        Card cardFoundOut = Card::NONE;
+        uint8_t dontHaveCardCount = 0;
+        for(auto& card : *it) {
+            if(hasCard(card)) {
+                haveACard = true;
+            } else if(doesntHaveCard(card)) {
+                dontHaveCardCount++;
+            } else {
+                cardFoundOut = card;
+            }
+        }
+
+        if(dontHaveCardCount == 2 && !haveACard) {
+            cardsWeLearnedWeHave.insert(cardFoundOut);
+        }
+
+        if(haveACard || (dontHaveCardCount == 2 && !haveACard)) {
+            pastTurnsToRemove.insert(*it);
+        }
+    }
+
+    // First remove the turns
+    for(auto& arr : pastTurnsToRemove) {
+        auto it = std::find(setOfThreesThisPlayerShowed.begin(), setOfThreesThisPlayerShowed.end(), arr);
+        if(it != setOfThreesThisPlayerShowed.end()) {
+            setOfThreesThisPlayerShowed.erase(it);
+        }
+    }
+
+    // Then add the cards
+    for(auto& card : cardsWeLearnedWeHave) {
+        addCardToHand(card);
+    }
+}
+
+void Player::setName(std::string newName)
+{
     this->name = newName;
 }
 
@@ -31,29 +76,16 @@ void Player::addCardToHand (Card card) {
             // throw std::__throw_logic_error;
         }
         hand->insert(card);
+        deduceFromPriorTurns();
     } else {
         // Card is already in hand
     }
 }
 
 void Player::showedOneOfThese(Suspect suspect, Weapon weapon, Room room) {
-    std::set<Card> shown = {toCard(suspect), toCard(weapon), toCard(room)};
-    __uint8_t count = 0;
-    Card cardInHand = Card::NONE;
-    for (auto card : shown)
-    {
-        if(doesntHaveCard(card)) {
-            count++;
-        } else {
-            cardInHand = card;
-        }
-    }
-    if (2 == count)
-    {
-        addCardToHand(cardInHand);
-    } else {
-        showedOneOfTheseVect.push_back(shown);
-    }
+    std::array<Card, 3> c = {toCard(suspect), toCard(weapon), toCard(room)};
+    setOfThreesThisPlayerShowed.insert(c);
+    deduceFromPriorTurns();
 }
 
 void Player::cardDefinitelyNotInHand(Card card) {
@@ -62,6 +94,7 @@ void Player::cardDefinitelyNotInHand(Card card) {
         // throw std::__throw_logic_error;
     } else {
         notInHand->insert(card);
+        deduceFromPriorTurns();
     }
 }
 

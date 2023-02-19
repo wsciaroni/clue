@@ -70,6 +70,17 @@ TEST(PlayerTest, ExclusionLogic) {
     EXPECT_TRUE(p.hasCard(Clue::Card::KITCHEN));
 }
 
+TEST(PlayerTest, ExclusionLogicIncomplete) {
+    Clue::Player p;
+    EXPECT_FALSE(p.hasCard(Clue::Card::KITCHEN));
+    p.showedOneOfThese(Clue::Suspect::MISS_SCARLET, Clue::Weapon::CANDLESTICK, Clue::Room::KITCHEN);
+    EXPECT_FALSE(p.hasCard(Clue::Card::KITCHEN));
+    p.cardDefinitelyNotInHand(Clue::Card::MISS_SCARLET);
+    EXPECT_FALSE(p.hasCard(Clue::Card::KITCHEN));
+    p.cardDefinitelyNotInHand(Clue::Card::CANDLESTICK);
+    EXPECT_TRUE(p.hasCard(Clue::Card::KITCHEN));
+}
+
 TEST(PlayerTest, NotInHand) {
     Clue::Player p;
 
