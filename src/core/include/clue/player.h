@@ -22,7 +22,7 @@ private:
 
     bool playerSolved = false;
 
-    u_int8_t numCardsInHand;
+    u_int8_t numCardsInHand = UINT8_MAX;
 
 public:
     void setName(std::string);
@@ -36,7 +36,6 @@ public:
     bool doesntHaveCard (const Card);
 
     void addCardToHand (Card);
-    void removeCardFromHand (Card); // Undo in case oops
 
     void showedOneOfThese(Suspect, Weapon, Room);
 

@@ -36,12 +36,6 @@ void Player::addCardToHand (Card card) {
     }
 }
 
-void Player::removeCardFromHand(Card card) {
-    if(hasCard(card)) {
-        hand->erase(hand->find(card));
-    }
-}
-
 void Player::showedOneOfThese(Suspect suspect, Weapon weapon, Room room) {
     std::set<Card> shown = {toCard(suspect), toCard(weapon), toCard(room)};
     __uint8_t count = 0;
