@@ -104,7 +104,6 @@
     <message>
         <location filename="mainwindow.ui" line="69"/>
         <source>Are they/you making a Suggestion?</source>
-        <oldsource>Are they/you making an accusation?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -120,7 +119,6 @@
     <message>
         <location filename="mainwindow.ui" line="116"/>
         <source>What&apos;s the suggestion?</source>
-        <oldsource>What&apos;s the Guess?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
