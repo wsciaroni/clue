@@ -42,8 +42,24 @@ Game::~Game()
 
 bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     // @TODO Check to make sure that this turn doesn't contradict any knowledge that we already have
-    return (whosTurnIsIt() == turn->getPlayersTurn());
-    // return true;
+    if (whosTurnIsIt() != turn->getPlayersTurn()) {
+        return false;
+    }
+    // Check to make sure someone didn't show us a card that we already know about
+    // Check to make sure we didn't show a card that we don't have
+    if(turn->getPlayerAnswered()->doesntHaveCard(turn->getCardShown())) {
+        // the player answered doesn't have that card...
+        return false;
+    }
+    for (auto player : playersStatic)
+    {
+        if ((player != turn->getPlayerAnswered()) && (player->hasCard(turn->getCardShown())))
+        {
+            // That person can't have that card. We've already ruled it out
+            return false;
+        }
+    }
+    return true;
 }
 
 void Game::incrementWhosTurnItIs() {
@@ -103,7 +119,6 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     auto playerNumber = static_cast<u_int8_t>(PlayerId::PLAYER_0);
     // players.resize(names.size());
     QStringList nameList;
-    bool firstPlayer = true;
     for (auto playerName : names) {
         auto player = std::make_shared<Player>();
         player->setName(playerName);
@@ -115,14 +130,13 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
          * If there are 5 players : 4, 4, 4, 3, 3
          * If there are 6 players : 3, 3, 3, 3, 3
          */
-        u_int8_t numCards = std::floor(names.size()/float(NUMBER_OF_CARDS-3));
+        u_int8_t numCards = std::floor(float(NUMBER_OF_CARDS-3)/float(names.size()));
         u_int8_t numCardsInHand = (playerNumber <= (names.size()-2)) ? numCards+1 : numCards;
         player->setNumCardsInHand(numCardsInHand);
 
         players.push_back(player);
         nameList.append(QString::fromStdString(playerName));
         playerNumber++;
-        firstPlayer = false;
     }
     playersStatic = players;
 
@@ -140,7 +154,7 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     }
 
     for(auto card : myHand) {
-        playerHasCard(players.front(), card);
+        playerHasCard(playersStatic.front(), card);
     }
     runAnalysis();
     getTableInfo();
@@ -228,6 +242,13 @@ void Game::runAnalysis() {
                         playerHasCard(player, i);
                     }
                 }
+            } else if (hand->size() >= player->getNumCardsInHand()) {
+                // We know all of the players cards. So, they don't have the rest of the cards
+                for (Card i=Card::FIRST; i<Card::LAST; i++) {
+                    if(!player->hasCard(i)) {
+                        player->cardDefinitelyNotInHand(i);
+                    }
+                }
             }
 
             // Make sure the card isn't in any of the other players hands
@@ -264,18 +285,6 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
         }
         return playersBetween;
     }
-
-    // auto currentPlayerIterator = std::find(players.begin(), players.end(), current);
-    // auto lastPlayerIterantor = std::find(players.begin(), players.end(), end);
-//        for(auto it = currentPlayerIterator; *it != *lastPlayerIterantor; it++) {
-//            if (it == players.end())
-//            {
-//                it = players.front();
-////                it++;
-//            } else if(current != *it && end != *it) {
-//                playersBetween.insert(*it);
-//            }
-//        }
 
     bool haveEncounteredStart = false;
     bool haveEncounteredEnd = false;

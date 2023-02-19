@@ -58,3 +58,7 @@ output
 /build-*/
 /build/
 /build*/
+
+# GCov files
+/kernel.info
+/html/

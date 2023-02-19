@@ -7,3 +7,19 @@ target_include_directories(CORElib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(CORElib PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CORElib PUBLIC UTILITYlib)
 target_link_libraries(clue PUBLIC CORElib)
+
+file(GLOB_RECURSE unittests CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp")
+
+add_executable(
+  CORETest
+  ${unittests}
+)
+target_link_libraries(
+    CORETest
+    PUBLIC
+    CORElib
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(CORETest)

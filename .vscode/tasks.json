@@ -1,0 +1,81 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure",
+            "command": "cmake",
+            "args": [
+                "-B",
+                "build",
+                "-S",
+                "src",
+                "-DCODE_COVERAGE=ON"
+            ],
+            "type": "shell",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build",
+                "--parallel 4"
+            ],
+            "type": "shell",
+            "problemMatcher": [],
+            "dependsOn":["Configure"]
+        },
+        {
+            "label": "Test",
+            "command": "ctest",
+            "args": [
+                "--parallel 4",
+                "--output-on-failure"
+            ],
+            "type": "shell",
+            "problemMatcher": [],
+            "dependsOn":["Build"],
+            "options": {
+                "cwd": "build",
+            }
+        },
+        {
+            "label": "Capture Coverage",
+            "command": "lcov",
+            "args": [
+                "--capture",
+                "--directory",
+                "build",
+                "--output-file",
+                "kernel.info",
+                "--exclude",
+                "*googletest*",
+                "--exclude",
+                "*10*",
+                "--exclude",
+                "*9*",
+                "--exclude",
+                "*test*",
+                "--exclude",
+                "*_deps*",
+                "--exclude",
+                "*QtCore*"
+            ],
+            "type": "shell",
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Coverage Report",
+            "command": "genhtml",
+            "args": [
+                "kernel.info",
+                "-o",
+                "html"
+            ],
+            "type": "shell",
+            "problemMatcher": [],
+            "dependsOn":["Capture Coverage"]
+        },
+    ]
+}

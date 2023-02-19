@@ -13,21 +13,21 @@ namespace Clue
 class Player
 {
 private:
-    std::string name;
+    std::string name = "";
     PlayerId playerId = PlayerId::UNKNOWN;
     std::shared_ptr<std::set<Card>> hand = std::make_shared<std::set<Card>>();
     std::shared_ptr<std::set<Card>> notInHand = std::make_shared<std::set<Card>>();
 
-    std::vector<std::set<Card>> showedOneOfTheseVect;
-
     bool playerSolved = false;
 
-    u_int8_t numCardsInHand;
+    u_int8_t numCardsInHand = UINT8_MAX;
+
+    /// @brief Holds arrays of Suspect, Weapon, Room that this player showed one of in the Past
+    std::set<std::array<Card,3>> setOfThreesThisPlayerShowed = {};
+
+    void deduceFromPriorTurns();
 
 public:
-    Player(/* args */);
-    ~Player();
-
     void setName(std::string);
     std::string getName();
 
@@ -39,7 +39,6 @@ public:
     bool doesntHaveCard (const Card);
 
     void addCardToHand (Card);
-    void removeCardFromHand (Card); // Undo in case oops
 
     void showedOneOfThese(Suspect, Weapon, Room);
 

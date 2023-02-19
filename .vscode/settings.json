@@ -57,7 +57,11 @@
         "hash_set": "cpp",
         "slist": "cpp",
         "cinttypes": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.o": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/src"
+    "cmake.sourceDirectory": "${workspaceFolder}/src",
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
 }
