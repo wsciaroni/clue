@@ -52,6 +52,13 @@ TEST(ConstantTests, TranslatorSuspect) {
     EXPECT_EQ(c, Clue::Card::PROFESSOR_PLUM);
     s = Clue::fromCard<Clue::Suspect>(c);
     EXPECT_EQ(s, Clue::Suspect::PROFESSOR_PLUM);
+
+    s = Clue::Suspect::LAST;
+    c = Clue::toCard(s);
+    EXPECT_EQ(c, Clue::Card::INVALID);
+    c = Clue::Card::LAST;
+    s = Clue::fromCard<Clue::Suspect>(c);
+    EXPECT_EQ(s, Clue::Suspect::INVALID);
 }
 
 TEST(ConstantTests, TranslatorWeapon) {
@@ -96,6 +103,13 @@ TEST(ConstantTests, TranslatorWeapon) {
     EXPECT_EQ(c, Clue::Card::WRENCH);
     s = Clue::fromCard<Clue::Weapon>(c);
     EXPECT_EQ(s, Clue::Weapon::WRENCH);
+
+    s = Clue::Weapon::LAST;
+    c = Clue::toCard(s);
+    EXPECT_EQ(c, Clue::Card::INVALID);
+    c = Clue::Card::LAST;
+    s = Clue::fromCard<Clue::Weapon>(c);
+    EXPECT_EQ(s, Clue::Weapon::INVALID);
 }
 
 TEST(ConstantTests, TranslatorRoom) {
@@ -158,4 +172,11 @@ TEST(ConstantTests, TranslatorRoom) {
     EXPECT_EQ(c, Clue::Card::DINING_ROOM);
     s = Clue::fromCard<Clue::Room>(c);
     EXPECT_EQ(s, Clue::Room::DINING_ROOM);
+
+    s = Clue::Room::LAST;
+    c = Clue::toCard(s);
+    EXPECT_EQ(c, Clue::Card::INVALID);
+    c = Clue::Card::LAST;
+    s = Clue::fromCard<Clue::Room>(c);
+    EXPECT_EQ(s, Clue::Room::INVALID);
 }
