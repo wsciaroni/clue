@@ -30,7 +30,8 @@
             "label": "Test",
             "command": "ctest",
             "args": [
-                "--parallel 4"
+                "--parallel 4",
+                "--output-on-failure"
             ],
             "type": "shell",
             "problemMatcher": [],
