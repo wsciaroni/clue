@@ -58,7 +58,9 @@
         "slist": "cpp",
         "cinttypes": "cpp",
         "variant": "cpp",
-        "*.o": "cpp"
+        "*.o": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/src"
 }
