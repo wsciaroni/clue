@@ -81,6 +81,16 @@ TEST(PlayerTest, ExclusionLogicIncomplete) {
     EXPECT_TRUE(p.hasCard(Clue::Card::KITCHEN));
 }
 
+TEST(PlayerTest, ExclusionLogicTossUseless) {
+    Clue::Player p;
+    p.addCardToHand(Clue::Card::KITCHEN);
+    p.showedOneOfThese(Clue::Suspect::MISS_SCARLET, Clue::Weapon::CANDLESTICK, Clue::Room::KITCHEN); // Useless ovservation
+
+    p.showedOneOfThese(Clue::Suspect::MISS_SCARLET, Clue::Weapon::DAGGER, Clue::Room::KITCHEN); // Useless ovservation
+    p.cardDefinitelyNotInHand(Clue::Card::MISS_SCARLET);
+    p.cardDefinitelyNotInHand(Clue::Card::DAGGER);
+}
+
 TEST(PlayerTest, NotInHand) {
     Clue::Player p;
 
