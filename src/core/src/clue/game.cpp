@@ -92,6 +92,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
         if (isTurnConsistent(turn))
         {
             turns.push_back(turn);
+            turn->executeTurn();
             incrementWhosTurnItIs();
             regenerateTurnStringList();
             runAnalysis();
