@@ -16,7 +16,7 @@ namespace Clue
         std::shared_ptr<Player> playersTurn = nullptr;
         bool suggestionMade = false;
 
-        std::set<std::shared_ptr<Player>> playersWithoutCards;
+        std::set<std::shared_ptr<Player>> playersWithoutCards = {};
 
         Suspect suggestionSuspect = Suspect::NONE;
         Weapon suggestionWeapon = Weapon::NONE;
