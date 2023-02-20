@@ -127,14 +127,19 @@ void Turn::executeTurn() const
     }
 }
 
+bool Turn::aCardWasShown() const
+{
+    return (playerAnswered != playersTurn) && suggestionMade;
+}
+
 bool Turn::cardWasShownToMe() const
 {
-    return (playerAnswered != playersTurn) && playersTurn->isMaster() && suggestionMade;
+    return aCardWasShown() && playersTurn->isMaster();
 }
 
 bool Turn::iShowedACard() const
 {
-    return (playerAnswered != playersTurn) && playerAnswered->isMaster() && suggestionMade;
+    return aCardWasShown() && playerAnswered->isMaster();
 }
 
 } // namespace Clue

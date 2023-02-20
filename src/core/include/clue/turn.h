@@ -114,6 +114,10 @@ namespace Clue
         /// @brief Update the players based on the information learned in this turn
         void executeTurn() const;
 
+        /// @brief Check if a card was shown
+        /// @return True if someone showed a card
+        bool aCardWasShown() const;
+
         /// @brief Check if I was shown a card
         /// @return True if I saw someone's card
         bool cardWasShownToMe() const;
