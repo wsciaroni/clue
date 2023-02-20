@@ -47,13 +47,13 @@ bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     }
     // Check to make sure someone didn't show us a card that we already know about
     // Check to make sure we didn't show a card that we don't have
-    if(turn->getPlayerAnswered()->doesntHaveCard(turn->getCardShown())) {
+    if(turn->aCardWasShown() && turn->getPlayerAnswered()->doesntHaveCard(turn->getCardShown())) {
         // the player answered doesn't have that card...
         return false;
     }
     for (auto player : playersStatic)
     {
-        if ((player != turn->getPlayerAnswered()) && (player->hasCard(turn->getCardShown())))
+        if (turn->aCardWasShown() && (player != turn->getPlayerAnswered()) && (player->hasCard(turn->getCardShown())))
         {
             // That person can't have that card. We've already ruled it out
             return false;
