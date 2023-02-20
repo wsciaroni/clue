@@ -56,7 +56,7 @@ namespace Clue
         /// @param playerAnsweredIn The player who answered. Equal to playersTurn if no one answered
         /// @param cardShownIn The Card that was shown
         /// @param playersWithoutCards Set of player's who said "I don't have one of those three cards"
-        Turn(
+        explicit Turn(
             std::shared_ptr<Player> playersTurnIn,
             bool accusationMadeIn,
             Suspect suspectAccusedIn,
@@ -64,12 +64,20 @@ namespace Clue
             Room roomAccusedIn,
             std::shared_ptr<Player> playerAnsweredIn,
             Card cardShownIn,
-            std::set<std::shared_ptr<Player>> playersWithoutCards
+            const std::set<std::shared_ptr<Player>>& playersWithoutCards
             );
+
+
+        /// @brief Constructor for a turn where no-one made an accusation
+        /// Used for testing to quickly write turns... Probably not used in the game
+        /// @param playersTurnIn The player who's turn it is
+        explicit Turn(
+            std::shared_ptr<Player> playersTurnIn
+        );
 
         /// @brief Get what happened in this turn, in a string
         /// @return A human readable string of the events of this turn
-        std::string toString();
+        std::string toString() const;
 
         /// @brief Check if it was my turn
         /// @return True if I was the player who's turn it was
@@ -105,5 +113,13 @@ namespace Clue
 
         /// @brief Update the players based on the information learned in this turn
         void executeTurn() const;
+
+        /// @brief Check if I was shown a card
+        /// @return True if I saw someone's card
+        bool cardWasShownToMe() const;
+
+        /// @brief Check if I showed someone a card
+        /// @return True if I showed someone a card
+        bool iShowedACard() const;
     };
 } // namespace Clue
