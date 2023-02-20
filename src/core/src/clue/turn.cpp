@@ -4,11 +4,6 @@
 
 namespace Clue
 {
-
-Turn::Turn() {
-
-}
-
 Turn::Turn(
     std::shared_ptr<Player> playersTurnIn,
     bool suggestionMadeIn,
@@ -18,42 +13,17 @@ Turn::Turn(
     std::shared_ptr<Player> playerAnsweredIn,
     Card cardShownIn,
     std::set<std::shared_ptr<Player>> playersWithoutCardsIn
-    ) {
-    this->playersTurn = playersTurnIn;
-    this->playerAnswered = playerAnsweredIn;
-    this->cardShown = cardShownIn;
-
-    if (this->playersTurn->isMaster())
-    {
-        this->isMyTurn = true;
-    } else if(this->playerAnswered->isMaster()) {
-        this->iAnswered = true;
-    }
-
-    this->suggestionMade = suggestionMadeIn;
-    if(this->suggestionMade) {
-        this->suggestionSuspect = suspectSuggestedIn;
-        this->suggestionWeapon = weaponSuggestedIn;
-        this->suggestionRoom = roomSuggestedIn;
-
-        if (this->isMyTurn)
-        {
-            playerAnswered->addCardToHand(cardShownIn);
-        } else {
-            playerAnswered->showedOneOfThese(suspectSuggestedIn, weaponSuggestedIn, roomSuggestedIn);
-        }
-        this->playersWithoutCards = playersWithoutCardsIn;
-
-        for(auto player : playersWithoutCards) {
-            player->cardDefinitelyNotInHand(toCard(suggestionSuspect));
-            player->cardDefinitelyNotInHand(toCard(suggestionWeapon));
-            player->cardDefinitelyNotInHand(toCard(suggestionRoom));
-        }
-    }    
-    
-}
-
-Turn::~Turn() {}
+    ) : isMyTurn(playersTurnIn->isMaster()),
+        iAnswered(!playersTurnIn->isMaster() && playerAnsweredIn->isMaster()),
+        playersTurn(playersTurnIn),
+        playerAnswered(playerAnsweredIn),
+        cardShown(cardShownIn),
+        suggestionMade(suggestionMadeIn),
+        suggestionSuspect(suspectSuggestedIn),
+        suggestionWeapon(weaponSuggestedIn),
+        suggestionRoom(roomSuggestedIn),
+        playersWithoutCards(playersWithoutCardsIn)
+    {}
 
 std::string Turn::toString() {
     std::ostringstream oss;
@@ -85,40 +55,58 @@ std::string Turn::toString() {
     return oss.str();
 }
 
-bool Turn::getIsMyTurn() {
+bool Turn::getIsMyTurn() const {
     return isMyTurn;
 }
 
-bool Turn::getIAnswered() {
+bool Turn::getIAnswered() const {
     return iAnswered;
 }
 
-std::shared_ptr<Player> Turn::getPlayersTurn() {
+std::shared_ptr<Player> Turn::getPlayersTurn() const {
     return playersTurn;
 }
 
-std::set<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() {
+std::set<std::shared_ptr<Player>> Turn::getPlayersWithoutCards() const {
     return playersWithoutCards;
 }
 
-Suspect Turn::getAccusationSuspect() {
+Suspect Turn::getAccusationSuspect() const {
     return suggestionSuspect;
 }
 
-Weapon Turn::getAccusationWeapon() {
+Weapon Turn::getAccusationWeapon() const {
     return suggestionWeapon;
 }
 
-Room Turn::getAccusationRoom() {
+Room Turn::getAccusationRoom() const {
     return suggestionRoom;
 }
 
-std::shared_ptr<Player> Turn::getPlayerAnswered() {
+std::shared_ptr<Player> Turn::getPlayerAnswered() const {
     return playerAnswered;
 }
 
-Card Turn::getCardShown() {
+Card Turn::getCardShown() const {
     return cardShown;
+}
+
+void Turn::executeTurn() const
+{
+        if(this->suggestionMade) {
+        if (this->isMyTurn)
+        {
+            playerAnswered->addCardToHand(cardShown);
+        } else {
+            playerAnswered->showedOneOfThese(suggestionSuspect, suggestionWeapon, suggestionRoom);
+        }
+
+        for(auto player : playersWithoutCards) {
+            player->cardDefinitelyNotInHand(toCard(suggestionSuspect));
+            player->cardDefinitelyNotInHand(toCard(suggestionWeapon));
+            player->cardDefinitelyNotInHand(toCard(suggestionRoom));
+        }
+    }
 }
 
 } // namespace Clue

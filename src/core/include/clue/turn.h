@@ -27,7 +27,7 @@ namespace Clue
         Card cardShown = Card::NONE;
 
     public:
-        Turn();
+        Turn() = default;
         Turn(
             std::shared_ptr<Player> playersTurnIn,
             bool accusationMadeIn,
@@ -38,18 +38,19 @@ namespace Clue
             Card cardShownIn,
             std::set<std::shared_ptr<Player>> playersWithoutCards
             );
-        ~Turn();
         
         std::string toString();
 
-        bool getIsMyTurn();
-        bool getIAnswered();
-        std::shared_ptr<Player> getPlayersTurn();
-        std::set<std::shared_ptr<Player>> getPlayersWithoutCards();
-        Suspect getAccusationSuspect();
-        Weapon getAccusationWeapon();
-        Room getAccusationRoom();
-        std::shared_ptr<Player> getPlayerAnswered();
-        Card getCardShown();
+        bool getIsMyTurn() const;
+        bool getIAnswered() const;
+        std::shared_ptr<Player> getPlayersTurn() const;
+        std::set<std::shared_ptr<Player>> getPlayersWithoutCards() const;
+        Suspect getAccusationSuspect() const;
+        Weapon getAccusationWeapon() const;
+        Room getAccusationRoom() const;
+        std::shared_ptr<Player> getPlayerAnswered() const;
+        Card getCardShown() const;
+
+        void executeTurn() const;
     };
 } // namespace Clue

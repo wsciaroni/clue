@@ -54,6 +54,7 @@ TEST_F(TurnTestF, FirstPlayerAnswers) {
         Clue::Card::MISS_SCARLET,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_TRUE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p0);
@@ -87,6 +88,7 @@ TEST_F(TurnTestF, SecondPlayerAnswers) {
         Clue::Card::MISS_SCARLET,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_TRUE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p0);
@@ -121,6 +123,7 @@ TEST_F(TurnTestF, OtherPlayerAnswers) {
         Clue::Card::INVALID,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_FALSE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p1);
@@ -152,6 +155,7 @@ TEST_F(TurnTestF, OtherPlayerNoOneAnswers) {
         Clue::Card::INVALID,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_FALSE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p1);
@@ -190,6 +194,7 @@ TEST_F(TurnTestF, OtherPlayerNoAccusation) {
         Clue::Card::NONE,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_FALSE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p1);
@@ -213,6 +218,7 @@ TEST_F(TurnTestF, MeNoAccusation) {
         Clue::Card::NONE,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_TRUE(t.getIsMyTurn());
     EXPECT_FALSE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p0);
@@ -238,6 +244,7 @@ TEST_F(TurnTestF, MeShowP3) {
         Clue::Card::MISS_SCARLET,
         playersWithoutCardsSet
     );
+    t.executeTurn();
     EXPECT_FALSE(t.getIsMyTurn());
     EXPECT_TRUE(t.getIAnswered());
     EXPECT_EQ(t.getPlayersTurn(), p2);
