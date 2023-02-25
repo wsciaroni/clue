@@ -47,13 +47,13 @@ bool Game::isTurnConsistent(std::shared_ptr<Turn> turn) {
     }
     // Check to make sure someone didn't show us a card that we already know about
     // Check to make sure we didn't show a card that we don't have
-    if(turn->getPlayerAnswered()->doesntHaveCard(turn->getCardShown())) {
+    if(turn->aCardWasShown() && turn->getPlayerAnswered()->doesntHaveCard(turn->getCardShown())) {
         // the player answered doesn't have that card...
         return false;
     }
     for (auto player : playersStatic)
     {
-        if ((player != turn->getPlayerAnswered()) && (player->hasCard(turn->getCardShown())))
+        if (turn->aCardWasShown() && (player != turn->getPlayerAnswered()) && (player->hasCard(turn->getCardShown())))
         {
             // That person can't have that card. We've already ruled it out
             return false;
@@ -67,7 +67,7 @@ void Game::incrementWhosTurnItIs() {
     regeneratePlayersTurnList();
 }
 
-void Game::regenerateTurnStringList() {
+void Game::regenerateTurnStringList() const {
     QStringList strings;
     strings.clear();
     uint64_t turnNumber = 1;
@@ -106,7 +106,7 @@ void Game::submitTurn(std::shared_ptr<Turn> turn) {
     throw std::logic_error("Turn is not consistent");
 }
 
-std::shared_ptr<Player> Game::getPlayerByName(const std::string name) {
+std::shared_ptr<Player> Game::getPlayerByName(const std::string name) const {
     for (auto player : players) {
         if (name == player->getName())
         {
@@ -155,10 +155,16 @@ void Game::createGame(std::vector<std::string> names, std::set<Card> myHand) {
     }
 
     for(auto card : myHand) {
-        playerHasCard(playersStatic.front(), card);
+        playerHasCard(playersStatic.front()->getPlayerId(), card);
     }
     runAnalysis();
     getTableInfo();
+
+    for(auto player : players) {
+        //std::function<void(Card card, PlayerId player_in)> fun = [this](Card card, PlayerId player_in){ this->playerHasCard(player_in, card); };
+        player->setIHaveFunction([this](Card card, PlayerId player_in){ this->playerHasCard(player_in, card); });
+        player->setIDontHaveFunction([this](Card card, PlayerId player_in){ this->playerDoesntHaveCard(player_in, card); });
+    }
 }
 
 void Game::setWhoGoesFirst(std::string firstPlayer) {
@@ -169,112 +175,44 @@ std::shared_ptr<Player> Game::whosTurnIsIt() {
     return players.front();
 }
 
-std::shared_ptr<QStringListModel> Game::getPlayersQStringListModel() {
+std::shared_ptr<QStringListModel> Game::getPlayersQStringListModel() const {
     return playersQStringListModel;
 }
 
-std::shared_ptr<QStringListModel> Game::getTurnsStringListModel() {
+std::shared_ptr<QStringListModel> Game::getTurnsStringListModel() const {
     return turnsStringListModel;
 }
 
-std::shared_ptr<QStringListModel> Game::getSuspectsQStringListModel() {
+std::shared_ptr<QStringListModel> Game::getSuspectsQStringListModel() const {
     return suspectsQStringListModel;
 }
 
-std::shared_ptr<QStringListModel> Game::getWeaponsQStringListModel() {
+std::shared_ptr<QStringListModel> Game::getWeaponsQStringListModel() const {
     return weaponsQStringListModel;
 }
 
-std::shared_ptr<QStringListModel> Game::getRoomsQStringListModel() {
+std::shared_ptr<QStringListModel> Game::getRoomsQStringListModel() const {
     return roomsQStringListModel;
 }
-std::shared_ptr<QStringListModel> Game::getCardQStringListModel() {
+std::shared_ptr<QStringListModel> Game::getCardQStringListModel() const {
     return cardQStringListModel;
 }
 
-void Game::runAnalysis() {
-    needsAnalysis = true;
-    while (needsAnalysis)
-    {
-        needsAnalysis = false;
-        for (auto turn : turns)
-        {
-            auto playerAnswered = turn->getPlayerAnswered();
-            if (
-                playerAnswered->hasCard(toCard(turn->getAccusationRoom())) || playerAnswered->hasCard(toCard(turn->getAccusationSuspect())) || playerAnswered->hasCard(toCard(turn->getAccusationWeapon())))
-            {
-                // We already know that they have one of the cards, hence we can known nothing else
-            }
-            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationSuspect())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationWeapon())))
-            {
-                playerHasCard(playerAnswered,toCard(turn->getAccusationRoom()));
-            }
-            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationRoom())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationWeapon())))
-            {
-                playerHasCard(playerAnswered,toCard(turn->getAccusationSuspect()));
-            }
-            else if (turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationRoom())) && turn->getPlayerAnswered()->doesntHaveCard(toCard(turn->getAccusationSuspect())))
-            {
-                playerHasCard(playerAnswered,toCard(turn->getAccusationWeapon()));
-            }
+void Game::runAnalysis() {}
 
-            // For players between player accusing and player answering.
-            // If No one answered && the card is either the answer or in that players hand. We can't be sure.
-            for (auto player : turn->getPlayersWithoutCards())
-            {
-                // @TODO Move this into the part where the turn is created.
-                player->cardDefinitelyNotInHand(toCard(turn->getAccusationRoom()));
-                player->cardDefinitelyNotInHand(toCard(turn->getAccusationSuspect()));
-                player->cardDefinitelyNotInHand(toCard(turn->getAccusationWeapon()));
-            }
-        }
-
-        for (auto player : players) {
-            // If they have three cards, they definitely don't have the rest of the cards
-            auto hand = player->getHand();
-            auto notInHand = player->getNotInHand();
-            if(player->isPlayerSolved()) {
-                // This player is solved.
-            } else if (notInHand->size() >= (NUMBER_OF_CARDS - player->getNumCardsInHand())) {
-                // We know the player doesn't have the rest of the cards, so, deduce that they do have the rest of the cards.
-                for (Card i=Card::FIRST; i<Card::LAST; ++i) {
-                    if (!player->doesntHaveCard(i))
-                    {
-                        playerHasCard(player, i);
-                    }
-                }
-            } else if (hand->size() >= player->getNumCardsInHand()) {
-                // We know all of the players cards. So, they don't have the rest of the cards
-                for (Card i=Card::FIRST; i<Card::LAST; i++) {
-                    if(!player->hasCard(i)) {
-                        player->cardDefinitelyNotInHand(i);
-                    }
-                }
-            }
-
-            // Make sure the card isn't in any of the other players hands
-            for(auto card : *hand) {
-                playerHasCard(player, card);
-            }
-        }
-    }
-}
-
-void Game::playerHasCard(std::shared_ptr<Player> player_in, Card card) {
-    if(!player_in->hasCard(card)) {
-        needsAnalysis = true;
-    }
+void Game::playerHasCard(PlayerId player_in, Card card) const {
     for(auto player : players) {
-        if (player_in == player)
-        {
-            player->addCardToHand(card);
-        } else {
+        if (player_in != player->getPlayerId()) {
             player->cardDefinitelyNotInHand(card);
         }
     }
 }
 
-std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player> current, std::shared_ptr<Player> end) {
+void Game::playerDoesntHaveCard(PlayerId player_in, Card card) {
+    /// @todo Keep track of which cards players don't have
+}
+
+std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player> current, std::shared_ptr<Player> end) const {
     std::set<std::shared_ptr<Player>> playersBetween;
 
     // If the person who accused and the person who answered are the same, that means no one else had the card.
@@ -320,7 +258,7 @@ std::set<std::shared_ptr<Player>> Game::getPlayersBetween(std::shared_ptr<Player
     return playersBetween;
 }
 
-QStringList Game::getWholePlayerListStrings() {
+QStringList Game::getWholePlayerListStrings() const {
     QStringList list;
     for(auto player : players) {
         list.append(QString::fromStdString(player->getName()));
@@ -328,7 +266,7 @@ QStringList Game::getWholePlayerListStrings() {
     return list;
 }
 
-std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
+std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() const {
     auto tableInfo = std::make_shared<std::vector<std::vector<std::string>>>();
     // Number of cards
     for(int i = 0; i <= NUMBER_OF_CARDS; i++) {
@@ -383,11 +321,11 @@ std::shared_ptr<std::vector<std::vector<std::string>>> Game::getTableInfo() {
     return tableInfo;
 }
 
-u_int8_t Game::getNumberOfPlayers() {
+u_int8_t Game::getNumberOfPlayers() const {
     return players.size();
 }
 
-const char*  Game::PlayerNotFoundByName::what() noexcept {
+const char*  Game::PlayerNotFoundByName::what() const noexcept {
     return "Player not found by name";
 }
 

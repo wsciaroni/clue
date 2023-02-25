@@ -14,9 +14,10 @@ TEST(PlayerTest, Name) {
 
 TEST(PlayerTest, PlayerId) {
     Clue::Player p;
-
+    EXPECT_EQ(p.getPlayerId(), Clue::PlayerId::UNKNOWN);
     EXPECT_FALSE(p.isMaster());
     p.setPlayerId(Clue::PlayerId::PLAYER_0);
+    EXPECT_EQ(p.getPlayerId(), Clue::PlayerId::PLAYER_0);
     EXPECT_TRUE(p.isMaster());
 }
 
