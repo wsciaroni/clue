@@ -64,6 +64,11 @@ TEST(GameTest, CreateGame) {
     EXPECT_NO_THROW(g.getPlayerByName("Abby"));
     EXPECT_NO_THROW(g.getPlayerByName("Hokie"));
     EXPECT_THROW(g.getPlayerByName("BADPLAYER"), Clue::Game::PlayerNotFoundByName);
+    try {
+        g.getPlayerByName("BADPLAYER");
+    } catch (Clue::Game::PlayerNotFoundByName& e) {
+        std::cout << "PlayerNotFoundByName: " << e.what() << std::endl;
+    }
 
     auto abby = g.whosTurnIsIt();
     EXPECT_STREQ(abby->getName().c_str(), "Abby");
@@ -136,6 +141,15 @@ TEST(GameTest, Getters) {
     auto a = g.getPlayersBetween(g.getPlayerByName("Will"),g.getPlayerByName("Hokie"));
     EXPECT_EQ(a.size(),1);
     EXPECT_EQ(*a.begin(), g.getPlayerByName("Abby"));
+
+    a = g.getPlayersBetween(g.getPlayerByName("Will"),g.getPlayerByName("Will"));
+    EXPECT_EQ(a.size(), 2);
+    EXPECT_EQ(*a.begin(), g.getPlayerByName("Abby"));
+    EXPECT_EQ(*std::next(a.begin()), g.getPlayerByName("Hokie"));
+
+    a = g.getPlayersBetween(g.getPlayerByName("Hokie"), g.getPlayerByName("Abby"));
+    EXPECT_EQ(a.size(),1);
+    EXPECT_EQ(*a.begin(), g.getPlayerByName("Will"));
 
     g.getWholePlayerListStrings();
     g.getTableInfo();
