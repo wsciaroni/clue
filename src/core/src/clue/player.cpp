@@ -58,6 +58,10 @@ void Player::setPlayerId(PlayerId playerId_in) {
     playerId = playerId_in;
 }
 
+PlayerId Player::getPlayerId() const {
+    return playerId;
+}
+
 bool Player::isMaster() {
     return PlayerId::PLAYER_0 == playerId;
 }

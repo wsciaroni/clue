@@ -29,11 +29,12 @@ private:
     bool isTurnConsistent(std::shared_ptr<Turn>);
     void incrementWhosTurnItIs();
 
-    void regenerateTurnStringList();
+    void regenerateTurnStringList() const;
     void regeneratePlayersTurnList();
 
     bool needsAnalysis = false;
-    void playerHasCard(std::shared_ptr<Player> , Card);
+    void playerHasCard(PlayerId player_in, Card card) const;
+    void playerDoesntHaveCard(PlayerId player_in, Card card);
 
     std::string whoGoesFirst = "NONE";
 
@@ -43,32 +44,32 @@ public:
 
     void submitTurn(std::shared_ptr<Turn>);
 
-    std::shared_ptr<Player> getPlayerByName(const std::string);
+    std::shared_ptr<Player> getPlayerByName(const std::string) const;
 
     void createGame(std::vector<std::string> names, std::set<Card> myHand);
     void setWhoGoesFirst(std::string);
     std::shared_ptr<Player> whosTurnIsIt();
 
-    std::shared_ptr<QStringListModel> getPlayersQStringListModel();
-    std::shared_ptr<QStringListModel> getTurnsStringListModel();
+    std::shared_ptr<QStringListModel> getPlayersQStringListModel() const;
+    std::shared_ptr<QStringListModel> getTurnsStringListModel() const;
 
-    std::shared_ptr<QStringListModel> getSuspectsQStringListModel();
-    std::shared_ptr<QStringListModel> getWeaponsQStringListModel();
-    std::shared_ptr<QStringListModel> getRoomsQStringListModel();
-    std::shared_ptr<QStringListModel> getCardQStringListModel();
+    std::shared_ptr<QStringListModel> getSuspectsQStringListModel() const;
+    std::shared_ptr<QStringListModel> getWeaponsQStringListModel() const;
+    std::shared_ptr<QStringListModel> getRoomsQStringListModel() const;
+    std::shared_ptr<QStringListModel> getCardQStringListModel() const;
 
     void runAnalysis();
 
-    std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
-    QStringList getWholePlayerListStrings();
+    std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>) const;
+    QStringList getWholePlayerListStrings() const;
 
-    std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
+    std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo() const;
 
-    u_int8_t getNumberOfPlayers();
+    u_int8_t getNumberOfPlayers() const;
 
     class PlayerNotFoundByName : std::exception {
         public:
-        const char* what() noexcept;
+        const char* what() const noexcept;
     };
 };
 

@@ -37,6 +37,7 @@ public:
     std::string getName();
 
     void setPlayerId(PlayerId);
+    PlayerId getPlayerId() const;
 
     bool isMaster();
 

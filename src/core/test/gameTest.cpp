@@ -99,6 +99,8 @@ TEST(GameTest, CreateGame) {
     );
     EXPECT_NO_THROW(g.submitTurn(t3));
     EXPECT_TRUE(hokie->hasCard(Clue::Card::BILLIARD_ROOM));
+    EXPECT_TRUE(will->doesntHaveCard(Clue::Card::BILLIARD_ROOM));
+    EXPECT_TRUE(abby->doesntHaveCard(Clue::Card::BILLIARD_ROOM));
 }
 
 TEST(GameTest, Getters) {
