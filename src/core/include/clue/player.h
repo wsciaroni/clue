@@ -8,6 +8,8 @@
 #include <vector>
 #include <memory>
 
+#include <functional>
+
 namespace Clue
 {
 class Player
@@ -26,6 +28,9 @@ private:
     std::set<std::array<Card,3>> setOfThreesThisPlayerShowed = {};
 
     void deduceFromPriorTurns();
+
+    std::function<void(Clue::Card, PlayerId)> iDontHaveCardFunc = [](Clue::Card, PlayerId){ /*Default function does nothing*/ };
+    std::function<void(Clue::Card, PlayerId)> iHaveCardFunc = [](Clue::Card, PlayerId){ /*Default function does nothing*/ };
 
 public:
     void setName(std::string);
@@ -52,6 +57,8 @@ public:
     void setNumCardsInHand(u_int8_t numCards);
     u_int8_t getNumCardsInHand();
 
+    void setIDontHaveFunction(std::function<void(Clue::Card, PlayerId)> _iDontHaveCardFunc);
+    void setIHaveFunction(std::function<void(Clue::Card, PlayerId)> _iHaveCardFunc);
 };
 
 } // namespace Clue

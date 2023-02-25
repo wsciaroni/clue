@@ -77,6 +77,7 @@ void Player::addCardToHand (Card card) {
         }
         hand->insert(card);
         deduceFromPriorTurns();
+        iHaveCardFunc(card, playerId);
     } else {
         // Card is already in hand
     }
@@ -95,6 +96,7 @@ void Player::cardDefinitelyNotInHand(Card card) {
     } else {
         notInHand->insert(card);
         deduceFromPriorTurns();
+        iDontHaveCardFunc(card, playerId);
     }
 }
 
@@ -125,6 +127,14 @@ void Player::setNumCardsInHand(u_int8_t numCards) {
 
 u_int8_t Player::getNumCardsInHand() {
     return numCardsInHand;
+}
+
+void Player::setIDontHaveFunction(std::function<void(Clue::Card, PlayerId)> _iDontHaveCardFunc) {
+    iDontHaveCardFunc = _iDontHaveCardFunc;
+}
+
+void Player::setIHaveFunction(std::function<void(Clue::Card, PlayerId)> _iHaveCardFunc){
+    iHaveCardFunc = _iHaveCardFunc;
 }
 
 } // namespace Clue
