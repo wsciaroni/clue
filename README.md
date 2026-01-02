@@ -1,9 +1,15 @@
-# clue
-Application to aid in the playing of Clue
+# cpp-application-template
+C++ Project Template
 
-# Building:
+## Building
 
-1. Install Qt
-2. Install CMake
-3. Configure CMake or open the CMakeLists.txt as a 'Project' in QtCreator
-4. Build
+- Configure with CMake
+- Build with the CMake Command
+
+```bash
+mkdir ./build
+cmake -S ./ -B ./build
+cmake --build ./build
+```
+
+## Running

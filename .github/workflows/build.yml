@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build build-essential
+
+    - name: Configure CMake
+      run: cmake -S . -B build -G Ninja
+
+    - name: Build Backend
+      run: cmake --build build --target clue_backend
+
+  analyze-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./applications/frontend
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter analyze

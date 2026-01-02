@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package clue;
+
+service ClueGameService {
+  rpc GetGameStatus (GameStatusRequest) returns (GameStatusResponse);
+}
+
+message GameStatusRequest {
+  string game_id = 1;
+}
+
+message GameStatusResponse {
+  string status = 1;
+  bool is_active = 2;
+}
