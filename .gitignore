@@ -34,6 +34,11 @@
 # Build Directories
 CMakeFiles/
 *_autogen/
+_deps/
+*.cmake
+!CMakeLists.txt
+!src/**/CMakeLists.txt
+!src/cmake/
 
 # Cmake Generated Files
 CMakeCache.txt
@@ -62,3 +67,6 @@ output
 # GCov files
 /kernel.info
 /html/
+
+# Protobuf/gRPC
+protos/

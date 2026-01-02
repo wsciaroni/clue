@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package clue;
+
+service ClueService {
+    rpc CreateGame (CreateGameRequest) returns (CreateGameResponse);
+    rpc SubmitTurn (SubmitTurnRequest) returns (SubmitTurnResponse);
+    rpc RunAnalysis (RunAnalysisRequest) returns (RunAnalysisResponse);
+    rpc GetTableInfo (GetTableInfoRequest) returns (GetTableInfoResponse);
+}
+
+message CreateGameRequest {
+    repeated string player_names = 1;
+    repeated string my_hand = 2; // Represented as strings for simplicity
+}
+
+message CreateGameResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+
+message SubmitTurnRequest {
+    string player_name = 1;
+    // Add other fields as needed for a turn
+    string suspect = 2;
+    string weapon = 3;
+    string room = 4;
+    // Outcome?
+}
+
+message SubmitTurnResponse {
+    bool success = 1;
+}
+
+message RunAnalysisRequest {
+}
+
+message RunAnalysisResponse {
+    // Result of analysis
+}
+
+message GetTableInfoRequest {
+}
+
+message GetTableInfoResponse {
+    // Represents the table info structure
+}
