@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package clue;
+
+service GameService {
+  rpc CreateGame (CreateGameRequest) returns (GameStatus);
+  rpc SubmitTurn (Turn) returns (GameStatus);
+  rpc GetGameState (Empty) returns (GameStatus);
+  rpc GetPlayer (PlayerRequest) returns (Player);
+}
+
+message Empty {}
+
+message CreateGameRequest {
+  repeated string player_names = 1;
+  repeated Card my_hand = 2;
+  string who_goes_first = 3;
+}
+
+message PlayerRequest {
+  string name = 1;
+}
+
+message GameStatus {
+  repeated Player players = 1;
+  repeated Turn turns = 2;
+  // Lists that were previously StringListModels can be repeated strings or messages
+  repeated string suspects_list = 3;
+  repeated string weapons_list = 4;
+  repeated string rooms_list = 5;
+  repeated string cards_list = 6;
+}
+
+message Player {
+  string name = 1;
+  // PlayerId id = 2; // Maybe not needed if name is unique
+  repeated Card hand = 3;
+  repeated Card not_in_hand = 4;
+  bool solved = 5;
+  uint32 num_cards_in_hand = 6;
+}
+
+message Turn {
+  bool is_my_turn = 1;
+  bool i_answered = 2;
+  string players_turn_name = 3;
+  bool suggestion_made = 4;
+  repeated string players_without_cards_names = 5;
+  Suspect suggestion_suspect = 6;
+  Weapon suggestion_weapon = 7;
+  Room suggestion_room = 8;
+  string player_answered_name = 9;
+  Card card_shown = 10;
+}
+
+enum Card {
+  CARD_NONE = 0;
+  CARD_MISS_SCARLET = 1;
+  CARD_COLONEL_MUSTARD = 2;
+  CARD_MRS_WHITE = 3;
+  CARD_MR_GREEN = 4;
+  CARD_MRS_PEACOCK = 5;
+  CARD_PROFESSOR_PLUM = 6;
+  CARD_CANDLESTICK = 7;
+  CARD_DAGGER = 8;
+  CARD_LEAD_PIPE = 9;
+  CARD_REVOLVER = 10;
+  CARD_ROPE = 11;
+  CARD_WRENCH = 12;
+  CARD_KITCHEN = 13;
+  CARD_BALLROOM = 14;
+  CARD_CONSERVATORY = 15;
+  CARD_BILLIARD_ROOM = 16;
+  CARD_LIBRARY = 17;
+  CARD_STUDY = 18;
+  CARD_HALL = 19;
+  CARD_LOUNGE = 20;
+  CARD_DINING_ROOM = 21;
+}
+
+enum Suspect {
+  SUSPECT_NONE = 0;
+  SUSPECT_MISS_SCARLET = 1;
+  SUSPECT_COLONEL_MUSTARD = 2;
+  SUSPECT_MRS_WHITE = 3;
+  SUSPECT_MR_GREEN = 4;
+  SUSPECT_MRS_PEACOCK = 5;
+  SUSPECT_PROFESSOR_PLUM = 6;
+}
+
+enum Weapon {
+  WEAPON_NONE = 0;
+  WEAPON_CANDLESTICK = 1;
+  WEAPON_DAGGER = 2;
+  WEAPON_LEAD_PIPE = 3;
+  WEAPON_REVOLVER = 4;
+  WEAPON_ROPE = 5;
+  WEAPON_WRENCH = 6;
+}
+
+enum Room {
+  ROOM_NONE = 0;
+  ROOM_KITCHEN = 1;
+  ROOM_BALLROOM = 2;
+  ROOM_CONSERVATORY = 3;
+  ROOM_BILLIARD_ROOM = 4;
+  ROOM_LIBRARY = 5;
+  ROOM_STUDY = 6;
+  ROOM_HALL = 7;
+  ROOM_LOUNGE = 8;
+  ROOM_DINING_ROOM = 9;
+}

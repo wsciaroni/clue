@@ -12,7 +12,7 @@ target_include_directories(UTILITYlib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/includ
 target_link_libraries(UTILITYlib PUBLIC glog::glog)
 
 # target_link_libraries(UTILITYlib PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(clue PUBLIC UTILITYlib)
+# target_link_libraries(clue PUBLIC UTILITYlib)
 
 file(GLOB_RECURSE unittests CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp")
 

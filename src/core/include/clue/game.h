@@ -2,11 +2,15 @@
 
 #include "clue/player.h"
 #include "clue/turn.h"
+#include "clue/constants.h"
+
+// Include generated protobuf headers
+#include "clue.pb.h"
 
 #include <vector>
 #include <memory>
-
-#include <QStringListModel>
+#include <set>
+#include <string>
 
 namespace Clue
 {
@@ -16,21 +20,19 @@ private:
     std::vector<std::shared_ptr<Player>> players;
     std::vector<std::shared_ptr<Player>> playersStatic;
 
-    std::shared_ptr<QStringListModel> playersQStringListModel = std::make_shared<QStringListModel>();
-    
     std::vector<std::shared_ptr<Turn>> turns;
-    std::shared_ptr<QStringListModel> turnsStringListModel = std::make_shared<QStringListModel>();
 
-    std::shared_ptr<QStringListModel> suspectsQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> weaponsQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> roomsQStringListModel = std::make_shared<QStringListModel>();
-    std::shared_ptr<QStringListModel> cardQStringListModel = std::make_shared<QStringListModel>();
+    // Previous QStringListModels are now just vectors of strings or messages
+    // accessible via getters or constructed on demand for the Proto response.
+    // We can keep internal state as C++ objects and convert to Proto on request.
 
     bool isTurnConsistent(std::shared_ptr<Turn>);
     void incrementWhosTurnItIs();
 
-    void regenerateTurnStringList();
-    void regeneratePlayersTurnList();
+    // Replaced regenerators with functions that might notify listeners or just update state
+    // For now, simple state updates are enough.
+    // void regenerateTurnStringList();
+    // void regeneratePlayersTurnList();
 
     bool needsAnalysis = false;
     void playerHasCard(std::shared_ptr<Player> , Card);
@@ -49,22 +51,27 @@ public:
     void setWhoGoesFirst(std::string);
     std::shared_ptr<Player> whosTurnIsIt();
 
-    std::shared_ptr<QStringListModel> getPlayersQStringListModel();
-    std::shared_ptr<QStringListModel> getTurnsStringListModel();
+    // Replaced getters for StringListModels with getters for raw data or Proto messages
+    const std::vector<std::shared_ptr<Player>>& getPlayers() const;
+    const std::vector<std::shared_ptr<Turn>>& getTurns() const;
 
-    std::shared_ptr<QStringListModel> getSuspectsQStringListModel();
-    std::shared_ptr<QStringListModel> getWeaponsQStringListModel();
-    std::shared_ptr<QStringListModel> getRoomsQStringListModel();
-    std::shared_ptr<QStringListModel> getCardQStringListModel();
+    // Helpers to get list of strings for UI (via Proto)
+    std::vector<std::string> getSuspectsList() const;
+    std::vector<std::string> getWeaponsList() const;
+    std::vector<std::string> getRoomsList() const;
+    std::vector<std::string> getCardsList() const;
 
     void runAnalysis();
 
     std::set<std::shared_ptr<Player>> getPlayersBetween(std::shared_ptr<Player>, std::shared_ptr<Player>);
-    QStringList getWholePlayerListStrings();
+    std::vector<std::string> getWholePlayerListStrings();
 
     std::shared_ptr<std::vector<std::vector<std::string>>> getTableInfo();
 
     u_int8_t getNumberOfPlayers();
+
+    // Convert current state to GameStatus proto
+    clue::GameStatus toProto() const;
 
     class PlayerNotFoundByName : std::exception {
         public:
