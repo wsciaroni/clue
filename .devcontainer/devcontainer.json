@@ -1,0 +1,47 @@
+{
+  "name": "Clue Solver (Clang & Flutter)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    // REMOVED FLUTTER HERE - We do it in Dockerfile now
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000",
+      "upgradePackages": false
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code",
+        "zxh404.vscode-proto3", 
+        "llvm-vs-code-extensions.vscode-clangd" 
+      ],
+      "settings": {
+        "cmake.configureOnOpen": true,
+        "cmake.environment": {
+          "CC": "/usr/bin/clang",
+          "CXX": "/usr/bin/clang++"
+        },
+        "C_Cpp.default.compilerPath": "/usr/bin/clang",
+        "files.associations": {
+          "*.proto": "proto3"
+        }
+      }
+    }
+  },
+  "forwardPorts": [50051],
+  "runArgs": [
+    "--init",
+    "--privileged"
+  ],
+  "remoteUser": "vscode",
+  "postCreateCommand": "flutter doctor && cmake --version && clang --version"
+}
