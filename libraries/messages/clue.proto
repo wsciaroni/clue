@@ -4,6 +4,9 @@ package clue;
 
 service ClueGameService {
   rpc GetGameStatus (GameStatusRequest) returns (GameStatusResponse);
+  rpc InitGame (InitGameRequest) returns (InitGameResponse);
+  rpc RecordTurn (TurnRequest) returns (TurnResponse);
+  rpc GetDeductions (DeductionRequest) returns (DeductionResponse);
 }
 
 message GameStatusRequest {
@@ -13,6 +16,54 @@ message GameStatusRequest {
 message GameStatusResponse {
   string status = 1;
   bool is_active = 2;
+}
+
+message InitGameRequest {
+  int32 num_players = 1;
+  repeated string player_names = 2;
+  repeated Card my_cards = 3;
+}
+
+message InitGameResponse {
+  string game_id = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+message TurnRequest {
+  string suggester = 1;
+  Card suggestion_suspect = 2;
+  Card suggestion_weapon = 3;
+  Card suggestion_room = 4;
+  string responder = 5;
+  bool card_shown = 6;
+  Card shown_card = 7; // Optional
+}
+
+message TurnResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message DeductionRequest {
+  string game_id = 1;
+}
+
+message DeductionResponse {
+  repeated CardKnowledge knowledge = 1;
+}
+
+message CardKnowledge {
+  string player_name = 1;
+  Card card = 2;
+  DeductionStatus status = 3;
+}
+
+enum DeductionStatus {
+  UNKNOWN = 0;
+  HAS_IT = 1;
+  DOES_NOT_HAVE_IT = 2;
+  MIGHT_HAVE_IT = 3;
 }
 
 enum CardType {
