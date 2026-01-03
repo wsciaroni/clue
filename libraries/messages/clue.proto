@@ -14,3 +14,54 @@ message GameStatusResponse {
   string status = 1;
   bool is_active = 2;
 }
+
+enum CardType {
+  CARD_TYPE_UNKNOWN = 0;
+  CARD_TYPE_SUSPECT = 1;
+  CARD_TYPE_WEAPON = 2;
+  CARD_TYPE_ROOM = 3;
+}
+
+enum Suspect {
+  SUSPECT_UNKNOWN = 0;
+  SUSPECT_COL_MUSTARD = 1;
+  SUSPECT_PROF_PLUM = 2;
+  SUSPECT_MR_GREEN = 3;
+  SUSPECT_MRS_PEACOCK = 4;
+  SUSPECT_MISS_SCARLET = 5;
+  SUSPECT_MRS_WHITE = 6;
+}
+
+enum Weapon {
+  WEAPON_UNKNOWN = 0;
+  WEAPON_KNIFE = 1;
+  WEAPON_CANDLESTICK = 2;
+  WEAPON_REVOLVER = 3;
+  WEAPON_ROPE = 4;
+  WEAPON_LEAD_PIPE = 5;
+  WEAPON_WRENCH = 6;
+}
+
+enum Room {
+  ROOM_UNKNOWN = 0;
+  ROOM_HALL = 1;
+  ROOM_LOUNGE = 2;
+  ROOM_DINING_ROOM = 3;
+  ROOM_KITCHEN = 4;
+  ROOM_BALLROOM = 5;
+  ROOM_CONSERVATORY = 6;
+  ROOM_BILLIARD_ROOM = 7;
+  ROOM_LIBRARY = 8;
+  ROOM_STUDY = 9;
+}
+
+message Card {
+  string name = 1;
+  CardType type = 2;
+  // One of the specific enums will be set based on type, or we use a universal ID.
+  // For simplicity in logic, we might rely on a global enum or just use these.
+  // Let's use a oneof or just simple fields if we want to carry the enum value.
+  Suspect suspect = 3;
+  Weapon weapon = 4;
+  Room room = 5;
+}

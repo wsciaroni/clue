@@ -10,11 +10,11 @@ set(gRPC_BUILD_TESTS OFF)
 set(protobuf_BUILD_TESTS OFF)
 set(gRPC_INSTALL OFF)
 set(protobuf_INSTALL OFF)
-set(gRPC_ZLIB_PROVIDER "package") # Use system zlib if available, or fetch
-set(gRPC_CARES_PROVIDER "package")
-set(gRPC_RE2_PROVIDER "package")
-set(gRPC_SSL_PROVIDER "package")
-set(gRPC_PROTOBUF_PROVIDER "module") # Force module mode to build protobuf from source
+set(gRPC_ZLIB_PROVIDER "module")
+set(gRPC_CARES_PROVIDER "module")
+set(gRPC_RE2_PROVIDER "module")
+set(gRPC_SSL_PROVIDER "module")
+set(gRPC_PROTOBUF_PROVIDER "module")
 
 FetchContent_MakeAvailable(gRPC)
 
@@ -74,3 +74,19 @@ target_include_directories(clue_messages
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 )
+
+# Install configuration (necessary for export)
+# include(GNUInstallDirs)
+# install(TARGETS clue_messages
+#         EXPORT clue_messagesTargets
+#         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# )
+
+# install(EXPORT clue_messagesTargets
+#         FILE clue_messagesTargets.cmake
+#         NAMESPACE clue_messages::
+#         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/clue_messages
+# )

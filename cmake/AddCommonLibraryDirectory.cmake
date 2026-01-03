@@ -89,21 +89,21 @@ function(AddCommonLibraryDirectory)
     endif()
 
     # Install Configuration
-    include(GNUInstallDirs)
-    install(TARGETS ${ARG_LIB_NAME}
-            EXPORT ${ARG_LIB_NAME}Targets
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    # include(GNUInstallDirs)
+    # install(TARGETS ${ARG_LIB_NAME}
+    #         EXPORT ${ARG_LIB_NAME}Targets
+    #         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    #         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    #         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    #         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    # )
+    # install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-    install(EXPORT ${ARG_LIB_NAME}Targets
-            FILE ${ARG_LIB_NAME}Targets.cmake
-            NAMESPACE ${ARG_LIB_NAME}::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${ARG_LIB_NAME}
-    )
+    # install(EXPORT ${ARG_LIB_NAME}Targets
+    #         FILE ${ARG_LIB_NAME}Targets.cmake
+    #         NAMESPACE ${ARG_LIB_NAME}::
+    #         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${ARG_LIB_NAME}
+    # )
 
     # --- Mock Library ---
     if(MOCK_SOURCES)
