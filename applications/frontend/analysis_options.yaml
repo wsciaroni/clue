@@ -3,4 +3,4 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     # preference
-    single_quote: true
+    prefer_single_quotes: true
