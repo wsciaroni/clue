@@ -72,7 +72,7 @@ class GameState extends ChangeNotifier {
     try {
       await _client.initializeGame(playerNames, userHand);
     } catch (e) {
-      print('Failed to initialize game on backend: $e');
+      debugPrint('Failed to initialize game on backend: $e');
     }
 
     _gameStarted = true;
@@ -108,7 +108,7 @@ class GameState extends ChangeNotifier {
       final deductionResponse = await _client.fetchDeductions();
       _updateDeductions(deductionResponse);
     } catch (e) {
-       print('Failed to sync turn or fetch deductions: $e');
+       debugPrint('Failed to sync turn or fetch deductions: $e');
     }
   }
 
@@ -131,7 +131,7 @@ class GameState extends ChangeNotifier {
          }
 
        } catch (e) {
-         print('Error updating deduction for ${knowledge.playerName}: $e');
+         debugPrint('Error updating deduction for ${knowledge.playerName}: $e');
        }
     }
     notifyListeners();

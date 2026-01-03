@@ -39,12 +39,12 @@ class ClueClient {
       final response = await _stub.initGame(request);
       if (response.success) {
         _gameId = response.gameId;
-        print('Game initialized with ID: $_gameId');
+        debugPrint('Game initialized with ID: $_gameId');
       } else {
         throw Exception('Failed to initialize game: ${response.errorMessage}');
       }
     } catch (e) {
-      print('Error initializing game: $e');
+      debugPrint('Error initializing game: $e');
       rethrow;
     }
   }
@@ -68,14 +68,14 @@ class ClueClient {
         throw Exception('Failed to record turn: ${response.errorMessage}');
       }
     } catch (e) {
-      print('Error recording turn: $e');
+      debugPrint('Error recording turn: $e');
       rethrow;
     }
   }
 
   Future<DeductionResponse> fetchDeductions() async {
     if (_gameId == null) {
-      print('Game ID is null, cannot fetch deductions.');
+      debugPrint('Game ID is null, cannot fetch deductions.');
       return DeductionResponse(); // Return empty
     }
     final request = DeductionRequest()..gameId = _gameId!;
@@ -83,7 +83,7 @@ class ClueClient {
     try {
       return await _stub.getDeductions(request);
     } catch (e) {
-      print('Error fetching deductions: $e');
+      debugPrint('Error fetching deductions: $e');
       rethrow;
     }
   }
