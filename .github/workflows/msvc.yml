@@ -43,7 +43,7 @@ jobs:
       #   run: cmake --build ${{ env.build }}
 
       - name: Initialize MSVC Code Analysis
-        uses: microsoft/msvc-code-analysis-action@04825f6d9e00f87422d93040c7210f87422f6237
+        uses: microsoft/msvc-code-analysis-action@v1
         # The 'id' must be 'run-analysis' for the 'upload-sarif' step to work
         id: run-analysis
         with:
