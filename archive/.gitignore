@@ -1,0 +1,64 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build Directories
+CMakeFiles/
+*_autogen/
+
+# Cmake Generated Files
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+*.user
+/src/CPackConfig.cmake
+/src/CPackSourceConfig.cmake
+/src/clue_en_US.ts
+/src/compile_commands.json
+/src/analysis/
+
+/Testing
+
+# Executable:
+src/clue
+
+# Logging directory:
+output
+
+# Qt Build Directories
+/build-*/
+/build/
+/build*/
+
+# GCov files
+/kernel.info
+/html/

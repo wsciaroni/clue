@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master", "main", "dev" ]
+  pull_request:
+    branches: [ "master", "main", "dev" ]
+
+jobs:
+  analyze-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./applications/frontend
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter analyze
