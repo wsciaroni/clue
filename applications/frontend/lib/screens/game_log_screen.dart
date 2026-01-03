@@ -53,13 +53,13 @@ class _GameLogScreenState extends State<GameLogScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Record Turn', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const Text('Record Turn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   const SizedBox(height: 10),
 
                   // Who asked?
                   DropdownButtonFormField<Player>(
                     decoration: const InputDecoration(labelText: 'Who Asked?'),
-                    value: _askingPlayer,
+                    initialValue: _askingPlayer,
                     items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
                     onChanged: (val) => setState(() => _askingPlayer = val),
                     validator: (val) => val == null ? 'Required' : null,
@@ -68,7 +68,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   // Suspect
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Suspect'),
-                    value: _selectedSuspect,
+                    initialValue: _selectedSuspect,
                     items: GameConstants.suspects.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
                     onChanged: (val) => setState(() => _selectedSuspect = val),
                     validator: (val) => val == null ? 'Required' : null,
@@ -77,7 +77,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   // Weapon
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Weapon'),
-                    value: _selectedWeapon,
+                    initialValue: _selectedWeapon,
                     items: GameConstants.weapons.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
                     onChanged: (val) => setState(() => _selectedWeapon = val),
                     validator: (val) => val == null ? 'Required' : null,
@@ -86,7 +86,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   // Room
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Room'),
-                    value: _selectedRoom,
+                    initialValue: _selectedRoom,
                     items: GameConstants.rooms.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
                     onChanged: (val) => setState(() => _selectedRoom = val),
                     validator: (val) => val == null ? 'Required' : null,
@@ -95,7 +95,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   // Who Answered?
                   DropdownButtonFormField<Player>(
                     decoration: const InputDecoration(labelText: 'Who Answered?'),
-                    value: _answeringPlayer,
+                    initialValue: _answeringPlayer,
                     items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
                     onChanged: (val) => setState(() => _answeringPlayer = val),
                     validator: (val) {
@@ -119,7 +119,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   if (_cardShown)
                     DropdownButtonFormField<GameCard>(
                       decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
-                      value: _specificCardShown,
+                      initialValue: _specificCardShown,
                       items: [
                         const DropdownMenuItem<GameCard>(value: null, child: Text('Unknown / Private')),
                         if (_selectedSuspect != null) DropdownMenuItem(value: _selectedSuspect, child: Text(_selectedSuspect!.name)),
