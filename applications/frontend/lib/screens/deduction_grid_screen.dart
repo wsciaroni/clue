@@ -18,13 +18,8 @@ class DeductionGridScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: [
-            const DataColumn(
-              label: Text(
-                'Card',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            ...players.map((p) => DataColumn(label: Text(p.name))),
+             const DataColumn(label: Text('Card', style: TextStyle(fontWeight: FontWeight.bold))),
+             ...players.map((p) => DataColumn(label: Text(p.name))),
           ],
           rows: [
             ..._buildRows(GameConstants.suspects, players, 'Suspects'),
@@ -36,41 +31,28 @@ class DeductionGridScreen extends StatelessWidget {
     );
   }
 
-  List<DataRow> _buildRows(
-    List<GameCard> cards,
-    List<Player> players,
-    String sectionTitle,
-  ) {
+  List<DataRow> _buildRows(List<GameCard> cards, List<Player> players, String sectionTitle) {
     final List<DataRow> rows = [];
 
     // Header for section
-    rows.add(
-      DataRow(
-        color: WidgetStateProperty.all(Colors.grey.shade200),
-        cells: [
-          DataCell(
-            Text(
-              sectionTitle,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          ...players.map((_) => const DataCell(SizedBox())),
-        ],
-      ),
-    );
+    rows.add(DataRow(
+      color: WidgetStateProperty.all(Colors.grey.shade200),
+      cells: [
+        DataCell(Text(sectionTitle, style: const TextStyle(fontWeight: FontWeight.bold))),
+        ...players.map((_) => const DataCell(SizedBox())),
+      ]
+    ));
 
     for (var card in cards) {
-      rows.add(
-        DataRow(
-          cells: [
-            DataCell(Text(card.name)),
-            ...players.map((player) {
-              final status = player.getStatus(card);
-              return DataCell(_buildStatusIcon(status));
-            }),
-          ],
-        ),
-      );
+      rows.add(DataRow(
+        cells: [
+          DataCell(Text(card.name)),
+          ...players.map((player) {
+            final status = player.getStatus(card);
+            return DataCell(_buildStatusIcon(status));
+          }),
+        ]
+      ));
     }
     return rows;
   }
