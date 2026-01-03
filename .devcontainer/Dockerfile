@@ -24,3 +24,17 @@ RUN apt-get update && apt-get install -y \
 # Set Clang as the default compiler
 ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
+
+# 2. Install Flutter Manually (Bypassing the failing Feature)
+# We clone the stable branch directly into a system folder
+RUN git clone https://github.com/flutter/flutter.git -b stable /sdks/flutter
+
+# 3. Add Flutter to PATH for all users
+ENV PATH="/sdks/flutter/bin:${PATH}"
+
+# 4. Set ownership of the flutter directory to the 'vscode' user
+# This ensures you can run 'flutter pub get' without permission errors
+RUN chown -R vscode:vscode /sdks/flutter
+
+# Revert to dialog for any interactive tools run later
+ENV DEBIAN_FRONTEND=dialog
