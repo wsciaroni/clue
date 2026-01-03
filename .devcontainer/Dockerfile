@@ -1,12 +1,26 @@
-FROM mcr.microsoft.com/devcontainers/cpp:0-debian-11
+# Start with the official Microsoft C++ Dev image (Debian 12 based)
+FROM mcr.microsoft.com/devcontainers/cpp:1-debian-12
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*; \
-    curl -L -O https://github.com/Kitware/CMake/releases/download/v3.25.2/cmake-3.25.2-linux-x86_64.tar.gz && \
-    tar -xf cmake-3.25.2-linux-x86_64.tar.gz && \
-    rm cmake-3.25.2-linux-x86_64.tar.gz;
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV PATH "/cmake-3.25.2-linux-x86_64/bin:/:$PATH"
+# 1. Install dependencies
+# Added 'curl', 'git', 'unzip', 'xz-utils', 'zip' which Flutter needs
+RUN apt-get update && apt-get install -y \
+    protobuf-compiler \
+    libprotobuf-dev \
+    cmake \
+    ninja-build \
+    pkg-config \
+    libgtk-3-dev \
+    liblzma-dev \
+    libstdc++-12-dev \
+    clang \
+    lldb \
+    llvm \
+    curl git unzip xz-utils zip libglu1-mesa \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Set Clang as the default compiler
+ENV CC=/usr/bin/clang
+ENV CXX=/usr/bin/clang++
