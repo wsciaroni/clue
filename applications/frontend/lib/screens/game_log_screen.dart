@@ -53,7 +53,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Record Turn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const Text('Record Turn', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   const SizedBox(height: 10),
 
                   // Who asked?

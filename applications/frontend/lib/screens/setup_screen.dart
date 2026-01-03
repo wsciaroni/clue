@@ -66,7 +66,7 @@ class _SetupScreenState extends State<SetupScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            const Text('Players', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Players', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ..._playerControllers.asMap().entries.map((entry) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -90,7 +90,7 @@ class _SetupScreenState extends State<SetupScreen> {
               ],
             ),
             const Divider(height: 32),
-            const Text('My Hand', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('My Hand', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Text('Select the cards currently in your hand.'),
             const SizedBox(height: 10),
 
@@ -102,7 +102,7 @@ class _SetupScreenState extends State<SetupScreen> {
             ElevatedButton(
               onPressed: _startGame,
               style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(16)),
-              child: const Text('Start Game', style: TextStyle(fontSize: 18)),
+              child: const Text('Start Game', style: const TextStyle(fontSize: 18)),
             ),
           ],
         ),

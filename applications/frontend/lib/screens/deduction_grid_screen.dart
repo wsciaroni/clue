@@ -18,7 +18,7 @@ class DeductionGridScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: [
-             const DataColumn(label: Text('Card', style: TextStyle(fontWeight: FontWeight.bold))),
+             const DataColumn(label: Text('Card', style: const TextStyle(fontWeight: FontWeight.bold))),
              ...players.map((p) => DataColumn(label: Text(p.name))),
           ],
           rows: [

@@ -41,7 +41,7 @@ class _GameHomeState extends State<GameHome> {
                         context.read<GameState>().reset();
                         Navigator.pop(c);
                       },
-                      child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                      child: const Text('Reset', style: const TextStyle(color: Colors.red)),
                     ),
                   ],
                 ),
