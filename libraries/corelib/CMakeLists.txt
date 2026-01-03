@@ -2,5 +2,5 @@
 
 AddCommonLibraryDirectory(
     LIB_NAME coreLib
-    PUBLIC_DEPENDENCIES utilityLib
+    PUBLIC_DEPENDENCIES clue_messages
 )

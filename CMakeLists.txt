@@ -14,7 +14,8 @@ if(MSVC)
 endif(MSVC)
 
 include(cmake/EnableGTest.cmake)
-# enable_gtest() # Disabling gtest for now as I haven't set up tests for new structure
+include(cmake/AddCommonLibraryDirectory.cmake)
+enable_gtest()
 
 # Include sub-projects.
 add_subdirectory ("${CMAKE_CURRENT_LIST_DIR}/libraries")
