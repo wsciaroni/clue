@@ -7,22 +7,6 @@ on:
     branches: [ "master", "main", "dev" ]
 
 jobs:
-  build-backend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake ninja-build build-essential
-
-    - name: Configure CMake
-      run: cmake -S . -B build -G Ninja
-
-    - name: Build Backend
-      run: cmake --build build --target clue_backend
-
   analyze-frontend:
     runs-on: ubuntu-latest
     defaults:
