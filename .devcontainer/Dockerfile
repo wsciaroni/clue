@@ -6,6 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # 1. Install dependencies
 # Added 'curl', 'git', 'unzip', 'xz-utils', 'zip' which Flutter needs
+# use wget to grab google chrome as well
+# fonts-liberation, libasound2, libvulkan1, xdg-utils are all needed to install google chrome
 RUN apt-get update && apt-get install -y \
     protobuf-compiler \
     libprotobuf-dev \
@@ -18,7 +20,14 @@ RUN apt-get update && apt-get install -y \
     clang \
     lldb \
     llvm \
+    fonts-liberation \
+    libasound2 \
+    libvulkan1 \
+    xdg-utils \
     curl git unzip xz-utils zip libglu1-mesa \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt install ./google-chrome-stable_current_amd64.deb \
+    && rm google-chrome-stable_current_amd64.deb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Set Clang as the default compiler
