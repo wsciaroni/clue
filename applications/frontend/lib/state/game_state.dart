@@ -44,6 +44,7 @@ class GameState extends ChangeNotifier {
   List<Player> _players = [];
   final List<GameTurn> _turnLog = [];
   bool _gameStarted = false;
+  List<GameCard> _userHand = [];
 
   List<Player> get players => _players;
   List<GameTurn> get turnLog => _turnLog;
@@ -59,19 +60,10 @@ class GameState extends ChangeNotifier {
     List<GameCard> userHand,
   ) async {
     _players = playerNames.map((name) => Player(name: name)).toList();
+    _userHand = List.from(userHand);
 
-    // Logic: If the user enters their hand, we find the "User" player (assuming first one or matching name)
-    // and mark those cards as 'hasIt'.
-    // For this implementation, let's assume the first player in the list is the user.
-    if (_players.isNotEmpty) {
-      for (var card in userHand) {
-        _players.first.setStatus(card, DeductionStatus.hasIt);
-        // Consequently, all other players do NOT have this card (if it's unique, which standard Clue cards are)
-        for (var i = 1; i < _players.length; i++) {
-          _players[i].setStatus(card, DeductionStatus.doesNotHaveIt);
-        }
-      }
-    }
+    // Apply initial hand knowledge
+    _applyUserHand();
 
     try {
       await _client.initializeGame(playerNames, userHand);
@@ -85,7 +77,59 @@ class GameState extends ChangeNotifier {
 
   Future<void> recordTurn(GameTurn turn) async {
     _turnLog.insert(0, turn); // Add to top of list
+    _applyTurnDeductions(turn);
+    notifyListeners();
 
+    try {
+      await _client.submitTurn(turn);
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
+    } catch (e) {
+      debugPrint('Failed to sync turn or fetch deductions: $e');
+    }
+  }
+
+  void updateTurn(int index, GameTurn newTurn) {
+    if (index < 0 || index >= _turnLog.length) return;
+
+    _turnLog[index] = newTurn;
+    _recalculateState();
+  }
+
+  void _recalculateState() {
+    // Reset status to unknown
+    for (var p in _players) {
+      p.cardStatus.clear();
+    }
+
+    // Re-apply initial hand knowledge
+    _applyUserHand();
+
+    // Re-applying turns in REVERSE order (oldest first)
+    // Note: _turnLog has newest at index 0. So we iterate end to start.
+    for (var i = _turnLog.length - 1; i >= 0; i--) {
+      _applyTurnDeductions(_turnLog[i]);
+    }
+
+    notifyListeners();
+  }
+
+  void _applyUserHand() {
+    // Logic: If the user enters their hand, we find the "User" player (assuming first one or matching name)
+    // and mark those cards as 'hasIt'.
+    // For this implementation, let's assume the first player in the list is the user.
+    if (_players.isNotEmpty) {
+      for (var card in _userHand) {
+        _players.first.setStatus(card, DeductionStatus.hasIt);
+        // Consequently, all other players do NOT have this card (if it's unique, which standard Clue cards are)
+        for (var i = 1; i < _players.length; i++) {
+          _players[i].setStatus(card, DeductionStatus.doesNotHaveIt);
+        }
+      }
+    }
+  }
+
+  void _applyTurnDeductions(GameTurn turn) {
     // Basic Deduction Logic (Client-side immediate feedback)
     if (!turn.cardShown) {
       // If answering player did NOT show a card, they do not have ANY of the three.
@@ -113,15 +157,6 @@ class GameState extends ChangeNotifier {
           }
         }
       }
-    }
-    notifyListeners();
-
-    try {
-      await _client.submitTurn(turn);
-      final gameStateResponse = await _client.fetchGameState();
-      _updateDeductions(gameStateResponse);
-    } catch (e) {
-      debugPrint('Failed to sync turn or fetch deductions: $e');
     }
   }
 
