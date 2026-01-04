@@ -143,7 +143,16 @@ private:
         // Initialize Engines
         for (int i = 0; i < m_config.num_players; ++i) {
             auto engine = std::make_unique<clue::GameEngine>();
-            engine->initialize(m_config.num_players, m_hands[i]);
+            clue::InitGameRequest request;
+            request.set_num_players(m_config.num_players);
+            for (int j=0; j < m_config.num_players; j++) {
+                request.add_player_names("Player " + std::to_string(j));
+            }
+            // For the current engine 'i', we only know its own hand
+            for (const auto& c : m_hands[i]) {
+                *request.add_my_hand() = c;
+            }
+            engine->initialize_game(request);
             m_player_engines.push_back(std::move(engine));
         }
     }
@@ -170,13 +179,36 @@ private:
     bool is_game_solved() {
         // Check if any player engine has solved the case file (3 cards known true in case file)
         for (const auto& engine : m_player_engines) {
+            // New way: iterate through solution probabilities or rows to check what's eliminated
+            auto state = engine->get_game_state_response();
             int solved_count = 0;
-            for (const auto& c : m_all_cards) {
-                clue::CardId id = get_card_id(c);
-                if (engine->get_case_file_state(id) == clue::CardState::KNOWN_TRUE) {
+
+            // In get_game_state_response, we have solution_probabilities
+            // A card is "solved" (part of the case file) if its probability is 1.0?
+            // Or if it's the only one left in its category.
+            // The memory says "get_case_file_state(id) == clue::CardState::KNOWN_TRUE" was the old check.
+
+            // Let's use solution_probabilities from GameStateResponse
+            for (const auto& prob : state.solution_probabilities()) {
+                // If it's NOT eliminated, it might be the solution.
+                // But how do we know if it is definitively the solution?
+                // The old code checked for KNOWN_TRUE in case file state.
+                // The new GameEngine likely doesn't expose raw state directly.
+                // However, if we have exactly 1 suspect, 1 weapon, 1 room not eliminated, we are solved.
+                // Or if the probability is 100% (if implemented).
+
+                // Alternatively, I can check if 'is_eliminated' is false. If only 3 cards (1 per type) remain un-eliminated, it's solved.
+                // But let's look at `rows`. It contains player states.
+                // The `solution_probabilities` message seems to be specifically for the case file.
+                // Let's assume `is_eliminated` is populated.
+
+                // Wait, `SolutionProbability` has a `probability` field. If it's 1.0, it's the card.
+                // Let's count cards with probability > 0.99 (float safety).
+                if (prob.probability() > 0.99f) {
                     solved_count++;
                 }
             }
+
             if (solved_count == 3) return true;
         }
         return false;
@@ -237,53 +269,47 @@ private:
 
         for (int i = 0; i < m_config.num_players; ++i) {
              // For Player i, what did they see?
-             std::optional<clue::Card> visible_response = std::nullopt;
+             clue::TurnData turn_data;
+             turn_data.set_suggester_player_index(suggester_idx);
+             *turn_data.mutable_suspect() = s;
+             *turn_data.mutable_weapon() = w;
+             *turn_data.mutable_room() = r;
+             turn_data.set_responder_player_index(responder_idx);
 
              if (has_response) {
                  if (i == suggester_idx) {
                      // I made the suggestion, I saw the card
-                     visible_response = response_card;
+                     *turn_data.mutable_card_shown() = response_card;
                  } else if (i == responder_idx) {
                      // I showed the card, so I know what I showed (redundant but consistent)
-                     visible_response = response_card;
+                     *turn_data.mutable_card_shown() = response_card;
                  }
-                 // Others see nothing (nullopt)
+                 // Others see nothing (card_shown remains unset)
+             } else {
+                 // No one responded
+                 turn_data.set_responder_player_index(-1);
              }
 
              // Update engine
-             m_player_engines[i]->process_suggestion(
-                 suggester_idx, s, w, r, responder_idx, visible_response
-             );
-
-             m_player_engines[i]->reconcile();
+             m_player_engines[i]->record_turn(turn_data);
         }
     }
 
     std::string get_knowledge_json(int player_idx) {
         // Extract what this player knows about the case file
-        // We can query GameEngine for all cards
         std::stringstream ss;
         ss << "{ \"player\": " << player_idx << ", \"case_file_probabilities\": {";
 
-        // Simple output: List candidates for each category
-        // Actually, let's just list what is KNOWN_TRUE, KNOWN_FALSE, UNKNOWN for case file
-        // Or maybe just list the cards that are NOT eliminated from case file.
-
         std::vector<std::string> suspects, weapons, rooms;
 
-        for (const auto& c : m_all_cards) {
-             clue::CardId id = get_card_id(c);
-             clue::CardState state = m_player_engines[player_idx]->get_case_file_state(id);
-
-             // If state is KNOWN_TRUE, it IS in the envelope.
-             // If state is UNKNOWN, it MIGHT be.
-             // If state is KNOWN_FALSE, it is NOT.
-
-             if (state != clue::CardState::KNOWN_FALSE) {
-                 std::string name = card_to_string(c);
-                 if (c.type() == clue::CARD_TYPE_SUSPECT) suspects.push_back(name);
-                 else if (c.type() == clue::CARD_TYPE_WEAPON) weapons.push_back(name);
-                 else if (c.type() == clue::CARD_TYPE_ROOM) rooms.push_back(name);
+        auto state = m_player_engines[player_idx]->get_game_state_response();
+        // Iterate over solution probabilities to see what is NOT eliminated
+        for (const auto& prob : state.solution_probabilities()) {
+             if (!prob.is_eliminated()) {
+                 std::string name = card_to_string(prob.card());
+                 if (prob.card().type() == clue::CARD_TYPE_SUSPECT) suspects.push_back(name);
+                 else if (prob.card().type() == clue::CARD_TYPE_WEAPON) weapons.push_back(name);
+                 else if (prob.card().type() == clue::CARD_TYPE_ROOM) rooms.push_back(name);
              }
         }
 

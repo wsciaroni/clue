@@ -1,0 +1,206 @@
+{
+  "config": {
+    "num_players": 3,
+    "seed": 123
+  },
+  "ground_truth": {
+    "case_file": ["SUSPECT_MR_GREEN", "WEAPON_ROPE", "ROOM_STUDY"],
+    "hands": [
+      ["SUSPECT_MISS_SCARLET", "ROOM_LIBRARY", "ROOM_KITCHEN", "SUSPECT_COL_MUSTARD", "ROOM_DINING_ROOM", "WEAPON_CANDLESTICK"],
+      ["ROOM_BALLROOM", "ROOM_LOUNGE", "WEAPON_WRENCH", "WEAPON_LEAD_PIPE", "SUSPECT_MRS_PEACOCK", "ROOM_BILLIARD_ROOM"],
+      ["ROOM_CONSERVATORY", "WEAPON_REVOLVER", "SUSPECT_MRS_WHITE", "ROOM_HALL", "WEAPON_KNIFE", "SUSPECT_PROF_PLUM"]
+    ]
+  },
+  "turns": [
+    {
+      "turn": 0,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_MR_GREEN", "WEAPON_REVOLVER", "ROOM_CONSERVATORY"],
+      "responder": 2,
+      "response_card_ground_truth": "ROOM_CONSERVATORY",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_LOUNGE","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_HALL","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MISS_SCARLET"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 1,
+      "suggester": 1,
+      "suggestion": ["SUSPECT_PROF_PLUM", "WEAPON_REVOLVER", "ROOM_DINING_ROOM"],
+      "responder": 2,
+      "response_card_ground_truth": "SUSPECT_PROF_PLUM",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_LOUNGE","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_HALL","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MISS_SCARLET"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 2,
+      "suggester": 2,
+      "suggestion": ["SUSPECT_MISS_SCARLET", "WEAPON_REVOLVER", "ROOM_CONSERVATORY"],
+      "responder": 0,
+      "response_card_ground_truth": "SUSPECT_MISS_SCARLET",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_LOUNGE","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_HALL","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 3,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_MISS_SCARLET", "WEAPON_ROPE", "ROOM_LOUNGE"],
+      "responder": 1,
+      "response_card_ground_truth": "ROOM_LOUNGE",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_HALL","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 4,
+      "suggester": 1,
+      "suggestion": ["SUSPECT_MR_GREEN", "WEAPON_CANDLESTICK", "ROOM_HALL"],
+      "responder": 2,
+      "response_card_ground_truth": "ROOM_HALL",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 5,
+      "suggester": 2,
+      "suggestion": ["SUSPECT_MRS_PEACOCK", "WEAPON_LEAD_PIPE", "ROOM_BALLROOM"],
+      "responder": 1,
+      "response_card_ground_truth": "WEAPON_LEAD_PIPE",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 6,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_MRS_PEACOCK", "WEAPON_CANDLESTICK", "ROOM_LIBRARY"],
+      "responder": 1,
+      "response_card_ground_truth": "SUSPECT_MRS_PEACOCK",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_PROF_PLUM","SUSPECT_MR_GREEN","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_HALL","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MISS_SCARLET","SUSPECT_MRS_WHITE"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_COL_MUSTARD","SUSPECT_MR_GREEN","SUSPECT_MRS_PEACOCK"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 7,
+      "suggester": 1,
+      "suggestion": ["SUSPECT_MR_GREEN", "WEAPON_LEAD_PIPE", "ROOM_BILLIARD_ROOM"],
+      "responder": -1,
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 8,
+      "suggester": 2,
+      "suggestion": ["SUSPECT_MRS_PEACOCK", "WEAPON_REVOLVER", "ROOM_BILLIARD_ROOM"],
+      "responder": 1,
+      "response_card_ground_truth": "ROOM_BILLIARD_ROOM",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_LOUNGE","ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 9,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_PROF_PLUM", "WEAPON_ROPE", "ROOM_KITCHEN"],
+      "responder": 2,
+      "response_card_ground_truth": "SUSPECT_PROF_PLUM",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_CANDLESTICK","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 10,
+      "suggester": 1,
+      "suggestion": ["SUSPECT_MR_GREEN", "WEAPON_CANDLESTICK", "ROOM_DINING_ROOM"],
+      "responder": 0,
+      "response_card_ground_truth": "WEAPON_CANDLESTICK",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 11,
+      "suggester": 2,
+      "suggestion": ["SUSPECT_MRS_WHITE", "WEAPON_ROPE", "ROOM_BILLIARD_ROOM"],
+      "responder": 1,
+      "response_card_ground_truth": "ROOM_BILLIARD_ROOM",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_LEAD_PIPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 12,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_COL_MUSTARD", "WEAPON_LEAD_PIPE", "ROOM_KITCHEN"],
+      "responder": 1,
+      "response_card_ground_truth": "WEAPON_LEAD_PIPE",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_REVOLVER","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 13,
+      "suggester": 1,
+      "suggestion": ["SUSPECT_COL_MUSTARD", "WEAPON_REVOLVER", "ROOM_LOUNGE"],
+      "responder": 2,
+      "response_card_ground_truth": "WEAPON_REVOLVER",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 14,
+      "suggester": 2,
+      "suggestion": ["SUSPECT_MR_GREEN", "WEAPON_KNIFE", "ROOM_KITCHEN"],
+      "responder": 0,
+      "response_card_ground_truth": "ROOM_KITCHEN",
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_BALLROOM","ROOM_BILLIARD_ROOM","ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE"], "rooms": ["ROOM_DINING_ROOM","ROOM_KITCHEN","ROOM_CONSERVATORY","ROOM_LIBRARY","ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_DINING_ROOM","ROOM_BALLROOM","ROOM_LIBRARY","ROOM_STUDY"]}}
+      ]
+    },
+    {
+      "turn": 15,
+      "suggester": 0,
+      "suggestion": ["SUSPECT_COL_MUSTARD", "WEAPON_CANDLESTICK", "ROOM_STUDY"],
+      "responder": -1,
+      "knowledge": [
+        { "player": 0, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE","WEAPON_WRENCH"], "rooms": ["ROOM_STUDY"]}},
+        { "player": 1, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_KNIFE","WEAPON_ROPE"], "rooms": ["ROOM_STUDY"]}},
+        { "player": 2, "case_file_probabilities": {"suspects": ["SUSPECT_MR_GREEN"], "weapons": ["WEAPON_CANDLESTICK"], "rooms": ["ROOM_STUDY"]}}
+      ]
+    }
+  ]
+}
