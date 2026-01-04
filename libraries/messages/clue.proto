@@ -31,13 +31,14 @@ message InitGameResponse {
 }
 
 message TurnRequest {
-  string suggester = 1;
-  Card suggestion_suspect = 2;
-  Card suggestion_weapon = 3;
-  Card suggestion_room = 4;
-  string responder = 5;
-  bool card_shown = 6;
-  Card shown_card = 7; // Optional
+  string game_id = 1;
+  string suggester = 2;
+  Card suggestion_suspect = 3;
+  Card suggestion_weapon = 4;
+  Card suggestion_room = 5;
+  string responder = 6;
+  bool card_shown = 7;
+  Card shown_card = 8; // Optional
 }
 
 message TurnResponse {
