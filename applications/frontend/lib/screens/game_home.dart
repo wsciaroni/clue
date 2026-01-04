@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../state/game_state.dart';
 import 'game_log_screen.dart';
 import 'deduction_grid_screen.dart';
+import 'solution_screen.dart';
 
 class GameHome extends StatefulWidget {
   const GameHome({super.key});
@@ -17,6 +18,7 @@ class _GameHomeState extends State<GameHome> {
   final List<Widget> _screens = [
     const GameLogScreen(),
     const DeductionGridScreen(),
+    const SolutionScreen(),
   ];
 
   @override
@@ -66,6 +68,10 @@ class _GameHomeState extends State<GameHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
             label: 'Deduction Grid',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.lightbulb),
+            label: 'Solution',
           ),
         ],
       ),
