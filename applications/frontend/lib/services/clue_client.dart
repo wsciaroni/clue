@@ -68,10 +68,10 @@ class ClueClient {
       ..weapon = _convertToProtoCard(turn.weapon)
       ..room = _convertToProtoCard(turn.room);
 
-    if (turn.answeringPlayer.name.toUpperCase() == 'NO ONE') {
-       turnData.responderPlayerIndex = -1;
+    if (turn.answeringPlayer == null) {
+      turnData.responderPlayerIndex = -1;
     } else {
-       turnData.responderPlayerIndex = _getPlayerIndex(turn.answeringPlayer.name);
+      turnData.responderPlayerIndex = _getPlayerIndex(turn.answeringPlayer!.name);
     }
 
     if (turn.specificCardShown != null) {
