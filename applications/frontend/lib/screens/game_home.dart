@@ -70,7 +70,11 @@ class _GameHomeState extends State<GameHome> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Game Log'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Game Log',
+            backgroundColor: Colors.blue,
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
             label: 'Deduction Grid',
