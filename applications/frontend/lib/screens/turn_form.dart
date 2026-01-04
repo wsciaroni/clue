@@ -96,6 +96,44 @@ class _TurnFormState extends State<TurnForm> {
     }
   }
 
+  List<DropdownMenuItem<GameCard>> _buildCardShownItems() {
+    final items = <DropdownMenuItem<GameCard>>[
+      const DropdownMenuItem<GameCard>(value: null, child: Text('Unknown / Private')),
+    ];
+
+    // Helper to add unique items.
+    // Logic: The options for "Which card?" should primarily be the selected Suspect, Weapon, and Room.
+    // However, if we are Editing, and the saved `_specificCardShown` is somehow NOT one of the currently selected 3
+    // (e.g. state drift or partial update), we must include it to avoid crash.
+    // BUT normally, it should be one of them.
+    // If `_specificCardShown` matches one of them by equality, we should use the *current* instance from selectedX to be clean,
+    // although `GameCard` equality should suffice.
+
+    // We'll create a set of candidates from the current selection.
+    final candidates = {
+      if (_selectedSuspect != null) _selectedSuspect!,
+      if (_selectedWeapon != null) _selectedWeapon!,
+      if (_selectedRoom != null) _selectedRoom!,
+    };
+
+    // If _specificCardShown is set but not in candidates (e.g. initializing or user changed a dropdown above),
+    // we should technically include it to prevent crash, OR allow it to be deselected.
+    // Ideally, if the user changes Suspect, and the old Suspect was the specific card shown, we should probably clear specific card.
+    // But for now, let's just ensure the list contains the value if it exists.
+
+    if (_specificCardShown != null && !candidates.contains(_specificCardShown)) {
+       // It's an orphan value. We add it so the dropdown can display it (prevent crash),
+       // likely the user will change it or it's a transient state.
+       items.add(DropdownMenuItem(value: _specificCardShown, child: Text(_specificCardShown!.name)));
+    }
+
+    for (var c in candidates) {
+      items.add(DropdownMenuItem(value: c, child: Text(c.name)));
+    }
+
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -167,12 +205,7 @@ class _TurnFormState extends State<TurnForm> {
             DropdownButtonFormField<GameCard>(
               decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
               value: _specificCardShown,
-              items: [
-                const DropdownMenuItem<GameCard>(value: null, child: Text('Unknown / Private')),
-                if (_selectedSuspect != null) DropdownMenuItem(value: _selectedSuspect, child: Text(_selectedSuspect!.name)),
-                if (_selectedWeapon != null) DropdownMenuItem(value: _selectedWeapon, child: Text(_selectedWeapon!.name)),
-                if (_selectedRoom != null) DropdownMenuItem(value: _selectedRoom, child: Text(_selectedRoom!.name)),
-              ],
+              items: _buildCardShownItems(),
               onChanged: (val) => setState(() => _specificCardShown = val),
             ),
 
