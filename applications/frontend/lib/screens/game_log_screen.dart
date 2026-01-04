@@ -20,7 +20,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
   GameCard? _selectedWeapon;
   GameCard? _selectedRoom;
 
-  bool _cardShown = false;
+  bool _someoneAnswered = true;
   GameCard? _specificCardShown; // Optional
 
   @override
@@ -92,31 +92,35 @@ class _GameLogScreenState extends State<GameLogScreen> {
                     validator: (val) => val == null ? 'Required' : null,
                   ),
 
-                  // Who Answered?
-                  DropdownButtonFormField<Player>(
-                    decoration: const InputDecoration(labelText: 'Who Answered?'),
-                    initialValue: _answeringPlayer,
-                    items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
-                    onChanged: (val) => setState(() => _answeringPlayer = val),
-                    validator: (val) {
-                      if (val == null) return 'Required';
-                      if (val == _askingPlayer) return 'Asker cannot answer';
-                      return null;
-                    },
-                  ),
-
                   SwitchListTile(
-                    title: const Text('Did they show a card?'),
-                    value: _cardShown,
+                    title: const Text('Did someone answer?'),
+                    value: _someoneAnswered,
                     onChanged: (val) {
                       setState(() {
-                        _cardShown = val;
-                        if (!val) _specificCardShown = null;
+                        _someoneAnswered = val;
+                        if (!val) {
+                          _answeringPlayer = null;
+                          _specificCardShown = null;
+                        }
                       });
                     },
                   ),
 
-                  if (_cardShown)
+                  if (_someoneAnswered) ...[
+                    // Who Answered?
+                    DropdownButtonFormField<Player>(
+                      decoration: const InputDecoration(labelText: 'Who Answered?'),
+                      initialValue: _answeringPlayer,
+                      items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
+                      onChanged: (val) => setState(() => _answeringPlayer = val),
+                      validator: (val) {
+                        if (!_someoneAnswered) return null;
+                        if (val == null) return 'Required';
+                        if (val == _askingPlayer) return 'Asker cannot answer';
+                        return null;
+                      },
+                    ),
+
                     DropdownButtonFormField<GameCard>(
                       decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
                       initialValue: _specificCardShown,
@@ -128,6 +132,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                       ],
                       onChanged: (val) => setState(() => _specificCardShown = val),
                     ),
+                  ],
 
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -150,8 +155,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
         suspect: _selectedSuspect!,
         weapon: _selectedWeapon!,
         room: _selectedRoom!,
-        answeringPlayer: _answeringPlayer!,
-        cardShown: _cardShown,
+        answeringPlayer: _someoneAnswered ? _answeringPlayer : null,
         specificCardShown: _specificCardShown,
       );
 
@@ -161,7 +165,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
       setState(() {
          // _askingPlayer = null; // Optional: keep or clear
          _answeringPlayer = null;
-         _cardShown = false;
+         _someoneAnswered = true;
          _specificCardShown = null;
          // Keep selected cards as they might be similar next turn? Or clear them.
          // Let's clear them to avoid mistakes.
