@@ -55,7 +55,7 @@ class ClueClient {
       ..suggestionSuspect = _convertToProtoCard(turn.suspect)
       ..suggestionWeapon = _convertToProtoCard(turn.weapon)
       ..suggestionRoom = _convertToProtoCard(turn.room)
-      ..responder = turn.answeringPlayer.name
+      ..responder = turn.answeringPlayer?.name ?? "NO_ONE"
       ..cardShown = turn.cardShown;
 
     if (turn.specificCardShown != null) {

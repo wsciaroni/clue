@@ -93,14 +93,28 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   ),
 
                   // Who Answered?
-                  DropdownButtonFormField<Player>(
+                  DropdownButtonFormField<Player?>(
                     decoration: const InputDecoration(labelText: 'Who Answered?'),
                     initialValue: _answeringPlayer,
-                    items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
-                    onChanged: (val) => setState(() => _answeringPlayer = val),
+                    items: [
+                      const DropdownMenuItem<Player?>(
+                        value: null,
+                        child: Text("No One"),
+                      ),
+                      ...players.map((p) => DropdownMenuItem<Player?>(value: p, child: Text(p.name))),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _answeringPlayer = val;
+                        if (val == null) {
+                          _cardShown = false;
+                          _specificCardShown = null;
+                        }
+                      });
+                    },
                     validator: (val) {
-                      if (val == null) return 'Required';
-                      if (val == _askingPlayer) return 'Asker cannot answer';
+                      // null is allowed ("No One")
+                      if (val != null && val == _askingPlayer) return 'Asker cannot answer';
                       return null;
                     },
                   ),
@@ -108,7 +122,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   SwitchListTile(
                     title: const Text('Did they show a card?'),
                     value: _cardShown,
-                    onChanged: (val) {
+                    onChanged: _answeringPlayer == null ? null : (val) {
                       setState(() {
                         _cardShown = val;
                         if (!val) _specificCardShown = null;
@@ -150,7 +164,7 @@ class _GameLogScreenState extends State<GameLogScreen> {
         suspect: _selectedSuspect!,
         weapon: _selectedWeapon!,
         room: _selectedRoom!,
-        answeringPlayer: _answeringPlayer!,
+        answeringPlayer: _answeringPlayer,
         cardShown: _cardShown,
         specificCardShown: _specificCardShown,
       );

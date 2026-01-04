@@ -76,7 +76,15 @@ class _SetupScreenState extends State<SetupScreen> {
                     labelText: entry.key == 0 ? 'My Name (User)' : 'Player ${entry.key + 1}',
                     border: const OutlineInputBorder(),
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Please enter a name' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    if (value.toUpperCase() == 'NO_ONE') {
+                      return 'Name cannot be "NO_ONE"';
+                    }
+                    return null;
+                  },
                 ),
               );
             }),
