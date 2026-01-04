@@ -14,31 +14,6 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class DeductionStatus extends $pb.ProtobufEnum {
-  static const DeductionStatus UNKNOWN =
-      DeductionStatus._(0, _omitEnumNames ? '' : 'UNKNOWN');
-  static const DeductionStatus HAS_IT =
-      DeductionStatus._(1, _omitEnumNames ? '' : 'HAS_IT');
-  static const DeductionStatus DOES_NOT_HAVE_IT =
-      DeductionStatus._(2, _omitEnumNames ? '' : 'DOES_NOT_HAVE_IT');
-  static const DeductionStatus MIGHT_HAVE_IT =
-      DeductionStatus._(3, _omitEnumNames ? '' : 'MIGHT_HAVE_IT');
-
-  static const $core.List<DeductionStatus> values = <DeductionStatus>[
-    UNKNOWN,
-    HAS_IT,
-    DOES_NOT_HAVE_IT,
-    MIGHT_HAVE_IT,
-  ];
-
-  static final $core.List<DeductionStatus?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 3);
-  static DeductionStatus? valueOf($core.int value) =>
-      value < 0 || value >= _byValue.length ? null : _byValue[value];
-
-  const DeductionStatus._(super.value, super.name);
-}
-
 class CardType extends $pb.ProtobufEnum {
   static const CardType CARD_TYPE_UNKNOWN =
       CardType._(0, _omitEnumNames ? '' : 'CARD_TYPE_UNKNOWN');
@@ -171,6 +146,31 @@ class Room extends $pb.ProtobufEnum {
       value < 0 || value >= _byValue.length ? null : _byValue[value];
 
   const Room._(super.value, super.name);
+}
+
+class CellState_Status extends $pb.ProtobufEnum {
+  static const CellState_Status UNKNOWN =
+      CellState_Status._(0, _omitEnumNames ? '' : 'UNKNOWN');
+  static const CellState_Status HAS =
+      CellState_Status._(1, _omitEnumNames ? '' : 'HAS');
+  static const CellState_Status DOES_NOT_HAVE =
+      CellState_Status._(2, _omitEnumNames ? '' : 'DOES_NOT_HAVE');
+  static const CellState_Status MIGHT_HAVE =
+      CellState_Status._(3, _omitEnumNames ? '' : 'MIGHT_HAVE');
+
+  static const $core.List<CellState_Status> values = <CellState_Status>[
+    UNKNOWN,
+    HAS,
+    DOES_NOT_HAVE,
+    MIGHT_HAVE,
+  ];
+
+  static final $core.List<CellState_Status?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 3);
+  static CellState_Status? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const CellState_Status._(super.value, super.name);
 }
 
 const $core.bool _omitEnumNames =

@@ -15,22 +15,6 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
-@$core.Deprecated('Use deductionStatusDescriptor instead')
-const DeductionStatus$json = {
-  '1': 'DeductionStatus',
-  '2': [
-    {'1': 'UNKNOWN', '2': 0},
-    {'1': 'HAS_IT', '2': 1},
-    {'1': 'DOES_NOT_HAVE_IT', '2': 2},
-    {'1': 'MIGHT_HAVE_IT', '2': 3},
-  ],
-};
-
-/// Descriptor for `DeductionStatus`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List deductionStatusDescriptor = $convert.base64Decode(
-    'Cg9EZWR1Y3Rpb25TdGF0dXMSCwoHVU5LTk9XThAAEgoKBkhBU19JVBABEhQKEERPRVNfTk9UX0'
-    'hBVkVfSVQQAhIRCg1NSUdIVF9IQVZFX0lUEAM=');
-
 @$core.Deprecated('Use cardTypeDescriptor instead')
 const CardType$json = {
   '1': 'CardType',
@@ -112,31 +96,203 @@ final $typed_data.Uint8List roomDescriptor = $convert.base64Decode(
     'T00QBRIVChFST09NX0NPTlNFUlZBVE9SWRAGEhYKElJPT01fQklMTElBUkRfUk9PTRAHEhAKDF'
     'JPT01fTElCUkFSWRAIEg4KClJPT01fU1RVRFkQCQ==');
 
-@$core.Deprecated('Use gameStatusRequestDescriptor instead')
-const GameStatusRequest$json = {
-  '1': 'GameStatusRequest',
+@$core.Deprecated('Use cardDescriptor instead')
+const Card$json = {
+  '1': 'Card',
   '2': [
-    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+    {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.clue.CardType', '10': 'type'},
+    {
+      '1': 'suspect',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.clue.Suspect',
+      '9': 0,
+      '10': 'suspect'
+    },
+    {
+      '1': 'weapon',
+      '3': 3,
+      '4': 1,
+      '5': 14,
+      '6': '.clue.Weapon',
+      '9': 0,
+      '10': 'weapon'
+    },
+    {
+      '1': 'room',
+      '3': 4,
+      '4': 1,
+      '5': 14,
+      '6': '.clue.Room',
+      '9': 0,
+      '10': 'room'
+    },
+  ],
+  '8': [
+    {'1': 'value'},
   ],
 };
 
-/// Descriptor for `GameStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List gameStatusRequestDescriptor = $convert.base64Decode(
-    'ChFHYW1lU3RhdHVzUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQ=');
+/// Descriptor for `Card`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List cardDescriptor = $convert.base64Decode(
+    'CgRDYXJkEiIKBHR5cGUYASABKA4yDi5jbHVlLkNhcmRUeXBlUgR0eXBlEikKB3N1c3BlY3QYAi'
+    'ABKA4yDS5jbHVlLlN1c3BlY3RIAFIHc3VzcGVjdBImCgZ3ZWFwb24YAyABKA4yDC5jbHVlLldl'
+    'YXBvbkgAUgZ3ZWFwb24SIAoEcm9vbRgEIAEoDjIKLmNsdWUuUm9vbUgAUgRyb29tQgcKBXZhbH'
+    'Vl');
 
-@$core.Deprecated('Use gameStatusResponseDescriptor instead')
-const GameStatusResponse$json = {
-  '1': 'GameStatusResponse',
+@$core.Deprecated('Use turnDataDescriptor instead')
+const TurnData$json = {
+  '1': 'TurnData',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 9, '10': 'status'},
-    {'1': 'is_active', '3': 2, '4': 1, '5': 8, '10': 'isActive'},
+    {
+      '1': 'suggester_player_index',
+      '3': 1,
+      '4': 1,
+      '5': 5,
+      '10': 'suggesterPlayerIndex'
+    },
+    {
+      '1': 'suspect',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.clue.Card',
+      '10': 'suspect'
+    },
+    {'1': 'weapon', '3': 3, '4': 1, '5': 11, '6': '.clue.Card', '10': 'weapon'},
+    {'1': 'room', '3': 4, '4': 1, '5': 11, '6': '.clue.Card', '10': 'room'},
+    {
+      '1': 'responder_player_index',
+      '3': 5,
+      '4': 1,
+      '5': 5,
+      '10': 'responderPlayerIndex'
+    },
+    {
+      '1': 'card_shown',
+      '3': 6,
+      '4': 1,
+      '5': 11,
+      '6': '.clue.Card',
+      '9': 0,
+      '10': 'cardShown',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_card_shown'},
   ],
 };
 
-/// Descriptor for `GameStatusResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List gameStatusResponseDescriptor = $convert.base64Decode(
-    'ChJHYW1lU3RhdHVzUmVzcG9uc2USFgoGc3RhdHVzGAEgASgJUgZzdGF0dXMSGwoJaXNfYWN0aX'
-    'ZlGAIgASgIUghpc0FjdGl2ZQ==');
+/// Descriptor for `TurnData`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List turnDataDescriptor = $convert.base64Decode(
+    'CghUdXJuRGF0YRI0ChZzdWdnZXN0ZXJfcGxheWVyX2luZGV4GAEgASgFUhRzdWdnZXN0ZXJQbG'
+    'F5ZXJJbmRleBIkCgdzdXNwZWN0GAIgASgLMgouY2x1ZS5DYXJkUgdzdXNwZWN0EiIKBndlYXBv'
+    'bhgDIAEoCzIKLmNsdWUuQ2FyZFIGd2VhcG9uEh4KBHJvb20YBCABKAsyCi5jbHVlLkNhcmRSBH'
+    'Jvb20SNAoWcmVzcG9uZGVyX3BsYXllcl9pbmRleBgFIAEoBVIUcmVzcG9uZGVyUGxheWVySW5k'
+    'ZXgSLgoKY2FyZF9zaG93bhgGIAEoCzIKLmNsdWUuQ2FyZEgAUgljYXJkU2hvd26IAQFCDQoLX2'
+    'NhcmRfc2hvd24=');
+
+@$core.Deprecated('Use turnEntryDescriptor instead')
+const TurnEntry$json = {
+  '1': 'TurnEntry',
+  '2': [
+    {'1': 'turn_id', '3': 1, '4': 1, '5': 9, '10': 'turnId'},
+    {'1': 'turn_number', '3': 2, '4': 1, '5': 5, '10': 'turnNumber'},
+    {'1': 'data', '3': 3, '4': 1, '5': 11, '6': '.clue.TurnData', '10': 'data'},
+  ],
+};
+
+/// Descriptor for `TurnEntry`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List turnEntryDescriptor = $convert.base64Decode(
+    'CglUdXJuRW50cnkSFwoHdHVybl9pZBgBIAEoCVIGdHVybklkEh8KC3R1cm5fbnVtYmVyGAIgAS'
+    'gFUgp0dXJuTnVtYmVyEiIKBGRhdGEYAyABKAsyDi5jbHVlLlR1cm5EYXRhUgRkYXRh');
+
+@$core.Deprecated('Use playerInfoDescriptor instead')
+const PlayerInfo$json = {
+  '1': 'PlayerInfo',
+  '2': [
+    {'1': 'index', '3': 1, '4': 1, '5': 5, '10': 'index'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'card_count', '3': 3, '4': 1, '5': 5, '10': 'cardCount'},
+  ],
+};
+
+/// Descriptor for `PlayerInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List playerInfoDescriptor = $convert.base64Decode(
+    'CgpQbGF5ZXJJbmZvEhQKBWluZGV4GAEgASgFUgVpbmRleBISCgRuYW1lGAIgASgJUgRuYW1lEh'
+    '0KCmNhcmRfY291bnQYAyABKAVSCWNhcmRDb3VudA==');
+
+@$core.Deprecated('Use cellStateDescriptor instead')
+const CellState$json = {
+  '1': 'CellState',
+  '2': [
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.clue.CellState.Status',
+      '10': 'status'
+    },
+  ],
+  '4': [CellState_Status$json],
+};
+
+@$core.Deprecated('Use cellStateDescriptor instead')
+const CellState_Status$json = {
+  '1': 'Status',
+  '2': [
+    {'1': 'UNKNOWN', '2': 0},
+    {'1': 'HAS', '2': 1},
+    {'1': 'DOES_NOT_HAVE', '2': 2},
+    {'1': 'MIGHT_HAVE', '2': 3},
+  ],
+};
+
+/// Descriptor for `CellState`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List cellStateDescriptor = $convert.base64Decode(
+    'CglDZWxsU3RhdGUSLgoGc3RhdHVzGAEgASgOMhYuY2x1ZS5DZWxsU3RhdGUuU3RhdHVzUgZzdG'
+    'F0dXMiQQoGU3RhdHVzEgsKB1VOS05PV04QABIHCgNIQVMQARIRCg1ET0VTX05PVF9IQVZFEAIS'
+    'DgoKTUlHSFRfSEFWRRAD');
+
+@$core.Deprecated('Use gridRowDescriptor instead')
+const GridRow$json = {
+  '1': 'GridRow',
+  '2': [
+    {'1': 'card', '3': 1, '4': 1, '5': 11, '6': '.clue.Card', '10': 'card'},
+    {
+      '1': 'player_states',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.clue.CellState',
+      '10': 'playerStates'
+    },
+  ],
+};
+
+/// Descriptor for `GridRow`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List gridRowDescriptor = $convert.base64Decode(
+    'CgdHcmlkUm93Eh4KBGNhcmQYASABKAsyCi5jbHVlLkNhcmRSBGNhcmQSNAoNcGxheWVyX3N0YX'
+    'RlcxgCIAMoCzIPLmNsdWUuQ2VsbFN0YXRlUgxwbGF5ZXJTdGF0ZXM=');
+
+@$core.Deprecated('Use solutionProbabilityDescriptor instead')
+const SolutionProbability$json = {
+  '1': 'SolutionProbability',
+  '2': [
+    {'1': 'card', '3': 1, '4': 1, '5': 11, '6': '.clue.Card', '10': 'card'},
+    {'1': 'probability', '3': 2, '4': 1, '5': 2, '10': 'probability'},
+    {'1': 'is_eliminated', '3': 3, '4': 1, '5': 8, '10': 'isEliminated'},
+  ],
+};
+
+/// Descriptor for `SolutionProbability`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List solutionProbabilityDescriptor = $convert.base64Decode(
+    'ChNTb2x1dGlvblByb2JhYmlsaXR5Eh4KBGNhcmQYASABKAsyCi5jbHVlLkNhcmRSBGNhcmQSIA'
+    'oLcHJvYmFiaWxpdHkYAiABKAJSC3Byb2JhYmlsaXR5EiMKDWlzX2VsaW1pbmF0ZWQYAyABKAhS'
+    'DGlzRWxpbWluYXRlZA==');
 
 @$core.Deprecated('Use initGameRequestDescriptor instead')
 const InitGameRequest$json = {
@@ -145,12 +301,12 @@ const InitGameRequest$json = {
     {'1': 'num_players', '3': 1, '4': 1, '5': 5, '10': 'numPlayers'},
     {'1': 'player_names', '3': 2, '4': 3, '5': 9, '10': 'playerNames'},
     {
-      '1': 'my_cards',
+      '1': 'my_hand',
       '3': 3,
       '4': 3,
       '5': 11,
       '6': '.clue.Card',
-      '10': 'myCards'
+      '10': 'myHand'
     },
   ],
 };
@@ -158,8 +314,8 @@ const InitGameRequest$json = {
 /// Descriptor for `InitGameRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List initGameRequestDescriptor = $convert.base64Decode(
     'Cg9Jbml0R2FtZVJlcXVlc3QSHwoLbnVtX3BsYXllcnMYASABKAVSCm51bVBsYXllcnMSIQoMcG'
-    'xheWVyX25hbWVzGAIgAygJUgtwbGF5ZXJOYW1lcxIlCghteV9jYXJkcxgDIAMoCzIKLmNsdWUu'
-    'Q2FyZFIHbXlDYXJkcw==');
+    'xheWVyX25hbWVzGAIgAygJUgtwbGF5ZXJOYW1lcxIjCgdteV9oYW5kGAMgAygLMgouY2x1ZS5D'
+    'YXJkUgZteUhhbmQ=');
 
 @$core.Deprecated('Use initGameResponseDescriptor instead')
 const InitGameResponse$json = {
@@ -181,53 +337,37 @@ const TurnRequest$json = {
   '1': 'TurnRequest',
   '2': [
     {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
-    {'1': 'suggester', '3': 2, '4': 1, '5': 9, '10': 'suggester'},
-    {
-      '1': 'suggestion_suspect',
-      '3': 3,
-      '4': 1,
-      '5': 11,
-      '6': '.clue.Card',
-      '10': 'suggestionSuspect'
-    },
-    {
-      '1': 'suggestion_weapon',
-      '3': 4,
-      '4': 1,
-      '5': 11,
-      '6': '.clue.Card',
-      '10': 'suggestionWeapon'
-    },
-    {
-      '1': 'suggestion_room',
-      '3': 5,
-      '4': 1,
-      '5': 11,
-      '6': '.clue.Card',
-      '10': 'suggestionRoom'
-    },
-    {'1': 'responder', '3': 6, '4': 1, '5': 9, '10': 'responder'},
-    {'1': 'card_shown', '3': 7, '4': 1, '5': 8, '10': 'cardShown'},
-    {
-      '1': 'shown_card',
-      '3': 8,
-      '4': 1,
-      '5': 11,
-      '6': '.clue.Card',
-      '10': 'shownCard'
-    },
+    {'1': 'data', '3': 2, '4': 1, '5': 11, '6': '.clue.TurnData', '10': 'data'},
   ],
 };
 
 /// Descriptor for `TurnRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List turnRequestDescriptor = $convert.base64Decode(
-    'CgtUdXJuUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQSHAoJc3VnZ2VzdGVyGAIgAS'
-    'gJUglzdWdnZXN0ZXISOQoSc3VnZ2VzdGlvbl9zdXNwZWN0GAMgASgLMgouY2x1ZS5DYXJkUhFz'
-    'dWdnZXN0aW9uU3VzcGVjdBI3ChFzdWdnZXN0aW9uX3dlYXBvbhgEIAEoCzIKLmNsdWUuQ2FyZF'
-    'IQc3VnZ2VzdGlvbldlYXBvbhIzCg9zdWdnZXN0aW9uX3Jvb20YBSABKAsyCi5jbHVlLkNhcmRS'
-    'DnN1Z2dlc3Rpb25Sb29tEhwKCXJlc3BvbmRlchgGIAEoCVIJcmVzcG9uZGVyEh0KCmNhcmRfc2'
-    'hvd24YByABKAhSCWNhcmRTaG93bhIpCgpzaG93bl9jYXJkGAggASgLMgouY2x1ZS5DYXJkUglz'
-    'aG93bkNhcmQ=');
+    'CgtUdXJuUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQSIgoEZGF0YRgCIAEoCzIOLm'
+    'NsdWUuVHVybkRhdGFSBGRhdGE=');
+
+@$core.Deprecated('Use updateTurnRequestDescriptor instead')
+const UpdateTurnRequest$json = {
+  '1': 'UpdateTurnRequest',
+  '2': [
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+    {'1': 'turn_id', '3': 2, '4': 1, '5': 9, '10': 'turnId'},
+    {
+      '1': 'new_data',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.clue.TurnData',
+      '10': 'newData'
+    },
+  ],
+};
+
+/// Descriptor for `UpdateTurnRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateTurnRequestDescriptor = $convert.base64Decode(
+    'ChFVcGRhdGVUdXJuUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQSFwoHdHVybl9pZB'
+    'gCIAEoCVIGdHVybklkEikKCG5ld19kYXRhGAMgASgLMg4uY2x1ZS5UdXJuRGF0YVIHbmV3RGF0'
+    'YQ==');
 
 @$core.Deprecated('Use turnResponseDescriptor instead')
 const TurnResponse$json = {
@@ -243,90 +383,102 @@ final $typed_data.Uint8List turnResponseDescriptor = $convert.base64Decode(
     'CgxUdXJuUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIjCg1lcnJvcl9tZXNzYW'
     'dlGAIgASgJUgxlcnJvck1lc3NhZ2U=');
 
-@$core.Deprecated('Use deductionRequestDescriptor instead')
-const DeductionRequest$json = {
-  '1': 'DeductionRequest',
+@$core.Deprecated('Use undoRequestDescriptor instead')
+const UndoRequest$json = {
+  '1': 'UndoRequest',
   '2': [
     {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
   ],
 };
 
-/// Descriptor for `DeductionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deductionRequestDescriptor = $convert.base64Decode(
-    'ChBEZWR1Y3Rpb25SZXF1ZXN0EhcKB2dhbWVfaWQYASABKAlSBmdhbWVJZA==');
+/// Descriptor for `UndoRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List undoRequestDescriptor = $convert
+    .base64Decode('CgtVbmRvUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQ=');
 
-@$core.Deprecated('Use deductionResponseDescriptor instead')
-const DeductionResponse$json = {
-  '1': 'DeductionResponse',
+@$core.Deprecated('Use undoResponseDescriptor instead')
+const UndoResponse$json = {
+  '1': 'UndoResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `UndoResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List undoResponseDescriptor = $convert
+    .base64Decode('CgxVbmRvUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2Vzcw==');
+
+@$core.Deprecated('Use getHistoryRequestDescriptor instead')
+const GetHistoryRequest$json = {
+  '1': 'GetHistoryRequest',
+  '2': [
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+  ],
+};
+
+/// Descriptor for `GetHistoryRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getHistoryRequestDescriptor = $convert.base64Decode(
+    'ChFHZXRIaXN0b3J5UmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQ=');
+
+@$core.Deprecated('Use getHistoryResponseDescriptor instead')
+const GetHistoryResponse$json = {
+  '1': 'GetHistoryResponse',
   '2': [
     {
-      '1': 'knowledge',
+      '1': 'history',
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.clue.CardKnowledge',
-      '10': 'knowledge'
+      '6': '.clue.TurnEntry',
+      '10': 'history'
     },
   ],
 };
 
-/// Descriptor for `DeductionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deductionResponseDescriptor = $convert.base64Decode(
-    'ChFEZWR1Y3Rpb25SZXNwb25zZRIxCglrbm93bGVkZ2UYASADKAsyEy5jbHVlLkNhcmRLbm93bG'
-    'VkZ2VSCWtub3dsZWRnZQ==');
+/// Descriptor for `GetHistoryResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getHistoryResponseDescriptor = $convert.base64Decode(
+    'ChJHZXRIaXN0b3J5UmVzcG9uc2USKQoHaGlzdG9yeRgBIAMoCzIPLmNsdWUuVHVybkVudHJ5Ug'
+    'doaXN0b3J5');
 
-@$core.Deprecated('Use cardKnowledgeDescriptor instead')
-const CardKnowledge$json = {
-  '1': 'CardKnowledge',
+@$core.Deprecated('Use gameStateRequestDescriptor instead')
+const GameStateRequest$json = {
+  '1': 'GameStateRequest',
   '2': [
-    {'1': 'player_name', '3': 1, '4': 1, '5': 9, '10': 'playerName'},
-    {'1': 'card', '3': 2, '4': 1, '5': 11, '6': '.clue.Card', '10': 'card'},
-    {
-      '1': 'status',
-      '3': 3,
-      '4': 1,
-      '5': 14,
-      '6': '.clue.DeductionStatus',
-      '10': 'status'
-    },
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
   ],
 };
 
-/// Descriptor for `CardKnowledge`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cardKnowledgeDescriptor = $convert.base64Decode(
-    'Cg1DYXJkS25vd2xlZGdlEh8KC3BsYXllcl9uYW1lGAEgASgJUgpwbGF5ZXJOYW1lEh4KBGNhcm'
-    'QYAiABKAsyCi5jbHVlLkNhcmRSBGNhcmQSLQoGc3RhdHVzGAMgASgOMhUuY2x1ZS5EZWR1Y3Rp'
-    'b25TdGF0dXNSBnN0YXR1cw==');
+/// Descriptor for `GameStateRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List gameStateRequestDescriptor = $convert.base64Decode(
+    'ChBHYW1lU3RhdGVSZXF1ZXN0EhcKB2dhbWVfaWQYASABKAlSBmdhbWVJZA==');
 
-@$core.Deprecated('Use cardDescriptor instead')
-const Card$json = {
-  '1': 'Card',
+@$core.Deprecated('Use gameStateResponseDescriptor instead')
+const GameStateResponse$json = {
+  '1': 'GameStateResponse',
   '2': [
-    {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'type', '3': 2, '4': 1, '5': 14, '6': '.clue.CardType', '10': 'type'},
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
     {
-      '1': 'suspect',
-      '3': 3,
-      '4': 1,
-      '5': 14,
-      '6': '.clue.Suspect',
-      '10': 'suspect'
+      '1': 'players',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.clue.PlayerInfo',
+      '10': 'players'
     },
+    {'1': 'rows', '3': 3, '4': 3, '5': 11, '6': '.clue.GridRow', '10': 'rows'},
     {
-      '1': 'weapon',
+      '1': 'solution_probabilities',
       '3': 4,
-      '4': 1,
-      '5': 14,
-      '6': '.clue.Weapon',
-      '10': 'weapon'
+      '4': 3,
+      '5': 11,
+      '6': '.clue.SolutionProbability',
+      '10': 'solutionProbabilities'
     },
-    {'1': 'room', '3': 5, '4': 1, '5': 14, '6': '.clue.Room', '10': 'room'},
   ],
 };
 
-/// Descriptor for `Card`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cardDescriptor = $convert.base64Decode(
-    'CgRDYXJkEhIKBG5hbWUYASABKAlSBG5hbWUSIgoEdHlwZRgCIAEoDjIOLmNsdWUuQ2FyZFR5cG'
-    'VSBHR5cGUSJwoHc3VzcGVjdBgDIAEoDjINLmNsdWUuU3VzcGVjdFIHc3VzcGVjdBIkCgZ3ZWFw'
-    'b24YBCABKA4yDC5jbHVlLldlYXBvblIGd2VhcG9uEh4KBHJvb20YBSABKA4yCi5jbHVlLlJvb2'
-    '1SBHJvb20=');
+/// Descriptor for `GameStateResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List gameStateResponseDescriptor = $convert.base64Decode(
+    'ChFHYW1lU3RhdGVSZXNwb25zZRIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQSKgoHcGxheWVycx'
+    'gCIAMoCzIQLmNsdWUuUGxheWVySW5mb1IHcGxheWVycxIhCgRyb3dzGAMgAygLMg0uY2x1ZS5H'
+    'cmlkUm93UgRyb3dzElAKFnNvbHV0aW9uX3Byb2JhYmlsaXRpZXMYBCADKAsyGS5jbHVlLlNvbH'
+    'V0aW9uUHJvYmFiaWxpdHlSFXNvbHV0aW9uUHJvYmFiaWxpdGllcw==');

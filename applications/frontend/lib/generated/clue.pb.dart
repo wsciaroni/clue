@@ -20,136 +20,602 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 export 'clue.pbenum.dart';
 
-class GameStatusRequest extends $pb.GeneratedMessage {
-  factory GameStatusRequest({
-    $core.String? gameId,
+enum Card_Value { suspect, weapon, room, notSet }
+
+class Card extends $pb.GeneratedMessage {
+  factory Card({
+    CardType? type,
+    Suspect? suspect,
+    Weapon? weapon,
+    Room? room,
   }) {
     final result = create();
-    if (gameId != null) result.gameId = gameId;
+    if (type != null) result.type = type;
+    if (suspect != null) result.suspect = suspect;
+    if (weapon != null) result.weapon = weapon;
+    if (room != null) result.room = room;
     return result;
   }
 
-  GameStatusRequest._();
+  Card._();
 
-  factory GameStatusRequest.fromBuffer($core.List<$core.int> data,
+  factory Card.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GameStatusRequest.fromJson($core.String json,
+  factory Card.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
+  static const $core.Map<$core.int, Card_Value> _Card_ValueByTag = {
+    2: Card_Value.suspect,
+    3: Card_Value.weapon,
+    4: Card_Value.room,
+    0: Card_Value.notSet
+  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GameStatusRequest',
+      _omitMessageNames ? '' : 'Card',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..oo(0, [2, 3, 4])
+    ..aE<CardType>(1, _omitFieldNames ? '' : 'type',
+        enumValues: CardType.values)
+    ..aE<Suspect>(2, _omitFieldNames ? '' : 'suspect',
+        enumValues: Suspect.values)
+    ..aE<Weapon>(3, _omitFieldNames ? '' : 'weapon', enumValues: Weapon.values)
+    ..aE<Room>(4, _omitFieldNames ? '' : 'room', enumValues: Room.values)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GameStatusRequest clone() => deepCopy();
+  Card clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GameStatusRequest copyWith(void Function(GameStatusRequest) updates) =>
-      super.copyWith((message) => updates(message as GameStatusRequest))
-          as GameStatusRequest;
+  Card copyWith(void Function(Card) updates) =>
+      super.copyWith((message) => updates(message as Card)) as Card;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GameStatusRequest create() => GameStatusRequest._();
+  static Card create() => Card._();
   @$core.override
-  GameStatusRequest createEmptyInstance() => create();
+  Card createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GameStatusRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GameStatusRequest>(create);
-  static GameStatusRequest? _defaultInstance;
+  static Card getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Card>(create);
+  static Card? _defaultInstance;
+
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  Card_Value whichValue() => _Card_ValueByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  void clearValue() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
-  $core.String get gameId => $_getSZ(0);
+  CardType get type => $_getN(0);
   @$pb.TagNumber(1)
-  set gameId($core.String value) => $_setString(0, value);
+  set type(CardType value) => $_setField(1, value);
   @$pb.TagNumber(1)
-  $core.bool hasGameId() => $_has(0);
+  $core.bool hasType() => $_has(0);
   @$pb.TagNumber(1)
-  void clearGameId() => $_clearField(1);
+  void clearType() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  Suspect get suspect => $_getN(1);
+  @$pb.TagNumber(2)
+  set suspect(Suspect value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasSuspect() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSuspect() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  Weapon get weapon => $_getN(2);
+  @$pb.TagNumber(3)
+  set weapon(Weapon value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasWeapon() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearWeapon() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  Room get room => $_getN(3);
+  @$pb.TagNumber(4)
+  set room(Room value) => $_setField(4, value);
+  @$pb.TagNumber(4)
+  $core.bool hasRoom() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearRoom() => $_clearField(4);
 }
 
-class GameStatusResponse extends $pb.GeneratedMessage {
-  factory GameStatusResponse({
-    $core.String? status,
-    $core.bool? isActive,
+class TurnData extends $pb.GeneratedMessage {
+  factory TurnData({
+    $core.int? suggesterPlayerIndex,
+    Card? suspect,
+    Card? weapon,
+    Card? room,
+    $core.int? responderPlayerIndex,
+    Card? cardShown,
+  }) {
+    final result = create();
+    if (suggesterPlayerIndex != null)
+      result.suggesterPlayerIndex = suggesterPlayerIndex;
+    if (suspect != null) result.suspect = suspect;
+    if (weapon != null) result.weapon = weapon;
+    if (room != null) result.room = room;
+    if (responderPlayerIndex != null)
+      result.responderPlayerIndex = responderPlayerIndex;
+    if (cardShown != null) result.cardShown = cardShown;
+    return result;
+  }
+
+  TurnData._();
+
+  factory TurnData.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory TurnData.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'TurnData',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'suggesterPlayerIndex')
+    ..aOM<Card>(2, _omitFieldNames ? '' : 'suspect', subBuilder: Card.create)
+    ..aOM<Card>(3, _omitFieldNames ? '' : 'weapon', subBuilder: Card.create)
+    ..aOM<Card>(4, _omitFieldNames ? '' : 'room', subBuilder: Card.create)
+    ..aI(5, _omitFieldNames ? '' : 'responderPlayerIndex')
+    ..aOM<Card>(6, _omitFieldNames ? '' : 'cardShown', subBuilder: Card.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TurnData clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TurnData copyWith(void Function(TurnData) updates) =>
+      super.copyWith((message) => updates(message as TurnData)) as TurnData;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TurnData create() => TurnData._();
+  @$core.override
+  TurnData createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static TurnData getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TurnData>(create);
+  static TurnData? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get suggesterPlayerIndex => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set suggesterPlayerIndex($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSuggesterPlayerIndex() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuggesterPlayerIndex() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  Card get suspect => $_getN(1);
+  @$pb.TagNumber(2)
+  set suspect(Card value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasSuspect() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSuspect() => $_clearField(2);
+  @$pb.TagNumber(2)
+  Card ensureSuspect() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  Card get weapon => $_getN(2);
+  @$pb.TagNumber(3)
+  set weapon(Card value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasWeapon() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearWeapon() => $_clearField(3);
+  @$pb.TagNumber(3)
+  Card ensureWeapon() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  Card get room => $_getN(3);
+  @$pb.TagNumber(4)
+  set room(Card value) => $_setField(4, value);
+  @$pb.TagNumber(4)
+  $core.bool hasRoom() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearRoom() => $_clearField(4);
+  @$pb.TagNumber(4)
+  Card ensureRoom() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  $core.int get responderPlayerIndex => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set responderPlayerIndex($core.int value) => $_setSignedInt32(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasResponderPlayerIndex() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearResponderPlayerIndex() => $_clearField(5);
+
+  @$pb.TagNumber(6)
+  Card get cardShown => $_getN(5);
+  @$pb.TagNumber(6)
+  set cardShown(Card value) => $_setField(6, value);
+  @$pb.TagNumber(6)
+  $core.bool hasCardShown() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCardShown() => $_clearField(6);
+  @$pb.TagNumber(6)
+  Card ensureCardShown() => $_ensure(5);
+}
+
+class TurnEntry extends $pb.GeneratedMessage {
+  factory TurnEntry({
+    $core.String? turnId,
+    $core.int? turnNumber,
+    TurnData? data,
+  }) {
+    final result = create();
+    if (turnId != null) result.turnId = turnId;
+    if (turnNumber != null) result.turnNumber = turnNumber;
+    if (data != null) result.data = data;
+    return result;
+  }
+
+  TurnEntry._();
+
+  factory TurnEntry.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory TurnEntry.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'TurnEntry',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'turnId')
+    ..aI(2, _omitFieldNames ? '' : 'turnNumber')
+    ..aOM<TurnData>(3, _omitFieldNames ? '' : 'data',
+        subBuilder: TurnData.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TurnEntry clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TurnEntry copyWith(void Function(TurnEntry) updates) =>
+      super.copyWith((message) => updates(message as TurnEntry)) as TurnEntry;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TurnEntry create() => TurnEntry._();
+  @$core.override
+  TurnEntry createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static TurnEntry getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TurnEntry>(create);
+  static TurnEntry? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get turnId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set turnId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasTurnId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTurnId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get turnNumber => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set turnNumber($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTurnNumber() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTurnNumber() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  TurnData get data => $_getN(2);
+  @$pb.TagNumber(3)
+  set data(TurnData value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasData() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearData() => $_clearField(3);
+  @$pb.TagNumber(3)
+  TurnData ensureData() => $_ensure(2);
+}
+
+class PlayerInfo extends $pb.GeneratedMessage {
+  factory PlayerInfo({
+    $core.int? index,
+    $core.String? name,
+    $core.int? cardCount,
+  }) {
+    final result = create();
+    if (index != null) result.index = index;
+    if (name != null) result.name = name;
+    if (cardCount != null) result.cardCount = cardCount;
+    return result;
+  }
+
+  PlayerInfo._();
+
+  factory PlayerInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PlayerInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PlayerInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'index')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aI(3, _omitFieldNames ? '' : 'cardCount')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PlayerInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PlayerInfo copyWith(void Function(PlayerInfo) updates) =>
+      super.copyWith((message) => updates(message as PlayerInfo)) as PlayerInfo;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PlayerInfo create() => PlayerInfo._();
+  @$core.override
+  PlayerInfo createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static PlayerInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PlayerInfo>(create);
+  static PlayerInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get index => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set index($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIndex() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIndex() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get cardCount => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set cardCount($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasCardCount() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCardCount() => $_clearField(3);
+}
+
+class CellState extends $pb.GeneratedMessage {
+  factory CellState({
+    CellState_Status? status,
   }) {
     final result = create();
     if (status != null) result.status = status;
-    if (isActive != null) result.isActive = isActive;
     return result;
   }
 
-  GameStatusResponse._();
+  CellState._();
 
-  factory GameStatusResponse.fromBuffer($core.List<$core.int> data,
+  factory CellState.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GameStatusResponse.fromJson($core.String json,
+  factory CellState.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GameStatusResponse',
+      _omitMessageNames ? '' : 'CellState',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'status')
-    ..aOB(2, _omitFieldNames ? '' : 'isActive')
+    ..aE<CellState_Status>(1, _omitFieldNames ? '' : 'status',
+        enumValues: CellState_Status.values)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GameStatusResponse clone() => deepCopy();
+  CellState clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GameStatusResponse copyWith(void Function(GameStatusResponse) updates) =>
-      super.copyWith((message) => updates(message as GameStatusResponse))
-          as GameStatusResponse;
+  CellState copyWith(void Function(CellState) updates) =>
+      super.copyWith((message) => updates(message as CellState)) as CellState;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GameStatusResponse create() => GameStatusResponse._();
+  static CellState create() => CellState._();
   @$core.override
-  GameStatusResponse createEmptyInstance() => create();
+  CellState createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GameStatusResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GameStatusResponse>(create);
-  static GameStatusResponse? _defaultInstance;
+  static CellState getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CellState>(create);
+  static CellState? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get status => $_getSZ(0);
+  CellState_Status get status => $_getN(0);
   @$pb.TagNumber(1)
-  set status($core.String value) => $_setString(0, value);
+  set status(CellState_Status value) => $_setField(1, value);
   @$pb.TagNumber(1)
   $core.bool hasStatus() => $_has(0);
   @$pb.TagNumber(1)
   void clearStatus() => $_clearField(1);
+}
+
+class GridRow extends $pb.GeneratedMessage {
+  factory GridRow({
+    Card? card,
+    $core.Iterable<CellState>? playerStates,
+  }) {
+    final result = create();
+    if (card != null) result.card = card;
+    if (playerStates != null) result.playerStates.addAll(playerStates);
+    return result;
+  }
+
+  GridRow._();
+
+  factory GridRow.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GridRow.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GridRow',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOM<Card>(1, _omitFieldNames ? '' : 'card', subBuilder: Card.create)
+    ..pPM<CellState>(2, _omitFieldNames ? '' : 'playerStates',
+        subBuilder: CellState.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GridRow clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GridRow copyWith(void Function(GridRow) updates) =>
+      super.copyWith((message) => updates(message as GridRow)) as GridRow;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GridRow create() => GridRow._();
+  @$core.override
+  GridRow createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GridRow getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GridRow>(create);
+  static GridRow? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Card get card => $_getN(0);
+  @$pb.TagNumber(1)
+  set card(Card value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCard() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCard() => $_clearField(1);
+  @$pb.TagNumber(1)
+  Card ensureCard() => $_ensure(0);
+
+  /// State of this card for every player (ordered by player index)
+  @$pb.TagNumber(2)
+  $pb.PbList<CellState> get playerStates => $_getList(1);
+}
+
+class SolutionProbability extends $pb.GeneratedMessage {
+  factory SolutionProbability({
+    Card? card,
+    $core.double? probability,
+    $core.bool? isEliminated,
+  }) {
+    final result = create();
+    if (card != null) result.card = card;
+    if (probability != null) result.probability = probability;
+    if (isEliminated != null) result.isEliminated = isEliminated;
+    return result;
+  }
+
+  SolutionProbability._();
+
+  factory SolutionProbability.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SolutionProbability.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SolutionProbability',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOM<Card>(1, _omitFieldNames ? '' : 'card', subBuilder: Card.create)
+    ..aD(2, _omitFieldNames ? '' : 'probability', fieldType: $pb.PbFieldType.OF)
+    ..aOB(3, _omitFieldNames ? '' : 'isEliminated')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SolutionProbability clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SolutionProbability copyWith(void Function(SolutionProbability) updates) =>
+      super.copyWith((message) => updates(message as SolutionProbability))
+          as SolutionProbability;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SolutionProbability create() => SolutionProbability._();
+  @$core.override
+  SolutionProbability createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SolutionProbability getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SolutionProbability>(create);
+  static SolutionProbability? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Card get card => $_getN(0);
+  @$pb.TagNumber(1)
+  set card(Card value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCard() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCard() => $_clearField(1);
+  @$pb.TagNumber(1)
+  Card ensureCard() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $core.bool get isActive => $_getBF(1);
+  $core.double get probability => $_getN(1);
   @$pb.TagNumber(2)
-  set isActive($core.bool value) => $_setBool(1, value);
+  set probability($core.double value) => $_setFloat(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasIsActive() => $_has(1);
+  $core.bool hasProbability() => $_has(1);
   @$pb.TagNumber(2)
-  void clearIsActive() => $_clearField(2);
+  void clearProbability() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.bool get isEliminated => $_getBF(2);
+  @$pb.TagNumber(3)
+  set isEliminated($core.bool value) => $_setBool(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasIsEliminated() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearIsEliminated() => $_clearField(3);
 }
 
 class InitGameRequest extends $pb.GeneratedMessage {
   factory InitGameRequest({
     $core.int? numPlayers,
     $core.Iterable<$core.String>? playerNames,
-    $core.Iterable<Card>? myCards,
+    $core.Iterable<Card>? myHand,
   }) {
     final result = create();
     if (numPlayers != null) result.numPlayers = numPlayers;
     if (playerNames != null) result.playerNames.addAll(playerNames);
-    if (myCards != null) result.myCards.addAll(myCards);
+    if (myHand != null) result.myHand.addAll(myHand);
     return result;
   }
 
@@ -168,7 +634,7 @@ class InitGameRequest extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'numPlayers')
     ..pPS(2, _omitFieldNames ? '' : 'playerNames')
-    ..pPM<Card>(3, _omitFieldNames ? '' : 'myCards', subBuilder: Card.create)
+    ..pPM<Card>(3, _omitFieldNames ? '' : 'myHand', subBuilder: Card.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -203,7 +669,7 @@ class InitGameRequest extends $pb.GeneratedMessage {
   $pb.PbList<$core.String> get playerNames => $_getList(1);
 
   @$pb.TagNumber(3)
-  $pb.PbList<Card> get myCards => $_getList(2);
+  $pb.PbList<Card> get myHand => $_getList(2);
 }
 
 class InitGameResponse extends $pb.GeneratedMessage {
@@ -287,23 +753,11 @@ class InitGameResponse extends $pb.GeneratedMessage {
 class TurnRequest extends $pb.GeneratedMessage {
   factory TurnRequest({
     $core.String? gameId,
-    $core.String? suggester,
-    Card? suggestionSuspect,
-    Card? suggestionWeapon,
-    Card? suggestionRoom,
-    $core.String? responder,
-    $core.bool? cardShown,
-    Card? shownCard,
+    TurnData? data,
   }) {
     final result = create();
     if (gameId != null) result.gameId = gameId;
-    if (suggester != null) result.suggester = suggester;
-    if (suggestionSuspect != null) result.suggestionSuspect = suggestionSuspect;
-    if (suggestionWeapon != null) result.suggestionWeapon = suggestionWeapon;
-    if (suggestionRoom != null) result.suggestionRoom = suggestionRoom;
-    if (responder != null) result.responder = responder;
-    if (cardShown != null) result.cardShown = cardShown;
-    if (shownCard != null) result.shownCard = shownCard;
+    if (data != null) result.data = data;
     return result;
   }
 
@@ -321,16 +775,8 @@ class TurnRequest extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'gameId')
-    ..aOS(2, _omitFieldNames ? '' : 'suggester')
-    ..aOM<Card>(3, _omitFieldNames ? '' : 'suggestionSuspect',
-        subBuilder: Card.create)
-    ..aOM<Card>(4, _omitFieldNames ? '' : 'suggestionWeapon',
-        subBuilder: Card.create)
-    ..aOM<Card>(5, _omitFieldNames ? '' : 'suggestionRoom',
-        subBuilder: Card.create)
-    ..aOS(6, _omitFieldNames ? '' : 'responder')
-    ..aOB(7, _omitFieldNames ? '' : 'cardShown')
-    ..aOM<Card>(8, _omitFieldNames ? '' : 'shownCard', subBuilder: Card.create)
+    ..aOM<TurnData>(2, _omitFieldNames ? '' : 'data',
+        subBuilder: TurnData.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -362,75 +808,96 @@ class TurnRequest extends $pb.GeneratedMessage {
   void clearGameId() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get suggester => $_getSZ(1);
+  TurnData get data => $_getN(1);
   @$pb.TagNumber(2)
-  set suggester($core.String value) => $_setString(1, value);
+  set data(TurnData value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasSuggester() => $_has(1);
+  $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
-  void clearSuggester() => $_clearField(2);
+  void clearData() => $_clearField(2);
+  @$pb.TagNumber(2)
+  TurnData ensureData() => $_ensure(1);
+}
+
+class UpdateTurnRequest extends $pb.GeneratedMessage {
+  factory UpdateTurnRequest({
+    $core.String? gameId,
+    $core.String? turnId,
+    TurnData? newData,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    if (turnId != null) result.turnId = turnId;
+    if (newData != null) result.newData = newData;
+    return result;
+  }
+
+  UpdateTurnRequest._();
+
+  factory UpdateTurnRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UpdateTurnRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UpdateTurnRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..aOS(2, _omitFieldNames ? '' : 'turnId')
+    ..aOM<TurnData>(3, _omitFieldNames ? '' : 'newData',
+        subBuilder: TurnData.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdateTurnRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdateTurnRequest copyWith(void Function(UpdateTurnRequest) updates) =>
+      super.copyWith((message) => updates(message as UpdateTurnRequest))
+          as UpdateTurnRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpdateTurnRequest create() => UpdateTurnRequest._();
+  @$core.override
+  UpdateTurnRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static UpdateTurnRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdateTurnRequest>(create);
+  static UpdateTurnRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get gameId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set gameId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get turnId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set turnId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTurnId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTurnId() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  Card get suggestionSuspect => $_getN(2);
+  TurnData get newData => $_getN(2);
   @$pb.TagNumber(3)
-  set suggestionSuspect(Card value) => $_setField(3, value);
+  set newData(TurnData value) => $_setField(3, value);
   @$pb.TagNumber(3)
-  $core.bool hasSuggestionSuspect() => $_has(2);
+  $core.bool hasNewData() => $_has(2);
   @$pb.TagNumber(3)
-  void clearSuggestionSuspect() => $_clearField(3);
+  void clearNewData() => $_clearField(3);
   @$pb.TagNumber(3)
-  Card ensureSuggestionSuspect() => $_ensure(2);
-
-  @$pb.TagNumber(4)
-  Card get suggestionWeapon => $_getN(3);
-  @$pb.TagNumber(4)
-  set suggestionWeapon(Card value) => $_setField(4, value);
-  @$pb.TagNumber(4)
-  $core.bool hasSuggestionWeapon() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSuggestionWeapon() => $_clearField(4);
-  @$pb.TagNumber(4)
-  Card ensureSuggestionWeapon() => $_ensure(3);
-
-  @$pb.TagNumber(5)
-  Card get suggestionRoom => $_getN(4);
-  @$pb.TagNumber(5)
-  set suggestionRoom(Card value) => $_setField(5, value);
-  @$pb.TagNumber(5)
-  $core.bool hasSuggestionRoom() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearSuggestionRoom() => $_clearField(5);
-  @$pb.TagNumber(5)
-  Card ensureSuggestionRoom() => $_ensure(4);
-
-  @$pb.TagNumber(6)
-  $core.String get responder => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set responder($core.String value) => $_setString(5, value);
-  @$pb.TagNumber(6)
-  $core.bool hasResponder() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearResponder() => $_clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.bool get cardShown => $_getBF(6);
-  @$pb.TagNumber(7)
-  set cardShown($core.bool value) => $_setBool(6, value);
-  @$pb.TagNumber(7)
-  $core.bool hasCardShown() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearCardShown() => $_clearField(7);
-
-  @$pb.TagNumber(8)
-  Card get shownCard => $_getN(7);
-  @$pb.TagNumber(8)
-  set shownCard(Card value) => $_setField(8, value);
-  @$pb.TagNumber(8)
-  $core.bool hasShownCard() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearShownCard() => $_clearField(8);
-  @$pb.TagNumber(8)
-  Card ensureShownCard() => $_ensure(7);
+  TurnData ensureNewData() => $_ensure(2);
 }
 
 class TurnResponse extends $pb.GeneratedMessage {
@@ -499,8 +966,8 @@ class TurnResponse extends $pb.GeneratedMessage {
   void clearErrorMessage() => $_clearField(2);
 }
 
-class DeductionRequest extends $pb.GeneratedMessage {
-  factory DeductionRequest({
+class UndoRequest extends $pb.GeneratedMessage {
+  factory UndoRequest({
     $core.String? gameId,
   }) {
     final result = create();
@@ -508,40 +975,40 @@ class DeductionRequest extends $pb.GeneratedMessage {
     return result;
   }
 
-  DeductionRequest._();
+  UndoRequest._();
 
-  factory DeductionRequest.fromBuffer($core.List<$core.int> data,
+  factory UndoRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory DeductionRequest.fromJson($core.String json,
+  factory UndoRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'DeductionRequest',
+      _omitMessageNames ? '' : 'UndoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'gameId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeductionRequest clone() => deepCopy();
+  UndoRequest clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeductionRequest copyWith(void Function(DeductionRequest) updates) =>
-      super.copyWith((message) => updates(message as DeductionRequest))
-          as DeductionRequest;
+  UndoRequest copyWith(void Function(UndoRequest) updates) =>
+      super.copyWith((message) => updates(message as UndoRequest))
+          as UndoRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static DeductionRequest create() => DeductionRequest._();
+  static UndoRequest create() => UndoRequest._();
   @$core.override
-  DeductionRequest createEmptyInstance() => create();
+  UndoRequest createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static DeductionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<DeductionRequest>(create);
-  static DeductionRequest? _defaultInstance;
+  static UndoRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UndoRequest>(create);
+  static UndoRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get gameId => $_getSZ(0);
@@ -553,240 +1020,291 @@ class DeductionRequest extends $pb.GeneratedMessage {
   void clearGameId() => $_clearField(1);
 }
 
-class DeductionResponse extends $pb.GeneratedMessage {
-  factory DeductionResponse({
-    $core.Iterable<CardKnowledge>? knowledge,
+class UndoResponse extends $pb.GeneratedMessage {
+  factory UndoResponse({
+    $core.bool? success,
   }) {
     final result = create();
-    if (knowledge != null) result.knowledge.addAll(knowledge);
+    if (success != null) result.success = success;
     return result;
   }
 
-  DeductionResponse._();
+  UndoResponse._();
 
-  factory DeductionResponse.fromBuffer($core.List<$core.int> data,
+  factory UndoResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory DeductionResponse.fromJson($core.String json,
+  factory UndoResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'DeductionResponse',
+      _omitMessageNames ? '' : 'UndoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
-    ..pPM<CardKnowledge>(1, _omitFieldNames ? '' : 'knowledge',
-        subBuilder: CardKnowledge.create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeductionResponse clone() => deepCopy();
+  UndoResponse clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeductionResponse copyWith(void Function(DeductionResponse) updates) =>
-      super.copyWith((message) => updates(message as DeductionResponse))
-          as DeductionResponse;
+  UndoResponse copyWith(void Function(UndoResponse) updates) =>
+      super.copyWith((message) => updates(message as UndoResponse))
+          as UndoResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static DeductionResponse create() => DeductionResponse._();
+  static UndoResponse create() => UndoResponse._();
   @$core.override
-  DeductionResponse createEmptyInstance() => create();
+  UndoResponse createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static DeductionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<DeductionResponse>(create);
-  static DeductionResponse? _defaultInstance;
+  static UndoResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UndoResponse>(create);
+  static UndoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<CardKnowledge> get knowledge => $_getList(0);
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => $_clearField(1);
 }
 
-class CardKnowledge extends $pb.GeneratedMessage {
-  factory CardKnowledge({
-    $core.String? playerName,
-    Card? card,
-    DeductionStatus? status,
+class GetHistoryRequest extends $pb.GeneratedMessage {
+  factory GetHistoryRequest({
+    $core.String? gameId,
   }) {
     final result = create();
-    if (playerName != null) result.playerName = playerName;
-    if (card != null) result.card = card;
-    if (status != null) result.status = status;
+    if (gameId != null) result.gameId = gameId;
     return result;
   }
 
-  CardKnowledge._();
+  GetHistoryRequest._();
 
-  factory CardKnowledge.fromBuffer($core.List<$core.int> data,
+  factory GetHistoryRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory CardKnowledge.fromJson($core.String json,
+  factory GetHistoryRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'CardKnowledge',
+      _omitMessageNames ? '' : 'GetHistoryRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'playerName')
-    ..aOM<Card>(2, _omitFieldNames ? '' : 'card', subBuilder: Card.create)
-    ..aE<DeductionStatus>(3, _omitFieldNames ? '' : 'status',
-        enumValues: DeductionStatus.values)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  CardKnowledge clone() => deepCopy();
+  GetHistoryRequest clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  CardKnowledge copyWith(void Function(CardKnowledge) updates) =>
-      super.copyWith((message) => updates(message as CardKnowledge))
-          as CardKnowledge;
+  GetHistoryRequest copyWith(void Function(GetHistoryRequest) updates) =>
+      super.copyWith((message) => updates(message as GetHistoryRequest))
+          as GetHistoryRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static CardKnowledge create() => CardKnowledge._();
+  static GetHistoryRequest create() => GetHistoryRequest._();
   @$core.override
-  CardKnowledge createEmptyInstance() => create();
+  GetHistoryRequest createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static CardKnowledge getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CardKnowledge>(create);
-  static CardKnowledge? _defaultInstance;
+  static GetHistoryRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetHistoryRequest>(create);
+  static GetHistoryRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get playerName => $_getSZ(0);
+  $core.String get gameId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set playerName($core.String value) => $_setString(0, value);
+  set gameId($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasPlayerName() => $_has(0);
+  $core.bool hasGameId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearPlayerName() => $_clearField(1);
-
-  @$pb.TagNumber(2)
-  Card get card => $_getN(1);
-  @$pb.TagNumber(2)
-  set card(Card value) => $_setField(2, value);
-  @$pb.TagNumber(2)
-  $core.bool hasCard() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearCard() => $_clearField(2);
-  @$pb.TagNumber(2)
-  Card ensureCard() => $_ensure(1);
-
-  @$pb.TagNumber(3)
-  DeductionStatus get status => $_getN(2);
-  @$pb.TagNumber(3)
-  set status(DeductionStatus value) => $_setField(3, value);
-  @$pb.TagNumber(3)
-  $core.bool hasStatus() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearStatus() => $_clearField(3);
+  void clearGameId() => $_clearField(1);
 }
 
-class Card extends $pb.GeneratedMessage {
-  factory Card({
-    $core.String? name,
-    CardType? type,
-    Suspect? suspect,
-    Weapon? weapon,
-    Room? room,
+class GetHistoryResponse extends $pb.GeneratedMessage {
+  factory GetHistoryResponse({
+    $core.Iterable<TurnEntry>? history,
   }) {
     final result = create();
-    if (name != null) result.name = name;
-    if (type != null) result.type = type;
-    if (suspect != null) result.suspect = suspect;
-    if (weapon != null) result.weapon = weapon;
-    if (room != null) result.room = room;
+    if (history != null) result.history.addAll(history);
     return result;
   }
 
-  Card._();
+  GetHistoryResponse._();
 
-  factory Card.fromBuffer($core.List<$core.int> data,
+  factory GetHistoryResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory Card.fromJson($core.String json,
+  factory GetHistoryResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'Card',
+      _omitMessageNames ? '' : 'GetHistoryResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'name')
-    ..aE<CardType>(2, _omitFieldNames ? '' : 'type',
-        enumValues: CardType.values)
-    ..aE<Suspect>(3, _omitFieldNames ? '' : 'suspect',
-        enumValues: Suspect.values)
-    ..aE<Weapon>(4, _omitFieldNames ? '' : 'weapon', enumValues: Weapon.values)
-    ..aE<Room>(5, _omitFieldNames ? '' : 'room', enumValues: Room.values)
+    ..pPM<TurnEntry>(1, _omitFieldNames ? '' : 'history',
+        subBuilder: TurnEntry.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Card clone() => deepCopy();
+  GetHistoryResponse clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Card copyWith(void Function(Card) updates) =>
-      super.copyWith((message) => updates(message as Card)) as Card;
+  GetHistoryResponse copyWith(void Function(GetHistoryResponse) updates) =>
+      super.copyWith((message) => updates(message as GetHistoryResponse))
+          as GetHistoryResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static Card create() => Card._();
+  static GetHistoryResponse create() => GetHistoryResponse._();
   @$core.override
-  Card createEmptyInstance() => create();
+  GetHistoryResponse createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static Card getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Card>(create);
-  static Card? _defaultInstance;
+  static GetHistoryResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetHistoryResponse>(create);
+  static GetHistoryResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $pb.PbList<TurnEntry> get history => $_getList(0);
+}
+
+class GameStateRequest extends $pb.GeneratedMessage {
+  factory GameStateRequest({
+    $core.String? gameId,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    return result;
+  }
+
+  GameStateRequest._();
+
+  factory GameStateRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GameStateRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GameStateRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GameStateRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GameStateRequest copyWith(void Function(GameStateRequest) updates) =>
+      super.copyWith((message) => updates(message as GameStateRequest))
+          as GameStateRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GameStateRequest create() => GameStateRequest._();
+  @$core.override
+  GameStateRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GameStateRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GameStateRequest>(create);
+  static GameStateRequest? _defaultInstance;
+
   @$pb.TagNumber(1)
-  set name($core.String value) => $_setString(0, value);
+  $core.String get gameId => $_getSZ(0);
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  set gameId($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  void clearName() => $_clearField(1);
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
+}
+
+class GameStateResponse extends $pb.GeneratedMessage {
+  factory GameStateResponse({
+    $core.String? gameId,
+    $core.Iterable<PlayerInfo>? players,
+    $core.Iterable<GridRow>? rows,
+    $core.Iterable<SolutionProbability>? solutionProbabilities,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    if (players != null) result.players.addAll(players);
+    if (rows != null) result.rows.addAll(rows);
+    if (solutionProbabilities != null)
+      result.solutionProbabilities.addAll(solutionProbabilities);
+    return result;
+  }
+
+  GameStateResponse._();
+
+  factory GameStateResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GameStateResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GameStateResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..pPM<PlayerInfo>(2, _omitFieldNames ? '' : 'players',
+        subBuilder: PlayerInfo.create)
+    ..pPM<GridRow>(3, _omitFieldNames ? '' : 'rows', subBuilder: GridRow.create)
+    ..pPM<SolutionProbability>(
+        4, _omitFieldNames ? '' : 'solutionProbabilities',
+        subBuilder: SolutionProbability.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GameStateResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GameStateResponse copyWith(void Function(GameStateResponse) updates) =>
+      super.copyWith((message) => updates(message as GameStateResponse))
+          as GameStateResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GameStateResponse create() => GameStateResponse._();
+  @$core.override
+  GameStateResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GameStateResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GameStateResponse>(create);
+  static GameStateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get gameId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set gameId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  CardType get type => $_getN(1);
-  @$pb.TagNumber(2)
-  set type(CardType value) => $_setField(2, value);
-  @$pb.TagNumber(2)
-  $core.bool hasType() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearType() => $_clearField(2);
+  $pb.PbList<PlayerInfo> get players => $_getList(1);
 
-  /// One of the specific enums will be set based on type, or we use a universal ID.
-  /// For simplicity in logic, we might rely on a global enum or just use these.
-  /// Let's use a oneof or just simple fields if we want to carry the enum value.
   @$pb.TagNumber(3)
-  Suspect get suspect => $_getN(2);
-  @$pb.TagNumber(3)
-  set suspect(Suspect value) => $_setField(3, value);
-  @$pb.TagNumber(3)
-  $core.bool hasSuspect() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearSuspect() => $_clearField(3);
+  $pb.PbList<GridRow> get rows => $_getList(2);
 
   @$pb.TagNumber(4)
-  Weapon get weapon => $_getN(3);
-  @$pb.TagNumber(4)
-  set weapon(Weapon value) => $_setField(4, value);
-  @$pb.TagNumber(4)
-  $core.bool hasWeapon() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearWeapon() => $_clearField(4);
-
-  @$pb.TagNumber(5)
-  Room get room => $_getN(4);
-  @$pb.TagNumber(5)
-  set room(Room value) => $_setField(5, value);
-  @$pb.TagNumber(5)
-  $core.bool hasRoom() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearRoom() => $_clearField(5);
+  $pb.PbList<SolutionProbability> get solutionProbabilities => $_getList(3);
 }
 
 const $core.bool _omitFieldNames =

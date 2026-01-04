@@ -105,36 +105,95 @@ class GameState extends ChangeNotifier {
 
     try {
       await _client.submitTurn(turn);
-      final deductionResponse = await _client.fetchDeductions();
-      _updateDeductions(deductionResponse);
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
     } catch (e) {
        debugPrint('Failed to sync turn or fetch deductions: $e');
     }
   }
 
-  void _updateDeductions(proto.DeductionResponse response) {
-    for (var knowledge in response.knowledge) {
-       // Find player
-       try {
-         final player = _players.firstWhere((p) => p.name == knowledge.playerName);
-         // Find card
-         // We need to map proto card back to GameCard.
-         // Since we don't have an easy ID map, we'll try by name.
-         final gameCard = GameConstants.allCards.firstWhere(
-           (c) => c.name == knowledge.card.name,
-           orElse: () => GameCard(knowledge.card.name, _mapProtoCardType(knowledge.card.type))
-         );
+  void _updateDeductions(proto.GameStateResponse response) {
+    // GameStateResponse has rows. Each row has a card and player states.
+    for (var row in response.rows) {
+        // Find the GameCard for this row
+        // Map proto card back to GameCard.
+        // Try by type and enum value.
+        GameCard? gameCard;
 
-         final status = _mapProtoStatus(knowledge.status);
-         if (status != null) {
-            player.setStatus(gameCard, status);
-         }
+        String? targetName;
+        if (row.card.type == proto.CardType.CARD_TYPE_SUSPECT) {
+             targetName = _mapSuspectToName(row.card.suspect);
+        } else if (row.card.type == proto.CardType.CARD_TYPE_WEAPON) {
+             targetName = _mapWeaponToName(row.card.weapon);
+        } else if (row.card.type == proto.CardType.CARD_TYPE_ROOM) {
+             targetName = _mapRoomToName(row.card.room);
+        }
 
-       } catch (e) {
-         debugPrint('Error updating deduction for ${knowledge.playerName}: $e');
-       }
+        if (targetName != null) {
+            try {
+                gameCard = GameConstants.allCards.firstWhere(
+                    (c) => c.name == targetName
+                );
+            } catch (_) {
+                // Fallback
+            }
+        }
+
+        if (gameCard == null) continue;
+
+        // Iterate over players
+        // player_states is a list, indices match players order in InitGame
+        for (int i = 0; i < row.playerStates.length; i++) {
+            if (i >= _players.length) break;
+
+            var protoState = row.playerStates[i].status;
+            var localStatus = _mapProtoStatus(protoState);
+
+            if (localStatus != null) {
+                _players[i].setStatus(gameCard, localStatus);
+            }
+        }
     }
     notifyListeners();
+  }
+
+  String? _mapSuspectToName(proto.Suspect s) {
+      switch (s) {
+          case proto.Suspect.SUSPECT_COL_MUSTARD: return 'Colonel Mustard';
+          case proto.Suspect.SUSPECT_PROF_PLUM: return 'Professor Plum';
+          case proto.Suspect.SUSPECT_MR_GREEN: return 'Mr. Green';
+          case proto.Suspect.SUSPECT_MRS_PEACOCK: return 'Mrs. Peacock';
+          case proto.Suspect.SUSPECT_MISS_SCARLET: return 'Miss Scarlet';
+          case proto.Suspect.SUSPECT_MRS_WHITE: return 'Mrs. White';
+          default: return null;
+      }
+  }
+
+  String? _mapWeaponToName(proto.Weapon w) {
+      switch (w) {
+          case proto.Weapon.WEAPON_KNIFE: return 'Knife';
+          case proto.Weapon.WEAPON_CANDLESTICK: return 'Candlestick';
+          case proto.Weapon.WEAPON_REVOLVER: return 'Revolver';
+          case proto.Weapon.WEAPON_ROPE: return 'Rope';
+          case proto.Weapon.WEAPON_LEAD_PIPE: return 'Lead Pipe';
+          case proto.Weapon.WEAPON_WRENCH: return 'Wrench';
+          default: return null;
+      }
+  }
+
+  String? _mapRoomToName(proto.Room r) {
+      switch (r) {
+          case proto.Room.ROOM_HALL: return 'Hall';
+          case proto.Room.ROOM_LOUNGE: return 'Lounge';
+          case proto.Room.ROOM_DINING_ROOM: return 'Dining Room';
+          case proto.Room.ROOM_KITCHEN: return 'Kitchen';
+          case proto.Room.ROOM_BALLROOM: return 'Ballroom';
+          case proto.Room.ROOM_CONSERVATORY: return 'Conservatory';
+          case proto.Room.ROOM_BILLIARD_ROOM: return 'Billiard Room';
+          case proto.Room.ROOM_LIBRARY: return 'Library';
+          case proto.Room.ROOM_STUDY: return 'Study';
+          default: return null;
+      }
   }
 
   CardType _mapProtoCardType(proto.CardType type) {
@@ -146,11 +205,12 @@ class GameState extends ChangeNotifier {
     }
   }
 
-  DeductionStatus? _mapProtoStatus(proto.DeductionStatus status) {
+  DeductionStatus? _mapProtoStatus(proto.CellState_Status status) {
     switch (status) {
-      case proto.DeductionStatus.HAS_IT: return DeductionStatus.hasIt;
-      case proto.DeductionStatus.DOES_NOT_HAVE_IT: return DeductionStatus.doesNotHaveIt;
-      case proto.DeductionStatus.MIGHT_HAVE_IT: return DeductionStatus.mightHaveIt; // Make sure mightHaveIt exists in local enum or map appropriately
+      case proto.CellState_Status.HAS: return DeductionStatus.hasIt;
+      case proto.CellState_Status.DOES_NOT_HAVE: return DeductionStatus.doesNotHaveIt;
+      case proto.CellState_Status.MIGHT_HAVE: return DeductionStatus.mightHaveIt;
+      case proto.CellState_Status.UNKNOWN: return DeductionStatus.unknown;
       default: return null;
     }
   }
