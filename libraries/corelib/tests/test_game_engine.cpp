@@ -274,3 +274,100 @@ TEST_F(EventSourcingTest, UndoTurn) {
     engine.undo_last_turn();
     EXPECT_EQ(engine.get_history().size(), 0);
 }
+
+class CaseFileEliminationTest : public ::testing::Test {
+protected:
+    GameEngine engine;
+    InitGameRequest init_req;
+
+    void SetUp() override {
+        // 3 Players: 0, 1, 2
+        init_req.set_num_players(3);
+        init_req.add_player_names("Me");
+        init_req.add_player_names("Player1");
+        init_req.add_player_names("Player2");
+        engine.initialize_game(init_req);
+    }
+
+    // Helper to get case file state from response
+    float get_probability(const GameStateResponse& resp, CardType type, int id) {
+        for(const auto& sp : resp.solution_probabilities()) {
+            bool match = false;
+            if(sp.card().type() == type) {
+                if(type == CardType::CARD_TYPE_SUSPECT && sp.card().suspect() == (Suspect)id) match = true;
+                if(type == CardType::CARD_TYPE_WEAPON && sp.card().weapon() == (Weapon)id) match = true;
+                if(type == CardType::CARD_TYPE_ROOM && sp.card().room() == (Room)id) match = true;
+            }
+            if(match) {
+                return sp.probability();
+            }
+        }
+        return -1.0f;
+    }
+};
+
+TEST_F(CaseFileEliminationTest, SolveByElimination_Suspects) {
+    // 6 Suspects total.
+    // If we mark 5 of them as HELD by someone (KNOWN_FALSE in Case File),
+    // The 6th must be the solution (KNOWN_TRUE).
+
+    // 1. Mark 5 suspects as held by P0 or P1
+    for (int i = 1; i <= 5; ++i) {
+        TurnData t;
+        t.set_suggester_player_index(1);
+        t.set_responder_player_index(0); // P0 shows
+        *t.mutable_card_shown() = create_suspect((Suspect)i);
+        // Fill dummy
+        *t.mutable_suspect() = create_suspect((Suspect)i);
+        *t.mutable_weapon() = create_weapon(WEAPON_KNIFE);
+        *t.mutable_room() = create_room(ROOM_HALL);
+
+        engine.record_turn(t);
+    }
+
+    GameStateResponse state = engine.get_game_state_response();
+
+    // Suspect 6 (Mrs. Peacock? - wait enum value)
+    // Enums are 1-based usually in proto if not 0.
+    // Let's assume 1..6 are valid.
+    // Suspect 6 should be the solution.
+    EXPECT_FLOAT_EQ(get_probability(state, CardType::CARD_TYPE_SUSPECT, 6), 1.0f);
+}
+
+TEST_F(CaseFileEliminationTest, SolveByElimination_Weapons) {
+    // 6 Weapons total. Mark 5.
+    for (int i = 1; i <= 5; ++i) {
+        TurnData t;
+        t.set_suggester_player_index(1);
+        t.set_responder_player_index(0);
+        *t.mutable_card_shown() = create_weapon((Weapon)i);
+        // Fill dummy
+        *t.mutable_suspect() = create_suspect(SUSPECT_COL_MUSTARD);
+        *t.mutable_weapon() = create_weapon((Weapon)i);
+        *t.mutable_room() = create_room(ROOM_HALL);
+
+        engine.record_turn(t);
+    }
+
+    GameStateResponse state = engine.get_game_state_response();
+    EXPECT_FLOAT_EQ(get_probability(state, CardType::CARD_TYPE_WEAPON, 6), 1.0f);
+}
+
+TEST_F(CaseFileEliminationTest, SolveByElimination_Rooms) {
+    // 9 Rooms total. Mark 8.
+    for (int i = 1; i <= 8; ++i) {
+        TurnData t;
+        t.set_suggester_player_index(1);
+        t.set_responder_player_index(0);
+        *t.mutable_card_shown() = create_room((Room)i);
+        // Fill dummy
+        *t.mutable_suspect() = create_suspect(SUSPECT_COL_MUSTARD);
+        *t.mutable_weapon() = create_weapon(WEAPON_KNIFE);
+        *t.mutable_room() = create_room((Room)i);
+
+        engine.record_turn(t);
+    }
+
+    GameStateResponse state = engine.get_game_state_response();
+    EXPECT_FLOAT_EQ(get_probability(state, CardType::CARD_TYPE_ROOM, 9), 1.0f);
+}
