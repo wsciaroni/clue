@@ -10,6 +10,7 @@ class ClueClient {
   late ClueGameServiceClient _stub;
   late ClientChannel _channel;
   String? _gameId;
+  List<String> _playerNames = [];
 
   ClueClient() {
     String host = 'localhost';
@@ -29,13 +30,14 @@ class ClueClient {
     List<String> players,
     List<model.GameCard> userHand,
   ) async {
+    _playerNames = List.from(players);
     final request = InitGameRequest()..numPlayers = players.length;
 
     request.playerNames.addAll(players);
 
     // Convert model.GameCard to generated Card
     for (var card in userHand) {
-      request.myCards.add(_convertToProtoCard(card));
+      request.myHand.add(_convertToProtoCard(card));
     }
 
     try {
@@ -60,18 +62,25 @@ class ClueClient {
       );
     }
 
-    final request = TurnRequest()
-      ..gameId = _gameId!
-      ..suggester = turn.askingPlayer.name
-      ..suggestionSuspect = _convertToProtoCard(turn.suspect)
-      ..suggestionWeapon = _convertToProtoCard(turn.weapon)
-      ..suggestionRoom = _convertToProtoCard(turn.room)
-      ..responder = turn.answeringPlayer.name
-      ..cardShown = turn.cardShown;
+    final turnData = TurnData()
+      ..suggesterPlayerIndex = _getPlayerIndex(turn.askingPlayer.name)
+      ..suspect = _convertToProtoCard(turn.suspect)
+      ..weapon = _convertToProtoCard(turn.weapon)
+      ..room = _convertToProtoCard(turn.room);
+
+    if (turn.answeringPlayer.name.toUpperCase() == 'NO ONE') {
+       turnData.responderPlayerIndex = -1;
+    } else {
+       turnData.responderPlayerIndex = _getPlayerIndex(turn.answeringPlayer.name);
+    }
 
     if (turn.specificCardShown != null) {
-      request.shownCard = _convertToProtoCard(turn.specificCardShown!);
+      turnData.cardShown = _convertToProtoCard(turn.specificCardShown!);
     }
+
+    final request = TurnRequest()
+      ..gameId = _gameId!
+      ..data = turnData;
 
     try {
       final response = await _stub.recordTurn(request);
@@ -84,19 +93,29 @@ class ClueClient {
     }
   }
 
-  Future<DeductionResponse> fetchDeductions() async {
+  Future<GameStateResponse> fetchGameState() async {
     if (_gameId == null) {
-      debugPrint('Game ID is null, cannot fetch deductions.');
-      return DeductionResponse(); // Return empty
+      debugPrint('Game ID is null, cannot fetch game state.');
+      return GameStateResponse(); // Return empty
     }
-    final request = DeductionRequest()..gameId = _gameId!;
+    final request = GameStateRequest()..gameId = _gameId!;
 
     try {
-      return await _stub.getDeductions(request);
+      return await _stub.getGameState(request);
     } catch (e) {
-      debugPrint('Error fetching deductions: $e');
+      debugPrint('Error fetching game state: $e');
       rethrow;
     }
+  }
+
+  // Helper to find index
+  int _getPlayerIndex(String name) {
+    int index = _playerNames.indexOf(name);
+    if (index == -1) {
+       debugPrint("Warning: Player $name not found in local list $_playerNames");
+       return 0; // Default or throw?
+    }
+    return index;
   }
 
   Future<void> shutdown() async {
@@ -104,7 +123,7 @@ class ClueClient {
   }
 
   Card _convertToProtoCard(model.GameCard card) {
-    final protoCard = Card()..name = card.name;
+    final protoCard = Card();
 
     if (card.type == model.CardType.suspect) {
       protoCard.type = CardType.CARD_TYPE_SUSPECT;
