@@ -3,17 +3,26 @@ syntax = "proto3";
 package clue;
 
 service ClueGameService {
-  rpc GetGameStatus (GameStatusRequest) returns (GameStatusResponse);
+  // Initialize a new session
+  rpc InitGame (InitGameRequest) returns (InitGameResponse);
+
+  // Appends a new turn to the history and updates state
+  rpc RecordTurn (TurnRequest) returns (TurnResponse);
+
+  // Modifies an existing turn in the history and REPLAYS the game state
+  rpc UpdateTurn (UpdateTurnRequest) returns (TurnResponse);
+
+  // Removes the last turn
+  rpc UndoLastTurn (UndoRequest) returns (UndoResponse);
+
+  // Returns list of turns (for UI "Edit" menu)
+  rpc GetTurnHistory (GetHistoryRequest) returns (GetHistoryResponse);
+
+  // The Source of Truth. Frontend calls this to get the renderable grid.
+  rpc GetGameState (GameStateRequest) returns (GameStateResponse);
 }
 
-message GameStatusRequest {
-  string game_id = 1;
-}
-
-message GameStatusResponse {
-  string status = 1;
-  bool is_active = 2;
-}
+// --- Data Structures ---
 
 enum CardType {
   CARD_TYPE_UNKNOWN = 0;
@@ -56,12 +65,92 @@ enum Room {
 }
 
 message Card {
-  string name = 1;
-  CardType type = 2;
-  // One of the specific enums will be set based on type, or we use a universal ID.
-  // For simplicity in logic, we might rely on a global enum or just use these.
-  // Let's use a oneof or just simple fields if we want to carry the enum value.
-  Suspect suspect = 3;
-  Weapon weapon = 4;
-  Room room = 5;
+  CardType type = 1;
+  oneof value {
+    Suspect suspect = 2;
+    Weapon weapon = 3;
+    Room room = 4;
+  }
+}
+
+message TurnData {
+  int32 suggester_player_index = 1;
+  Card suspect = 2;
+  Card weapon = 3;
+  Card room = 4;
+  int32 responder_player_index = 5; // -1 if no one responded
+  optional Card card_shown = 6;
+}
+
+message TurnEntry {
+  string turn_id = 1;
+  int32 turn_number = 2;
+  TurnData data = 3;
+}
+
+message PlayerInfo {
+  int32 index = 1;
+  string name = 2;
+  int32 card_count = 3;
+}
+
+message CellState {
+  enum Status {
+    UNKNOWN = 0;
+    HAS = 1;         // Checkmark
+    DOES_NOT_HAVE = 2; // X
+    MIGHT_HAVE = 3;  // User annotation / heuristic guess
+  }
+  Status status = 1;
+}
+
+message GridRow {
+  Card card = 1;
+  // State of this card for every player (ordered by player index)
+  repeated CellState player_states = 2;
+}
+
+message SolutionProbability {
+  Card card = 1;
+  float probability = 2;
+  bool is_eliminated = 3;
+}
+
+// --- RPC Messages ---
+
+message InitGameRequest {
+  int32 num_players = 1;
+  repeated string player_names = 2;
+  repeated Card my_hand = 3;
+}
+
+message InitGameResponse {
+  string game_id = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+message TurnRequest {
+  string game_id = 1;
+  TurnData data = 2;
+}
+
+message UpdateTurnRequest {
+  string game_id = 1;
+  string turn_id = 2;
+  TurnData new_data = 3;
+}
+
+message TurnResponse { bool success = 1; string error_message = 2; }
+message UndoRequest { string game_id = 1; }
+message UndoResponse { bool success = 1; }
+message GetHistoryRequest { string game_id = 1; }
+message GetHistoryResponse { repeated TurnEntry history = 1; }
+message GameStateRequest { string game_id = 1; }
+
+message GameStateResponse {
+  string game_id = 1;
+  repeated PlayerInfo players = 2;
+  repeated GridRow rows = 3;
+  repeated SolutionProbability solution_probabilities = 4;
 }

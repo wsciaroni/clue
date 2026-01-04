@@ -60,6 +60,39 @@ add_custom_command(
   COMMENT "Generating gRPC/Protobuf sources for ${proto_name}"
 )
 
+# -------------------------------------------------------------------------
+# Dart generation for frontend
+# -------------------------------------------------------------------------
+find_program(DART_PROTOC_PLUGIN protoc-gen-dart HINTS "$ENV{HOME}/.pub-cache/bin")
+
+if(DART_PROTOC_PLUGIN)
+  get_filename_component(FRONTEND_GEN_DIR "${CMAKE_CURRENT_LIST_DIR}/../../applications/frontend/lib/generated" ABSOLUTE)
+  file(MAKE_DIRECTORY ${FRONTEND_GEN_DIR})
+
+  set(dart_srcs
+    "${FRONTEND_GEN_DIR}/${proto_name}.pb.dart"
+    "${FRONTEND_GEN_DIR}/${proto_name}.pbenum.dart"
+    "${FRONTEND_GEN_DIR}/${proto_name}.pbgrpc.dart"
+    "${FRONTEND_GEN_DIR}/${proto_name}.pbjson.dart"
+  )
+
+  add_custom_command(
+    OUTPUT ${dart_srcs}
+    COMMAND ${_PROTOBUF_PROTOC}
+    ARGS --dart_out=grpc:${FRONTEND_GEN_DIR}
+         -I "${CMAKE_CURRENT_LIST_DIR}"
+         --plugin=protoc-gen-dart=${DART_PROTOC_PLUGIN}
+         "${protos}"
+    DEPENDS "${protos}"
+    COMMENT "Generating Dart gRPC/Protobuf sources for ${proto_name}"
+  )
+
+  # Create a target so that it runs when building
+  add_custom_target(generate_dart_protos ALL DEPENDS ${dart_srcs})
+else()
+  message(WARNING "protoc-gen-dart not found. Dart generation skipped. Install it with: dart pub global activate protoc_plugin")
+endif()
+
 # Create the library
 add_library(clue_messages "${proto_srcs}" "${proto_hdrs}" "${grpc_srcs}" "${grpc_hdrs}")
 

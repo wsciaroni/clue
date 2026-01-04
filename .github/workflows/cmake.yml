@@ -23,9 +23,16 @@ jobs:
     - name: Setup ccache
       uses: actions/cache@v3
       with:
-        path: ~/.ccache
-        key: ${{ runner.os }}-ccache-${{ github.sha }}
+        path: ${{ github.workspace }}/.ccache
+        # KEY: Always unique so we SAVE the new cache at the end of this run
+        key: ${{ runner.os }}-ccache-${{ github.ref_name }}-${{ github.sha }}
+
+        # RESTORE KEYS: The "Waterfall" logic
+        # GitHub searches these prefixes in order.
         restore-keys: |
+          ${{ runner.os }}-ccache-${{ github.ref_name }}-
+          ${{ runner.os }}-ccache-dev-
+          ${{ runner.os }}-ccache-master-
           ${{ runner.os }}-ccache-
 
     - name: Configure CMake
@@ -37,3 +44,6 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: Ccache Stats
+      run: ccache -s

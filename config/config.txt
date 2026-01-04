@@ -1,0 +1,4 @@
+num_players=3
+seed=123
+output=game_log.json
+turns=20

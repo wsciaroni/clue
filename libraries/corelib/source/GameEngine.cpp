@@ -1,43 +1,79 @@
 #include "GameEngine.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <random>
 
 namespace clue {
 
-GameEngine::GameEngine() : m_num_players(0) {}
+// Helper to generate a simple ID
+std::string generate_uuid() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 15);
+    std::stringstream ss;
+    for (int i = 0; i < 32; ++i) {
+        int rc = dis(gen);
+        ss << std::hex << rc;
+    }
+    return ss.str();
+}
 
-void GameEngine::initialize(int num_players, const std::vector<Card>& my_hand,
-                           int num_suspects, int num_weapons, int num_rooms) {
-    m_num_players = num_players;
+GameEngine::GameEngine() {}
+
+void GameEngine::initialize_game(const InitGameRequest& request) {
+    m_init_request = request;
+    m_initialized = true;
+    m_history.clear();
+    m_next_turn_number = 1;
+
+    register_card_types();
+    reset_state();
+}
+
+void GameEngine::register_card_types() {
+    m_all_cards.clear();
+    // Assuming standard Clue counts for now, or could parameterize if needed.
+    // Spec doesn't specify counts in InitGameRequest, so using defaults.
+    // 6 Suspects, 6 Weapons, 9 Rooms.
+    for (int i = 1; i <= 6; ++i) m_all_cards.push_back({CardType::CARD_TYPE_SUSPECT, i});
+    for (int i = 1; i <= 6; ++i) m_all_cards.push_back({CardType::CARD_TYPE_WEAPON, i});
+    for (int i = 1; i <= 9; ++i) m_all_cards.push_back({CardType::CARD_TYPE_ROOM, i});
+}
+
+void GameEngine::reset_state() {
     m_player_states.clear();
     m_case_file_state.clear();
     m_constraints.clear();
-    m_all_cards.clear();
 
-    register_card_types(num_suspects, num_weapons, num_rooms);
+    int num_players = m_init_request.num_players();
 
     // Initialize all states to UNKNOWN
     for (const auto& card : m_all_cards) {
-        for (int i = 0; i < m_num_players; ++i) {
+        for (int i = 0; i < num_players; ++i) {
             m_player_states[i][card] = CardState::UNKNOWN;
         }
         m_case_file_state[card] = CardState::UNKNOWN;
     }
 
-    // Process my hand (Player 0)
-    std::set<CardId> my_hand_ids;
-    for (const auto& card : my_hand) {
-        CardId id;
-        id.type = card.type();
-        if (id.type == CardType::CARD_TYPE_SUSPECT) id.id = card.suspect();
-        else if (id.type == CardType::CARD_TYPE_WEAPON) id.id = card.weapon();
-        else if (id.type == CardType::CARD_TYPE_ROOM) id.id = card.room();
+    // Process my hand (Player 0 - assuming "us" is always index 0 or derived from names?
+    // The spec says "User's hand = Known". We assume User is always a specific index.
+    // Usually Player 0 is the user in this context, or we match names.
+    // Let's assume user is index 0 for simplicity as per previous implementation logic.)
 
-        mark_card_true(0, id);
+    // Actually, check InitGameRequest. It has "my_hand".
+    // We'll assume "my_hand" belongs to the player at index 0 in "player_names" unless specified otherwise.
+    // The previous code assumed "us" is Player 0.
+
+    std::set<CardId> my_hand_ids;
+    for (const auto& card : m_init_request.my_hand()) {
+        CardId id = to_card_id(card);
+        mark_card_true(0, id); // User is Player 0
         my_hand_ids.insert(id);
     }
 
-    // Mark everything else as NOT in my hand
+    // Mark everything else as NOT in my hand (Player 0)
     for (const auto& card : m_all_cards) {
         if (my_hand_ids.find(card) == my_hand_ids.end()) {
             mark_card_false(0, card);
@@ -45,110 +81,115 @@ void GameEngine::initialize(int num_players, const std::vector<Card>& my_hand,
     }
 }
 
-void GameEngine::register_card_types(int num_suspects, int num_weapons, int num_rooms) {
-    for (int i = 1; i <= num_suspects; ++i) m_all_cards.push_back({CardType::CARD_TYPE_SUSPECT, i});
-    for (int i = 1; i <= num_weapons; ++i) m_all_cards.push_back({CardType::CARD_TYPE_WEAPON, i});
-    for (int i = 1; i <= num_rooms; ++i) m_all_cards.push_back({CardType::CARD_TYPE_ROOM, i});
+void GameEngine::record_turn(const TurnData& turn_data) {
+    if (!m_initialized) return;
+
+    TurnEntry entry;
+    entry.set_turn_id(generate_uuid());
+    entry.set_turn_number(m_next_turn_number++);
+    *entry.mutable_data() = turn_data;
+
+    m_history.push_back(entry);
+
+    // Apply logic directly instead of full replay for efficiency on append
+    apply_turn_logic(turn_data);
+    reconcile();
 }
 
-CardState GameEngine::get_card_state(int player_idx, const CardId& card) const {
-    auto p_it = m_player_states.find(player_idx);
-    if (p_it != m_player_states.end()) {
-        auto c_it = p_it->second.find(card);
-        if (c_it != p_it->second.end()) return c_it->second;
+bool GameEngine::update_turn(const std::string& turn_id, const TurnData& new_data) {
+    auto it = std::find_if(m_history.begin(), m_history.end(),
+        [&](const TurnEntry& entry) { return entry.turn_id() == turn_id; });
+
+    if (it == m_history.end()) return false;
+
+    *it->mutable_data() = new_data;
+
+    replay_game();
+    return true;
+}
+
+bool GameEngine::undo_last_turn() {
+    if (m_history.empty()) return false;
+    m_history.pop_back();
+    m_next_turn_number--;
+    replay_game();
+    return true;
+}
+
+std::vector<TurnEntry> GameEngine::get_history() const {
+    return m_history;
+}
+
+void GameEngine::replay_game() {
+    reset_state();
+    for (const auto& entry : m_history) {
+        apply_turn_logic(entry.data());
+        reconcile();
     }
-    return CardState::UNKNOWN;
 }
 
-CardState GameEngine::get_case_file_state(const CardId& card) const {
-    auto it = m_case_file_state.find(card);
-    if (it != m_case_file_state.end()) return it->second;
-    return CardState::UNKNOWN;
-}
+void GameEngine::apply_turn_logic(const TurnData& data) {
+    int num_players = m_init_request.num_players();
+    int suggester_idx = data.suggester_player_index();
+    int responder_idx = data.responder_player_index();
 
-void GameEngine::mark_card_true(int player_idx, const CardId& card) {
-    if (m_player_states[player_idx][card] == CardState::KNOWN_TRUE) return; // Already known
+    CardId s_id = to_card_id(data.suspect());
+    CardId w_id = to_card_id(data.weapon());
+    CardId r_id = to_card_id(data.room());
 
-    m_player_states[player_idx][card] = CardState::KNOWN_TRUE;
+    // Logic Rule 2: Players between A and B passed -> They DO NOT HAVE any of the 3 cards.
+    int current = (suggester_idx + 1) % num_players;
 
-    // If this player has it, no one else does (including Case File)
-    for (int i = 0; i < m_num_players; ++i) {
-        if (i != player_idx) {
-            mark_card_false(i, card);
-        }
-    }
-    m_case_file_state[card] = CardState::KNOWN_FALSE;
-}
+    // If no one responded (-1), everyone else passed.
+    // If someone responded, everyone between passed.
 
-void GameEngine::mark_card_false(int player_idx, const CardId& card) {
-    m_player_states[player_idx][card] = CardState::KNOWN_FALSE;
-}
-
-void GameEngine::process_suggestion(int suggester_idx,
-                                  const Card& suspect,
-                                  const Card& weapon,
-                                  const Card& room,
-                                  int responder_idx,
-                                  std::optional<Card> response_card) {
-
-    CardId s_id = {CardType::CARD_TYPE_SUSPECT, (int)suspect.suspect()};
-    CardId w_id = {CardType::CARD_TYPE_WEAPON, (int)weapon.weapon()};
-    CardId r_id = {CardType::CARD_TYPE_ROOM, (int)room.room()};
-
-    // Calculate pass logic: Everyone between suggester and responder (clockwise) passed.
-    // If responder is -1, everyone passed.
-
-    int current = (suggester_idx + 1) % m_num_players;
-    int end = (responder_idx == -1) ? suggester_idx : responder_idx;
-
-    // Loop handles wrapping. If responder is -1, loop until we hit suggester again.
-    // Special case: if responder is -1, it means NO ONE had the cards.
-    // So everyone except suggester gets marked false for these 3.
-    // If responder is valid, loop stops AT responder (responder NOT included in pass loop).
+    // Stop condition for loop
+    int stop_at = (responder_idx == -1) ? suggester_idx : responder_idx;
 
     if (responder_idx == -1) {
-         // Everyone passed!
-         for (int i = 0; i < m_num_players; ++i) {
-             if (i == suggester_idx) continue; // Suggester might have them (bluffing)
-             mark_card_false(i, s_id);
-             mark_card_false(i, w_id);
-             mark_card_false(i, r_id);
+        // Everyone passed (except suggester who we don't know about via passing)
+        // Loop wrapping around back to suggester
+         int loop_curr = (suggester_idx + 1) % num_players;
+         while (loop_curr != suggester_idx) {
+             mark_card_false(loop_curr, s_id);
+             mark_card_false(loop_curr, w_id);
+             mark_card_false(loop_curr, r_id);
+             loop_curr = (loop_curr + 1) % num_players;
          }
-         // If everyone passed, the Case File MUST have them (unless suggester has them).
-         // Actually, if everyone passed, and suggester checks his hand and sees he doesn't have them,
-         // then they are in the envelope.
-         // Logic for Case File: If P1, P2, P3... all don't have X, then CaseFile has X.
-         // This is handled in reconcile().
-         return;
-    }
-
-    // Mark passes
-    while (current != responder_idx) {
-        mark_card_false(current, s_id);
-        mark_card_false(current, w_id);
-        mark_card_false(current, r_id);
-        current = (current + 1) % m_num_players;
-    }
-
-    // Handle Responder
-    // If we know the card shown (because we are suggester, or we are responder, or it was just revealed)
-    if (response_card.has_value()) {
-        CardId c_id;
-        c_id.type = response_card->type();
-        if (c_id.type == CardType::CARD_TYPE_SUSPECT) c_id.id = response_card->suspect();
-        else if (c_id.type == CardType::CARD_TYPE_WEAPON) c_id.id = response_card->weapon();
-        else if (c_id.type == CardType::CARD_TYPE_ROOM) c_id.id = response_card->room();
-
-        mark_card_true(responder_idx, c_id);
+         // Suggestion was not refuted by anyone.
+         // If suggester doesn't have them, they are in the envelope.
+         // This is handled by reconcile/CaseFile logic implicitly if we know suggester hand.
     } else {
-        // We don't know which one, but we know responder has ONE of them.
-        Constraint c;
-        c.player_index = responder_idx;
-        c.possible_cards.insert(s_id);
-        c.possible_cards.insert(w_id);
-        c.possible_cards.insert(r_id);
-        m_constraints.push_back(c);
+        // Passers
+        while (current != responder_idx) {
+            mark_card_false(current, s_id);
+            mark_card_false(current, w_id);
+            mark_card_false(current, r_id);
+            current = (current + 1) % num_players;
+        }
+
+        // Logic Rule 2: Responder MUST have (Mustard OR Rope OR Hall)
+        // If we know the card shown:
+        if (data.has_card_shown()) {
+            // Check if card_shown is actually set (proto3 optional or field presence)
+            // The proto definition says 'optional Card card_shown = 6;'
+            CardId c_id = to_card_id(data.card_shown());
+            mark_card_true(responder_idx, c_id);
+        } else {
+            // We don't know which one, create constraint
+            Constraint c;
+            c.player_index = responder_idx;
+            c.possible_cards.insert(s_id);
+            c.possible_cards.insert(w_id);
+            c.possible_cards.insert(r_id);
+            m_constraints.push_back(c);
+        }
     }
+
+    // Note: Rule 2 says "Player A does NOT have Mustard... unless bluffing".
+    // We usually don't assume Player A *doesn't* have them just because they suggested them.
+    // Standard strategy often involves suggesting cards you have to confuse others.
+    // So we do NOT mark suggester as NOT having them.
 }
 
 void GameEngine::reconcile() {
@@ -162,21 +203,18 @@ void GameEngine::reconcile() {
 }
 
 bool GameEngine::solve_elimination() {
-    // Basic propagation is handled in mark_card_true/false, but we might check for:
-    // "Player X has only 1 UNKNOWN card left, and needs 1 more card to fill hand size?"
-    // (Hand size tracking isn't explicitly requested but is good advanced logic. skipping for now to keep simple).
-    return false;
+    // Logic Rule 1 & 3 are handled here or in helpers.
+    // Logic Rule 3: If constraint (A or B) and A is FALSE -> B must be TRUE.
+    return false; // See solve_constraints
 }
 
 bool GameEngine::solve_case_file() {
     bool changed = false;
     for (const auto& card : m_all_cards) {
-        // Check if Case File ALREADY knows
         if (m_case_file_state[card] != CardState::UNKNOWN) continue;
 
-        // If all players are KNOWN_FALSE, Case File must be TRUE
         bool all_players_false = true;
-        for (int i = 0; i < m_num_players; ++i) {
+        for (int i = 0; i < m_init_request.num_players(); ++i) {
             if (m_player_states[i][card] != CardState::KNOWN_FALSE) {
                 all_players_false = false;
                 break;
@@ -185,15 +223,14 @@ bool GameEngine::solve_case_file() {
 
         if (all_players_false) {
             m_case_file_state[card] = CardState::KNOWN_TRUE;
-            // DANGER: If Case File has it, no one else does (already checked false).
-            // Also, for that TYPE (e.g. Suspect), all other cards in Case File must be FALSE.
-            // (There is only 1 suspect in the envelope).
-            for (const auto& other_card : m_all_cards) {
-                if (other_card.type == card.type && !(other_card == card)) {
-                   if (m_case_file_state[other_card] != CardState::KNOWN_FALSE) {
-                       m_case_file_state[other_card] = CardState::KNOWN_FALSE;
-                       changed = true;
-                   }
+            // Case File has it, so it's the solution for that category.
+            // All other cards of this type in Case File must be FALSE.
+            for (const auto& other : m_all_cards) {
+                if (other.type == card.type && other != card) {
+                    if (m_case_file_state[other] != CardState::KNOWN_FALSE) {
+                        m_case_file_state[other] = CardState::KNOWN_FALSE;
+                        changed = true;
+                    }
                 }
             }
             changed = true;
@@ -208,16 +245,16 @@ bool GameEngine::solve_constraints() {
     while (it != m_constraints.end()) {
         Constraint& c = *it;
 
-        // Remove cards that are KNOWN_FALSE for this player
+        // Logic Rule 3: Remove cards that are KNOWN_FALSE for this player
         auto cit = c.possible_cards.begin();
         while (cit != c.possible_cards.end()) {
-            if (m_player_states[c.player_index][*cit] == CardState::KNOWN_FALSE) {
+            CardState s = m_player_states[c.player_index][*cit];
+            if (s == CardState::KNOWN_FALSE) {
                 cit = c.possible_cards.erase(cit);
                 changed = true;
-            } else if (m_player_states[c.player_index][*cit] == CardState::KNOWN_TRUE) {
-                // The constraint is satisfied! Player HAS one of the cards.
-                // We can remove the constraint.
-                c.possible_cards.clear(); // Markers to remove
+            } else if (s == CardState::KNOWN_TRUE) {
+                // Constraint satisfied
+                c.possible_cards.clear();
                 break;
             } else {
                 ++cit;
@@ -225,7 +262,6 @@ bool GameEngine::solve_constraints() {
         }
 
         if (c.possible_cards.empty()) {
-             // Constraint satisfied or invalid (shouldn't happen if logic is sound)
              it = m_constraints.erase(it);
              continue;
         }
@@ -241,6 +277,107 @@ bool GameEngine::solve_constraints() {
         }
     }
     return changed;
+}
+
+void GameEngine::mark_card_true(int player_idx, const CardId& card) {
+    if (m_player_states[player_idx][card] == CardState::KNOWN_TRUE) return;
+
+    m_player_states[player_idx][card] = CardState::KNOWN_TRUE;
+
+    // Logic Rule 1: If Player has it, others (and Case File) DO NOT.
+    for (int i = 0; i < m_init_request.num_players(); ++i) {
+        if (i != player_idx) {
+            mark_card_false(i, card);
+        }
+    }
+    m_case_file_state[card] = CardState::KNOWN_FALSE;
+}
+
+void GameEngine::mark_card_false(int player_idx, const CardId& card) {
+    if (m_player_states[player_idx][card] == CardState::KNOWN_FALSE) return;
+    m_player_states[player_idx][card] = CardState::KNOWN_FALSE;
+    // Note: Marking false might trigger constraints in reconcile()
+}
+
+CardId GameEngine::to_card_id(const Card& c) const {
+    CardId id;
+    id.type = c.type();
+    if (id.type == CardType::CARD_TYPE_SUSPECT) id.id = c.suspect();
+    else if (id.type == CardType::CARD_TYPE_WEAPON) id.id = c.weapon();
+    else if (id.type == CardType::CARD_TYPE_ROOM) id.id = c.room();
+    return id;
+}
+
+Card GameEngine::from_card_id(const CardId& id) const {
+    Card c;
+    c.set_type(id.type);
+    if (id.type == CardType::CARD_TYPE_SUSPECT) c.set_suspect((Suspect)id.id);
+    else if (id.type == CardType::CARD_TYPE_WEAPON) c.set_weapon((Weapon)id.id);
+    else if (id.type == CardType::CARD_TYPE_ROOM) c.set_room((Room)id.id);
+    return c;
+}
+
+GameStateResponse GameEngine::get_game_state_response() const {
+    GameStateResponse response;
+    response.set_game_id("game_1"); // or managed elsewhere
+
+    // Players
+    for (int i = 0; i < m_init_request.num_players(); ++i) {
+        PlayerInfo* p = response.add_players();
+        p->set_index(i);
+        if (i < m_init_request.player_names_size()) {
+            p->set_name(m_init_request.player_names(i));
+        } else {
+            p->set_name("Player " + std::to_string(i));
+        }
+        // Card count not explicitly tracked yet but required by proto
+        p->set_card_count(0);
+    }
+
+    // Rows
+    for (const auto& card : m_all_cards) {
+        GridRow* row = response.add_rows();
+        *row->mutable_card() = from_card_id(card);
+
+        for (int i = 0; i < m_init_request.num_players(); ++i) {
+            CellState* cs = row->add_player_states();
+            CardState internal_state = CardState::UNKNOWN;
+
+            auto p_it = m_player_states.find(i);
+            if (p_it != m_player_states.end()) {
+                auto c_it = p_it->second.find(card);
+                if (c_it != p_it->second.end()) internal_state = c_it->second;
+            }
+
+            if (internal_state == CardState::KNOWN_TRUE) cs->set_status(CellState::HAS);
+            else if (internal_state == CardState::KNOWN_FALSE) cs->set_status(CellState::DOES_NOT_HAVE);
+            else cs->set_status(CellState::UNKNOWN);
+        }
+    }
+
+    // Solution Probabilities (from Case File state)
+    for (const auto& card : m_all_cards) {
+        SolutionProbability* sp = response.add_solution_probabilities();
+        *sp->mutable_card() = from_card_id(card);
+        CardState s = CardState::UNKNOWN;
+        auto it = m_case_file_state.find(card);
+        if (it != m_case_file_state.end()) s = it->second;
+
+        if (s == CardState::KNOWN_FALSE) {
+            sp->set_is_eliminated(true);
+            sp->set_probability(0.0f);
+        } else if (s == CardState::KNOWN_TRUE) {
+            sp->set_is_eliminated(false);
+            sp->set_probability(1.0f);
+        } else {
+            sp->set_is_eliminated(false);
+            // Rough probability: 1 / (count of unknown cards of this type)
+            // Ideally calculate this properly
+            sp->set_probability(0.5f);
+        }
+    }
+
+    return response;
 }
 
 } // namespace clue

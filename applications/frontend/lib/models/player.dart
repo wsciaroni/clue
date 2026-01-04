@@ -4,6 +4,7 @@ enum DeductionStatus {
   unknown,
   hasIt, // Green Check
   doesNotHaveIt, // Red X
+  mightHaveIt, // Question mark
 }
 
 class Player {
