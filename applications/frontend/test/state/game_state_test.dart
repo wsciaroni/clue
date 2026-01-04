@@ -48,9 +48,9 @@ void main() {
       final gameState = GameState();
 
       // Setup players
-      final p1 = Player(name: 'Alice');
-      final p2 = Player(name: 'Bob');
-      final p3 = Player(name: 'Charlie');
+      // final p1 = Player(name: 'Alice');
+      // final p2 = Player(name: 'Bob');
+      // final p3 = Player(name: 'Charlie');
 
       // Hacky way to set players since startGame involves backend
       // We can't easily mock ClueClient inside GameState without DI or overrides.
@@ -99,17 +99,38 @@ void main() {
 
       // Verify deductions
       // Bob and Charlie should NOT have these cards
-      expect(gameState.players[1].getStatus(suspect), DeductionStatus.doesNotHaveIt);
-      expect(gameState.players[1].getStatus(weapon), DeductionStatus.doesNotHaveIt);
-      expect(gameState.players[1].getStatus(room), DeductionStatus.doesNotHaveIt);
+      expect(
+        gameState.players[1].getStatus(suspect),
+        DeductionStatus.doesNotHaveIt,
+      );
+      expect(
+        gameState.players[1].getStatus(weapon),
+        DeductionStatus.doesNotHaveIt,
+      );
+      expect(
+        gameState.players[1].getStatus(room),
+        DeductionStatus.doesNotHaveIt,
+      );
 
-      expect(gameState.players[2].getStatus(suspect), DeductionStatus.doesNotHaveIt);
-      expect(gameState.players[2].getStatus(weapon), DeductionStatus.doesNotHaveIt);
-      expect(gameState.players[2].getStatus(room), DeductionStatus.doesNotHaveIt);
+      expect(
+        gameState.players[2].getStatus(suspect),
+        DeductionStatus.doesNotHaveIt,
+      );
+      expect(
+        gameState.players[2].getStatus(weapon),
+        DeductionStatus.doesNotHaveIt,
+      );
+      expect(
+        gameState.players[2].getStatus(room),
+        DeductionStatus.doesNotHaveIt,
+      );
 
       // Alice (Asker) status remains unknown (or whatever it was)
       // Actually, logic says "if p != turn.askingPlayer".
-      expect(gameState.players[0].getStatus(suspect), isNot(DeductionStatus.doesNotHaveIt));
+      expect(
+        gameState.players[0].getStatus(suspect),
+        isNot(DeductionStatus.doesNotHaveIt),
+      );
     });
   });
 }
