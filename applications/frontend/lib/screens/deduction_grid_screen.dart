@@ -83,6 +83,8 @@ class DeductionGridScreen extends StatelessWidget {
         return const Icon(Icons.close, color: Colors.red);
       case DeductionStatus.unknown:
         return const Icon(Icons.help_outline, color: Colors.grey);
+      case DeductionStatus.mightHaveIt:
+        return const Icon(Icons.question_mark, color: Colors.orange);
     }
   }
 }

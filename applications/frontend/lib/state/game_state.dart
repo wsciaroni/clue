@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import '../models/game_constants.dart';
 import '../models/player.dart';
+import '../services/clue_client.dart';
+import '../generated/clue.pb.dart' as proto;
 
 class GameTurn {
   final Player askingPlayer;
@@ -37,6 +39,7 @@ class GameTurn {
 }
 
 class GameState extends ChangeNotifier {
+  final ClueClient _client = ClueClient();
   List<Player> _players = [];
   final List<GameTurn> _turnLog = [];
   bool _gameStarted = false;
@@ -50,7 +53,7 @@ class GameState extends ChangeNotifier {
   // For now, let's assume the user enters themselves first or selects themselves.
   // We'll add a helper to identifying the main user if needed.
 
-  void startGame(List<String> playerNames, List<GameCard> userHand) {
+  Future<void> startGame(List<String> playerNames, List<GameCard> userHand) async {
     _players = playerNames.map((name) => Player(name: name)).toList();
 
     // Logic: If the user enters their hand, we find the "User" player (assuming first one or matching name)
@@ -66,14 +69,20 @@ class GameState extends ChangeNotifier {
        }
     }
 
+    try {
+      await _client.initializeGame(playerNames, userHand);
+    } catch (e) {
+      debugPrint('Failed to initialize game on backend: $e');
+    }
+
     _gameStarted = true;
     notifyListeners();
   }
 
-  void recordTurn(GameTurn turn) {
+  Future<void> recordTurn(GameTurn turn) async {
     _turnLog.insert(0, turn); // Add to top of list
 
-    // Basic Deduction Logic
+    // Basic Deduction Logic (Client-side immediate feedback)
     if (!turn.cardShown) {
       // If answering player did NOT show a card, they do not have ANY of the three.
       turn.answeringPlayer.setStatus(turn.suspect, DeductionStatus.doesNotHaveIt);
@@ -92,8 +101,58 @@ class GameState extends ChangeNotifier {
         }
       }
     }
-
     notifyListeners();
+
+    try {
+      await _client.submitTurn(turn);
+      final deductionResponse = await _client.fetchDeductions();
+      _updateDeductions(deductionResponse);
+    } catch (e) {
+       debugPrint('Failed to sync turn or fetch deductions: $e');
+    }
+  }
+
+  void _updateDeductions(proto.DeductionResponse response) {
+    for (var knowledge in response.knowledge) {
+       // Find player
+       try {
+         final player = _players.firstWhere((p) => p.name == knowledge.playerName);
+         // Find card
+         // We need to map proto card back to GameCard.
+         // Since we don't have an easy ID map, we'll try by name.
+         final gameCard = GameConstants.allCards.firstWhere(
+           (c) => c.name == knowledge.card.name,
+           orElse: () => GameCard(knowledge.card.name, _mapProtoCardType(knowledge.card.type))
+         );
+
+         final status = _mapProtoStatus(knowledge.status);
+         if (status != null) {
+            player.setStatus(gameCard, status);
+         }
+
+       } catch (e) {
+         debugPrint('Error updating deduction for ${knowledge.playerName}: $e');
+       }
+    }
+    notifyListeners();
+  }
+
+  CardType _mapProtoCardType(proto.CardType type) {
+    switch (type) {
+      case proto.CardType.CARD_TYPE_SUSPECT: return CardType.suspect;
+      case proto.CardType.CARD_TYPE_WEAPON: return CardType.weapon;
+      case proto.CardType.CARD_TYPE_ROOM: return CardType.room;
+      default: return CardType.suspect; // Fallback
+    }
+  }
+
+  DeductionStatus? _mapProtoStatus(proto.DeductionStatus status) {
+    switch (status) {
+      case proto.DeductionStatus.HAS_IT: return DeductionStatus.hasIt;
+      case proto.DeductionStatus.DOES_NOT_HAVE_IT: return DeductionStatus.doesNotHaveIt;
+      case proto.DeductionStatus.MIGHT_HAVE_IT: return DeductionStatus.mightHaveIt; // Make sure mightHaveIt exists in local enum or map appropriately
+      default: return null;
+    }
   }
 
   void reset() {
