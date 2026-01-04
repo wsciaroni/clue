@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/game_constants.dart';
 import '../models/player.dart';
+import '../models/solution_probability.dart';
 import '../services/clue_client.dart';
 import '../generated/clue.pb.dart' as proto;
 
@@ -43,10 +44,12 @@ class GameState extends ChangeNotifier {
   final ClueClient _client = ClueClient();
   List<Player> _players = [];
   final List<GameTurn> _turnLog = [];
+  List<LocalSolutionProbability> _solutionProbabilities = [];
   bool _gameStarted = false;
 
   List<Player> get players => _players;
   List<GameTurn> get turnLog => _turnLog;
+  List<LocalSolutionProbability> get solutionProbabilities => _solutionProbabilities;
   bool get gameStarted => _gameStarted;
 
   // The "User" is assumed to be the first player for simplicity in this version,
@@ -131,26 +134,7 @@ class GameState extends ChangeNotifier {
       // Find the GameCard for this row
       // Map proto card back to GameCard.
       // Try by type and enum value.
-      GameCard? gameCard;
-
-      String? targetName;
-      if (row.card.type == proto.CardType.CARD_TYPE_SUSPECT) {
-        targetName = _mapSuspectToName(row.card.suspect);
-      } else if (row.card.type == proto.CardType.CARD_TYPE_WEAPON) {
-        targetName = _mapWeaponToName(row.card.weapon);
-      } else if (row.card.type == proto.CardType.CARD_TYPE_ROOM) {
-        targetName = _mapRoomToName(row.card.room);
-      }
-
-      if (targetName != null) {
-        try {
-          gameCard = GameConstants.allCards.firstWhere(
-            (c) => c.name == targetName,
-          );
-        } catch (_) {
-          // Fallback
-        }
-      }
+      GameCard? gameCard = _protoToGameCard(row.card);
 
       if (gameCard == null) continue;
 
@@ -167,7 +151,43 @@ class GameState extends ChangeNotifier {
         }
       }
     }
+
+    // Process Solution Probabilities
+    _solutionProbabilities = [];
+    for (var sp in response.solutionProbabilities) {
+      GameCard? gameCard = _protoToGameCard(sp.card);
+      if (gameCard != null) {
+        _solutionProbabilities.add(LocalSolutionProbability(
+          card: gameCard,
+          probability: sp.probability,
+          isEliminated: sp.isEliminated,
+        ));
+      }
+    }
+
     notifyListeners();
+  }
+
+  GameCard? _protoToGameCard(proto.Card card) {
+      String? targetName;
+      if (card.type == proto.CardType.CARD_TYPE_SUSPECT) {
+        targetName = _mapSuspectToName(card.suspect);
+      } else if (card.type == proto.CardType.CARD_TYPE_WEAPON) {
+        targetName = _mapWeaponToName(card.weapon);
+      } else if (card.type == proto.CardType.CARD_TYPE_ROOM) {
+        targetName = _mapRoomToName(card.room);
+      }
+
+      if (targetName != null) {
+        try {
+          return GameConstants.allCards.firstWhere(
+            (c) => c.name == targetName,
+          );
+        } catch (_) {
+          return null;
+        }
+      }
+      return null;
   }
 
   String? _mapSuspectToName(proto.Suspect s) {
@@ -260,6 +280,7 @@ class GameState extends ChangeNotifier {
   void reset() {
     _players = [];
     _turnLog.clear();
+    _solutionProbabilities = [];
     _gameStarted = false;
     notifyListeners();
   }

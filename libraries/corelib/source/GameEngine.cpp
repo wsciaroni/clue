@@ -356,6 +356,18 @@ GameStateResponse GameEngine::get_game_state_response() const {
     }
 
     // Solution Probabilities (from Case File state)
+    // First, count unknown cards for each type
+    std::map<CardType, int> unknown_counts;
+    for (const auto& card : m_all_cards) {
+        CardState s = CardState::UNKNOWN;
+        auto it = m_case_file_state.find(card);
+        if (it != m_case_file_state.end()) s = it->second;
+
+        if (s != CardState::KNOWN_FALSE) {
+            unknown_counts[card.type]++;
+        }
+    }
+
     for (const auto& card : m_all_cards) {
         SolutionProbability* sp = response.add_solution_probabilities();
         *sp->mutable_card() = from_card_id(card);
@@ -370,10 +382,19 @@ GameStateResponse GameEngine::get_game_state_response() const {
             sp->set_is_eliminated(false);
             sp->set_probability(1.0f);
         } else {
+            // Case File state is UNKNOWN.
+            // Check if card is eliminated by being in a player's hand (which marks Case File as FALSE,
+            // but let's be double sure if there's inconsistency or if logic relies on player states too)
+            // Actually, mark_card_true updates m_case_file_state[card] = KNOWN_FALSE.
+            // So if it's UNKNOWN here, it means it's not known to be in anyone's hand.
+
             sp->set_is_eliminated(false);
-            // Rough probability: 1 / (count of unknown cards of this type)
-            // Ideally calculate this properly
-            sp->set_probability(0.5f);
+            int count = unknown_counts[card.type];
+            if (count > 0) {
+                sp->set_probability(1.0f / count);
+            } else {
+                sp->set_probability(0.0f);
+            }
         }
     }
 
