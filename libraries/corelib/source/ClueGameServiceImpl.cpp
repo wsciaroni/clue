@@ -29,7 +29,23 @@ grpc::Status ClueGameServiceImpl::InitGame(grpc::ServerContext* context, const c
                                            clue::InitGameResponse* response) {
     std::lock_guard<std::mutex> lock(m_mutex);
     try {
-        std::string new_id = generate_game_id();
+        std::string new_id;
+        bool unique = false;
+        // Retrying a max of 5 times to ensure unique ID
+        for (int i = 0; i < 5; ++i) {
+            new_id = generate_game_id();
+            if (m_games.find(new_id) == m_games.end()) {
+                unique = true;
+                break;
+            }
+        }
+
+        if (!unique) {
+            response->set_success(false);
+            response->set_error_message("Failed to generate unique game ID after 5 attempts");
+            return grpc::Status::OK;
+        }
+
         auto engine = std::make_shared<clue::GameEngine>();
         engine->initialize_game(*request);
         m_games[new_id] = engine;
