@@ -28,6 +28,9 @@ struct CardId {
     bool operator==(const CardId& other) const {
         return type == other.type && id == other.id;
     }
+    bool operator!=(const CardId& other) const {
+        return !(*this == other);
+    }
 };
 
 // Represents a disjunctive constraint (e.g., "Player B has Card1 OR Card2 OR Card3")
@@ -40,51 +43,57 @@ class GameEngine {
 public:
     GameEngine();
 
-    // Initialize the game with the number of players and the cards in "our" hand
-    // num_players includes "us". Players are indexed 0 to num_players-1.
-    // We are assumed to be Player 0.
-    // The "Case File" (Envelope) is a special entity (tracked internally).
-    void initialize(int num_players, const std::vector<Card>& my_hand,
-                   int num_suspects = 6, int num_weapons = 6, int num_rooms = 9);
+    // Initialize a new session
+    // This sets the base state which is restored upon reset/replay.
+    void initialize_game(const InitGameRequest& request);
 
-    // Record a turn where a suggestion was made
-    // suggester_idx: Index of player making suggestion
-    // suspect, weapon, room: The suggested cards
-    // responder_idx: Index of player who responded (or -1 if nobody responded/all passed)
-    // response_card: If we are the suggester, the card shown. If we are the responder, the card we showed.
-    //                If we are an observer, this might be empty/unknown.
-    // card_shown_to_me: True if the card was shown specifically to "me" (Player 0) or by "me".
-    void process_suggestion(int suggester_idx,
-                          const Card& suspect,
-                          const Card& weapon,
-                          const Card& room,
-                          int responder_idx,
-                          std::optional<Card> response_card = std::nullopt);
+    // Appends a new turn and updates state
+    void record_turn(const TurnData& turn_data);
 
-    // Run the solver to deduce new information
-    void reconcile();
+    // Modifies an existing turn and replays the game
+    bool update_turn(const std::string& turn_id, const TurnData& new_data);
 
-    // Query state
-    CardState get_card_state(int player_idx, const CardId& card) const;
-    CardState get_case_file_state(const CardId& card) const;
+    // Removes the last turn and replays
+    bool undo_last_turn();
+
+    // Returns the history
+    std::vector<TurnEntry> get_history() const;
+
+    // Returns the full game state suitable for the frontend
+    GameStateResponse get_game_state_response() const;
 
 private:
-    int m_num_players;
+    // Game Configuration
+    InitGameRequest m_init_request;
+    bool m_initialized = false;
+    std::vector<CardId> m_all_cards;
 
+    // History (Event Sourcing)
+    std::vector<TurnEntry> m_history;
+    int m_next_turn_number = 1;
+
+    // Current State (Calculated)
     // Grid: [PlayerIndex][CardId] -> State
-    // We use a map for CardId to state for flexibility, or we could flatten it.
     std::map<int, std::map<CardId, CardState>> m_player_states;
-
     // Case File state
     std::map<CardId, CardState> m_case_file_state;
-
     // Constraints list
     std::vector<Constraint> m_constraints;
 
-    // Helper to get all card IDs
-    std::vector<CardId> m_all_cards;
+    // --- Core Logic Methods ---
 
-    void register_card_types(int num_suspects, int num_weapons, int num_rooms);
+    // Resets the state to the initial configuration (players, my hand)
+    // Clears all deductions and constraints.
+    void reset_state();
+
+    // Replays all turns in history
+    void replay_game();
+
+    // Processes a single turn's logic (updates state/constraints)
+    // This does NOT add to history, it just applies logic.
+    void apply_turn_logic(const TurnData& data);
+
+    void register_card_types();
 
     // Helper to mark a card as KNOWN_TRUE for a player
     // This also implies KNOWN_FALSE for everyone else (including Case File)
@@ -93,13 +102,15 @@ private:
     // Helper to mark a card as KNOWN_FALSE for a player
     void mark_card_false(int player_idx, const CardId& card);
 
-    // Helper to check if a constraint is resolved
-    bool resolve_constraint(const Constraint& c);
-
     // Solver steps
-    bool solve_elimination(); // If a player has a card, others don't
-    bool solve_case_file(); // If all players don't have it, Case File does (if type count permits)
-    bool solve_constraints(); // Resolve pending constraints
+    void reconcile();
+    bool solve_elimination();
+    bool solve_case_file();
+    bool solve_constraints();
+
+    // Helpers
+    CardId to_card_id(const Card& c) const;
+    Card from_card_id(const CardId& id) const;
 };
 
 } // namespace clue
