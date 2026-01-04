@@ -71,7 +71,7 @@ class SolutionScreen extends StatelessWidget {
               } else {
                 return _buildRow(item);
               }
-            }).toList(),
+            }),
           ],
         ),
       ),
