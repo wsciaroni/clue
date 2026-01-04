@@ -144,7 +144,7 @@ class _TurnFormState extends State<TurnForm> {
           // Who asked?
           DropdownButtonFormField<Player>(
             decoration: const InputDecoration(labelText: 'Who Asked?'),
-            initialValue: _askingPlayer,
+            value: _askingPlayer,
             items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
             onChanged: (val) => setState(() => _askingPlayer = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -153,34 +153,49 @@ class _TurnFormState extends State<TurnForm> {
           // Suspect
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Suspect'),
-            initialValue: _selectedSuspect,
+            value: _selectedSuspect,
             items: GameConstants.suspects.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
-            onChanged: (val) => setState(() => _selectedSuspect = val),
+            onChanged: (val) => setState(() {
+              if (_specificCardShown == _selectedSuspect) {
+                _specificCardShown = val;
+              }
+              _selectedSuspect = val;
+            }),
             validator: (val) => val == null ? 'Required' : null,
           ),
 
           // Weapon
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Weapon'),
-            initialValue: _selectedWeapon,
+            value: _selectedWeapon,
             items: GameConstants.weapons.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
-            onChanged: (val) => setState(() => _selectedWeapon = val),
+            onChanged: (val) => setState(() {
+              if (_specificCardShown == _selectedWeapon) {
+                _specificCardShown = val;
+              }
+              _selectedWeapon = val;
+            }),
             validator: (val) => val == null ? 'Required' : null,
           ),
 
           // Room
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Room'),
-            initialValue: _selectedRoom,
+            value: _selectedRoom,
             items: GameConstants.rooms.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
-            onChanged: (val) => setState(() => _selectedRoom = val),
+            onChanged: (val) => setState(() {
+              if (_specificCardShown == _selectedRoom) {
+                _specificCardShown = val;
+              }
+              _selectedRoom = val;
+            }),
             validator: (val) => val == null ? 'Required' : null,
           ),
 
           // Who Answered?
           DropdownButtonFormField<Player>(
             decoration: const InputDecoration(labelText: 'Who Answered?'),
-            initialValue: _answeringPlayer,
+            value: _answeringPlayer,
             items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
             onChanged: (val) => setState(() => _answeringPlayer = val),
             validator: (val) {
@@ -204,7 +219,7 @@ class _TurnFormState extends State<TurnForm> {
           if (_cardShown)
             DropdownButtonFormField<GameCard>(
               decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
-              initialValue: _specificCardShown,
+              value: _specificCardShown,
               items: _buildCardShownItems(),
               onChanged: (val) => setState(() => _specificCardShown = val),
             ),
