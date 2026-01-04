@@ -144,7 +144,7 @@ class _TurnFormState extends State<TurnForm> {
           // Who asked?
           DropdownButtonFormField<Player>(
             decoration: const InputDecoration(labelText: 'Who Asked?'),
-            value: _askingPlayer,
+            initialValue: _askingPlayer,
             items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
             onChanged: (val) => setState(() => _askingPlayer = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -153,7 +153,7 @@ class _TurnFormState extends State<TurnForm> {
           // Suspect
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Suspect'),
-            value: _selectedSuspect,
+            initialValue: _selectedSuspect,
             items: GameConstants.suspects.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() => _selectedSuspect = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -162,7 +162,7 @@ class _TurnFormState extends State<TurnForm> {
           // Weapon
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Weapon'),
-            value: _selectedWeapon,
+            initialValue: _selectedWeapon,
             items: GameConstants.weapons.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() => _selectedWeapon = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -171,7 +171,7 @@ class _TurnFormState extends State<TurnForm> {
           // Room
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Room'),
-            value: _selectedRoom,
+            initialValue: _selectedRoom,
             items: GameConstants.rooms.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() => _selectedRoom = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -180,7 +180,7 @@ class _TurnFormState extends State<TurnForm> {
           // Who Answered?
           DropdownButtonFormField<Player>(
             decoration: const InputDecoration(labelText: 'Who Answered?'),
-            value: _answeringPlayer,
+            initialValue: _answeringPlayer,
             items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
             onChanged: (val) => setState(() => _answeringPlayer = val),
             validator: (val) {
@@ -204,7 +204,7 @@ class _TurnFormState extends State<TurnForm> {
           if (_cardShown)
             DropdownButtonFormField<GameCard>(
               decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
-              value: _specificCardShown,
+              initialValue: _specificCardShown,
               items: _buildCardShownItems(),
               onChanged: (val) => setState(() => _specificCardShown = val),
             ),
