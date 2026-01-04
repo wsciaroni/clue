@@ -19,3 +19,16 @@ jobs:
         channel: 'stable'
     - run: flutter pub get
     - run: flutter analyze
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./applications/frontend
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter test
