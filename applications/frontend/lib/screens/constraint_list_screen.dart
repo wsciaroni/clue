@@ -19,15 +19,17 @@ class _ConstraintListScreenState extends State<ConstraintListScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = context.watch<GameState>();
-    // Filter for turns where a card was shown
-    final constraints = gameState.turnLog.where((t) => t.cardShown).toList();
+
+    final constraints = gameState.turnLog
+        .where((t) => t.answeringPlayer != null)
+        .toList();
 
     // Grouping
     Map<Player, List<GameTurn>> grouped;
     if (_groupBy == GroupBy.answerer) {
       grouped = {};
       for (var t in constraints) {
-        grouped.putIfAbsent(t.answeringPlayer, () => []).add(t);
+        grouped.putIfAbsent(t.answeringPlayer!, () => []).add(t);
       }
     } else {
       grouped = {};
@@ -48,8 +50,14 @@ class _ConstraintListScreenState extends State<ConstraintListScreen> {
             initialValue: _groupBy,
             onSelected: (val) => setState(() => _groupBy = val),
             itemBuilder: (context) => const [
-              PopupMenuItem(value: GroupBy.answerer, child: Text('Group by Answerer')),
-              PopupMenuItem(value: GroupBy.asker, child: Text('Group by Asker')),
+              PopupMenuItem(
+                value: GroupBy.answerer,
+                child: Text('Group by Answerer'),
+              ),
+              PopupMenuItem(
+                value: GroupBy.asker,
+                child: Text('Group by Asker'),
+              ),
             ],
             icon: const Icon(Icons.sort),
           ),
@@ -63,30 +71,37 @@ class _ConstraintListScreenState extends State<ConstraintListScreen> {
                 final player = sortedKeys[index];
                 final playerTurns = grouped[player]!;
 
-                // Sort playerTurns: Unresolved first, then Resolved
-                // Resolved means: We know the answerer HAS one of the cards involved.
-                // Or implicitly, if we know they don't have 2, and they showed one, we effectively know the 3rd.
-                // But strictly, let's stick to: Is one of them marked 'hasIt'?
                 playerTurns.sort((a, b) {
                   bool aResolved = _isResolved(a);
                   bool bResolved = _isResolved(b);
                   if (aResolved == bResolved) return 0;
-                  return aResolved ? 1 : -1; // Unresolved (false) comes before Resolved (true)
+                  return aResolved ? 1 : -1;
                 });
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       color: Colors.grey.shade200,
                       width: double.infinity,
                       child: Text(
                         player.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                    ...playerTurns.map((turn) => _ConstraintCard(turn: turn, isResolved: _isResolved(turn))),
+                    ...playerTurns.map(
+                      (turn) => _ConstraintCard(
+                        turn: turn,
+                        isResolved: _isResolved(turn),
+                      ),
+                    ),
                   ],
                 );
               },
@@ -95,11 +110,10 @@ class _ConstraintListScreenState extends State<ConstraintListScreen> {
   }
 
   bool _isResolved(GameTurn turn) {
-    // A constraint is resolved if we know the answering player HAS one of the cards.
-    // Or if we know specifically which card was shown (which implies they have it).
     if (turn.specificCardShown != null) return true;
 
-    final p = turn.answeringPlayer;
+    final p = turn.answeringPlayer!;
+
     if (p.getStatus(turn.suspect) == DeductionStatus.hasIt) return true;
     if (p.getStatus(turn.weapon) == DeductionStatus.hasIt) return true;
     if (p.getStatus(turn.room) == DeductionStatus.hasIt) return true;
@@ -116,12 +130,7 @@ class _ConstraintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If grouped by answerer, we show who asked.
-    // If grouped by asker, we show who answered.
-    // Actually, simpler to just show the "other" person in the subtitle.
-    // But the core request is the 3 cards.
-
-    // Grouping by Answerer -> Header is Answerer. Subtitle could be "Asked by X".
+    final answerer = turn.answeringPlayer!;
 
     return Opacity(
       opacity: isResolved ? 0.5 : 1.0,
@@ -136,15 +145,18 @@ class _ConstraintCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildCardIcon(turn.suspect, turn.answeringPlayer),
-                  _buildCardIcon(turn.weapon, turn.answeringPlayer),
-                  _buildCardIcon(turn.room, turn.answeringPlayer),
+                  _buildCardIcon(turn.suspect, answerer),
+                  _buildCardIcon(turn.weapon, answerer),
+                  _buildCardIcon(turn.room, answerer),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
-                'Asked by: ${turn.askingPlayer.name} -> Answered by: ${turn.answeringPlayer.name}',
-                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                'Asked by: ${turn.askingPlayer.name} -> Answered by: ${answerer.name}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -180,8 +192,11 @@ class _ConstraintCard extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  card.name.substring(0, 1), // Initials or Icon placeholder
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  card.name.substring(0, 1),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
