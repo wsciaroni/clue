@@ -10,8 +10,7 @@ class GameTurn {
   final GameCard suspect;
   final GameCard weapon;
   final GameCard room;
-  final Player answeringPlayer;
-  final bool cardShown;
+  final Player? answeringPlayer;
   final GameCard? specificCardShown; // Optional, if user saw it
 
   GameTurn({
@@ -19,23 +18,22 @@ class GameTurn {
     required this.suspect,
     required this.weapon,
     required this.room,
-    required this.answeringPlayer,
-    required this.cardShown,
+    this.answeringPlayer,
     this.specificCardShown,
   });
 
   @override
   String toString() {
     String base =
-        '${askingPlayer.name} asked ${answeringPlayer.name} about $suspect, $weapon, $room.';
-    if (cardShown) {
+        '${askingPlayer.name} asked ${answeringPlayer?.name ?? "No one"} about $suspect, $weapon, $room.';
+    if (answeringPlayer != null) {
       if (specificCardShown != null) {
         return '$base Shown: $specificCardShown.';
       } else {
         return '$base Card shown (hidden).';
       }
     } else {
-      return '$base No card shown.';
+      return '$base No one answered.';
     }
   }
 }
@@ -90,28 +88,26 @@ class GameState extends ChangeNotifier {
     _turnLog.insert(0, turn); // Add to top of list
 
     // Basic Deduction Logic (Client-side immediate feedback)
-    if (!turn.cardShown) {
-      // If answering player did NOT show a card, they do not have ANY of the three.
-      turn.answeringPlayer.setStatus(
-        turn.suspect,
-        DeductionStatus.doesNotHaveIt,
-      );
-      turn.answeringPlayer.setStatus(
-        turn.weapon,
-        DeductionStatus.doesNotHaveIt,
-      );
-      turn.answeringPlayer.setStatus(turn.room, DeductionStatus.doesNotHaveIt);
+    if (turn.answeringPlayer == null) {
+       // If No one answered, then everyone (except the asker) does NOT have any of the three cards.
+       for (var p in _players) {
+         if (p != turn.askingPlayer) {
+           p.setStatus(turn.suspect, DeductionStatus.doesNotHaveIt);
+           p.setStatus(turn.weapon, DeductionStatus.doesNotHaveIt);
+           p.setStatus(turn.room, DeductionStatus.doesNotHaveIt);
+         }
+       }
     } else {
       // Answering player showed a card. They have AT LEAST one of them.
       // If specific card is known:
       if (turn.specificCardShown != null) {
-        turn.answeringPlayer.setStatus(
+        turn.answeringPlayer!.setStatus(
           turn.specificCardShown!,
           DeductionStatus.hasIt,
         );
         // Other players do not have it
         for (var p in _players) {
-          if (p != turn.answeringPlayer) {
+          if (p != turn.answeringPlayer!) {
             p.setStatus(turn.specificCardShown!, DeductionStatus.doesNotHaveIt);
           }
         }
