@@ -51,12 +51,7 @@ class DeductionGridScreen extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              ..._buildSection(
-                GameConstants.suspects,
-                players,
-                'Suspects',
-                0,
-              ),
+              ..._buildSection(GameConstants.suspects, players, 'Suspects', 0),
               ..._buildSection(
                 GameConstants.weapons,
                 players,
@@ -121,9 +116,7 @@ class DeductionGridScreen extends StatelessWidget {
               ),
               ...players.map((player) {
                 final status = player.getStatus(card);
-                return Expanded(
-                  child: Center(child: _buildStatusIcon(status)),
-                );
+                return Expanded(child: Center(child: _buildStatusIcon(status)));
               }),
             ],
           ),
@@ -138,6 +131,7 @@ class DeductionGridScreen extends StatelessWidget {
       case DeductionStatus.hasIt:
         return Container(
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: Colors.green.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
@@ -149,11 +143,7 @@ class DeductionGridScreen extends StatelessWidget {
       case DeductionStatus.unknown:
         return const SizedBox(width: 20, height: 20);
       case DeductionStatus.mightHaveIt:
-        return const Icon(
-          Icons.question_mark,
-          color: Colors.orange,
-          size: 20,
-        );
+        return const Icon(Icons.question_mark, color: Colors.orange, size: 20);
     }
   }
 }
