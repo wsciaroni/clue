@@ -179,6 +179,8 @@ const TurnData$json = {
       '10': 'cardShown',
       '17': true
     },
+    {'1': 'is_accusation', '3': 7, '4': 1, '5': 8, '10': 'isAccusation'},
+    {'1': 'was_correct', '3': 8, '4': 1, '5': 8, '10': 'wasCorrect'},
   ],
   '8': [
     {'1': '_card_shown'},
@@ -191,8 +193,9 @@ final $typed_data.Uint8List turnDataDescriptor = $convert.base64Decode(
     'F5ZXJJbmRleBIkCgdzdXNwZWN0GAIgASgLMgouY2x1ZS5DYXJkUgdzdXNwZWN0EiIKBndlYXBv'
     'bhgDIAEoCzIKLmNsdWUuQ2FyZFIGd2VhcG9uEh4KBHJvb20YBCABKAsyCi5jbHVlLkNhcmRSBH'
     'Jvb20SNAoWcmVzcG9uZGVyX3BsYXllcl9pbmRleBgFIAEoBVIUcmVzcG9uZGVyUGxheWVySW5k'
-    'ZXgSLgoKY2FyZF9zaG93bhgGIAEoCzIKLmNsdWUuQ2FyZEgAUgljYXJkU2hvd26IAQFCDQoLX2'
-    'NhcmRfc2hvd24=');
+    'ZXgSLgoKY2FyZF9zaG93bhgGIAEoCzIKLmNsdWUuQ2FyZEgAUgljYXJkU2hvd26IAQESIwoNaX'
+    'NfYWNjdXNhdGlvbhgHIAEoCFIMaXNBY2N1c2F0aW9uEh8KC3dhc19jb3JyZWN0GAggASgIUgp3'
+    'YXNDb3JyZWN0Qg0KC19jYXJkX3Nob3du');
 
 @$core.Deprecated('Use turnEntryDescriptor instead')
 const TurnEntry$json = {

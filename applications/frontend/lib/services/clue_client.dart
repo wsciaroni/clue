@@ -78,6 +78,9 @@ class ClueClient {
       turnData.cardShown = _convertToProtoCard(turn.specificCardShown!);
     }
 
+    turnData.isAccusation = turn.isAccusation;
+    turnData.wasCorrect = turn.wasCorrect;
+
     final request = TurnRequest()
       ..gameId = _gameId!
       ..data = turnData;

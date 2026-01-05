@@ -12,6 +12,8 @@ class GameTurn {
   final GameCard room;
   final Player? answeringPlayer;
   final GameCard? specificCardShown; // Optional, if user saw it
+  final bool isAccusation;
+  final bool wasCorrect;
 
   GameTurn({
     required this.askingPlayer,
@@ -20,10 +22,16 @@ class GameTurn {
     required this.room,
     this.answeringPlayer,
     this.specificCardShown,
+    this.isAccusation = false,
+    this.wasCorrect = false,
   });
 
   @override
   String toString() {
+    if (isAccusation) {
+       return '${askingPlayer.name} made an ACCUSATION: $suspect, $weapon, $room. Result: ${wasCorrect ? "Correct" : "Incorrect"}.';
+    }
+
     String base =
         '${askingPlayer.name} asked ${answeringPlayer?.name ?? "No one"} about $suspect, $weapon, $room.';
     if (answeringPlayer != null) {

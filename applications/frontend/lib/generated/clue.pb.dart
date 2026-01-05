@@ -137,6 +137,8 @@ class TurnData extends $pb.GeneratedMessage {
     Card? room,
     $core.int? responderPlayerIndex,
     Card? cardShown,
+    $core.bool? isAccusation,
+    $core.bool? wasCorrect,
   }) {
     final result = create();
     if (suggesterPlayerIndex != null)
@@ -147,6 +149,8 @@ class TurnData extends $pb.GeneratedMessage {
     if (responderPlayerIndex != null)
       result.responderPlayerIndex = responderPlayerIndex;
     if (cardShown != null) result.cardShown = cardShown;
+    if (isAccusation != null) result.isAccusation = isAccusation;
+    if (wasCorrect != null) result.wasCorrect = wasCorrect;
     return result;
   }
 
@@ -169,6 +173,8 @@ class TurnData extends $pb.GeneratedMessage {
     ..aOM<Card>(4, _omitFieldNames ? '' : 'room', subBuilder: Card.create)
     ..aI(5, _omitFieldNames ? '' : 'responderPlayerIndex')
     ..aOM<Card>(6, _omitFieldNames ? '' : 'cardShown', subBuilder: Card.create)
+    ..aOB(7, _omitFieldNames ? '' : 'isAccusation')
+    ..aOB(8, _omitFieldNames ? '' : 'wasCorrect')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -250,6 +256,24 @@ class TurnData extends $pb.GeneratedMessage {
   void clearCardShown() => $_clearField(6);
   @$pb.TagNumber(6)
   Card ensureCardShown() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  $core.bool get isAccusation => $_getBF(6);
+  @$pb.TagNumber(7)
+  set isAccusation($core.bool value) => $_setBool(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasIsAccusation() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearIsAccusation() => $_clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.bool get wasCorrect => $_getBF(7);
+  @$pb.TagNumber(8)
+  set wasCorrect($core.bool value) => $_setBool(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasWasCorrect() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearWasCorrect() => $_clearField(8);
 }
 
 class TurnEntry extends $pb.GeneratedMessage {
