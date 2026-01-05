@@ -56,14 +56,22 @@ class _GameLogScreenState extends State<GameLogScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Record Turn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const Text(
+                    'Record Turn',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                   const SizedBox(height: 10),
 
                   // Who asked?
                   DropdownButtonFormField<Player>(
                     decoration: const InputDecoration(labelText: 'Who Asked?'),
                     initialValue: _askingPlayer,
-                    items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
+                    items: players
+                        .map(
+                          (p) =>
+                              DropdownMenuItem(value: p, child: Text(p.name)),
+                        )
+                        .toList(),
                     onChanged: (val) => setState(() => _askingPlayer = val),
                     validator: (val) => val == null ? 'Required' : null,
                   ),
@@ -72,7 +80,12 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Suspect'),
                     initialValue: _selectedSuspect,
-                    items: GameConstants.suspects.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
+                    items: GameConstants.suspects
+                        .map(
+                          (c) =>
+                              DropdownMenuItem(value: c, child: Text(c.name)),
+                        )
+                        .toList(),
                     onChanged: (val) => setState(() => _selectedSuspect = val),
                     validator: (val) => val == null ? 'Required' : null,
                   ),
@@ -81,7 +94,12 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Weapon'),
                     initialValue: _selectedWeapon,
-                    items: GameConstants.weapons.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
+                    items: GameConstants.weapons
+                        .map(
+                          (c) =>
+                              DropdownMenuItem(value: c, child: Text(c.name)),
+                        )
+                        .toList(),
                     onChanged: (val) => setState(() => _selectedWeapon = val),
                     validator: (val) => val == null ? 'Required' : null,
                   ),
@@ -90,7 +108,12 @@ class _GameLogScreenState extends State<GameLogScreen> {
                   DropdownButtonFormField<GameCard>(
                     decoration: const InputDecoration(labelText: 'Room'),
                     initialValue: _selectedRoom,
-                    items: GameConstants.rooms.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
+                    items: GameConstants.rooms
+                        .map(
+                          (c) =>
+                              DropdownMenuItem(value: c, child: Text(c.name)),
+                        )
+                        .toList(),
                     onChanged: (val) => setState(() => _selectedRoom = val),
                     validator: (val) => val == null ? 'Required' : null,
                   ),
@@ -104,34 +127,49 @@ class _GameLogScreenState extends State<GameLogScreen> {
                       });
                     },
                     children: const [
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Suggestion")),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Accusation")),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text("Suggestion"),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text("Accusation"),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
 
                   if (_isAccusation) ...[
-                     const Text("Was the accusation correct?", style: TextStyle(fontWeight: FontWeight.bold)),
-                     Row(
-                       children: [
-                         Expanded(
-                           child: RadioListTile<bool>(
-                             title: const Text("Yes (Game Over)"),
-                             value: true,
-                             groupValue: _wasAccusationCorrect,
-                             onChanged: (val) => setState(() => _wasAccusationCorrect = val!),
-                           ),
-                         ),
-                         Expanded(
-                           child: RadioListTile<bool>(
-                             title: const Text("No"),
-                             value: false,
-                             groupValue: _wasAccusationCorrect,
-                             onChanged: (val) => setState(() => _wasAccusationCorrect = val!),
-                           ),
-                         ),
-                       ],
-                     ),
+                    const Text(
+                      "Was the accusation correct?",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    RadioGroup<bool>(
+                      groupValue: _wasAccusationCorrect,
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _wasAccusationCorrect = val);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<bool>(
+                              title: const Text("Yes (Game Over)"),
+                              value: true,
+                              // 3. Remove groupValue and onChanged from individual tiles
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<bool>(
+                              title: const Text("No"),
+                              value: false,
+                              // 3. Remove groupValue and onChanged from individual tiles
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ] else ...[
                     SwitchListTile(
                       title: const Text('Did someone answer?'),
@@ -150,28 +188,58 @@ class _GameLogScreenState extends State<GameLogScreen> {
                     if (_someoneAnswered) ...[
                       // Who Answered?
                       DropdownButtonFormField<Player>(
-                        decoration: const InputDecoration(labelText: 'Who Answered?'),
+                        decoration: const InputDecoration(
+                          labelText: 'Who Answered?',
+                        ),
                         initialValue: _answeringPlayer,
-                        items: players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
-                        onChanged: (val) => setState(() => _answeringPlayer = val),
+                        items: players
+                            .map(
+                              (p) => DropdownMenuItem(
+                                value: p,
+                                child: Text(p.name),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (val) =>
+                            setState(() => _answeringPlayer = val),
                         validator: (val) {
                           if (!_someoneAnswered) return null;
                           if (val == null) return 'Required';
-                          if (val == _askingPlayer) return 'Asker cannot answer';
+                          if (val == _askingPlayer) {
+                            return 'Asker cannot answer';
+                          }
                           return null;
                         },
                       ),
 
                       DropdownButtonFormField<GameCard>(
-                        decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Which card? (Optional/Private)',
+                        ),
                         initialValue: _specificCardShown,
                         items: [
-                          const DropdownMenuItem<GameCard>(value: null, child: Text('Unknown / Private')),
-                          if (_selectedSuspect != null) DropdownMenuItem(value: _selectedSuspect, child: Text(_selectedSuspect!.name)),
-                          if (_selectedWeapon != null) DropdownMenuItem(value: _selectedWeapon, child: Text(_selectedWeapon!.name)),
-                          if (_selectedRoom != null) DropdownMenuItem(value: _selectedRoom, child: Text(_selectedRoom!.name)),
+                          const DropdownMenuItem<GameCard>(
+                            value: null,
+                            child: Text('Unknown / Private'),
+                          ),
+                          if (_selectedSuspect != null)
+                            DropdownMenuItem(
+                              value: _selectedSuspect,
+                              child: Text(_selectedSuspect!.name),
+                            ),
+                          if (_selectedWeapon != null)
+                            DropdownMenuItem(
+                              value: _selectedWeapon,
+                              child: Text(_selectedWeapon!.name),
+                            ),
+                          if (_selectedRoom != null)
+                            DropdownMenuItem(
+                              value: _selectedRoom,
+                              child: Text(_selectedRoom!.name),
+                            ),
                         ],
-                        onChanged: (val) => setState(() => _specificCardShown = val),
+                        onChanged: (val) =>
+                            setState(() => _specificCardShown = val),
                       ),
                     ],
                   ],
@@ -197,7 +265,9 @@ class _GameLogScreenState extends State<GameLogScreen> {
         suspect: _selectedSuspect!,
         weapon: _selectedWeapon!,
         room: _selectedRoom!,
-        answeringPlayer: (_isAccusation || !_someoneAnswered) ? null : _answeringPlayer,
+        answeringPlayer: (_isAccusation || !_someoneAnswered)
+            ? null
+            : _answeringPlayer,
         specificCardShown: (_isAccusation) ? null : _specificCardShown,
         isAccusation: _isAccusation,
         wasCorrect: _isAccusation ? _wasAccusationCorrect : false,
@@ -207,20 +277,22 @@ class _GameLogScreenState extends State<GameLogScreen> {
 
       // Reset form fields slightly for convenience, but keep asker?
       setState(() {
-         // _askingPlayer = null; // Optional: keep or clear
-         _answeringPlayer = null;
-         _someoneAnswered = true;
-         _specificCardShown = null;
-         // Keep selected cards as they might be similar next turn? Or clear them.
-         // Let's clear them to avoid mistakes.
-         _selectedSuspect = null;
-         _selectedWeapon = null;
-         _selectedRoom = null;
-         _isAccusation = false;
-         _wasAccusationCorrect = false;
+        // _askingPlayer = null; // Optional: keep or clear
+        _answeringPlayer = null;
+        _someoneAnswered = true;
+        _specificCardShown = null;
+        // Keep selected cards as they might be similar next turn? Or clear them.
+        // Let's clear them to avoid mistakes.
+        _selectedSuspect = null;
+        _selectedWeapon = null;
+        _selectedRoom = null;
+        _isAccusation = false;
+        _wasAccusationCorrect = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Turn Recorded')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Turn Recorded')));
     }
   }
 }
