@@ -21,6 +21,9 @@ public:
     grpc::Status UpdateTurn(grpc::ServerContext* context, const clue::UpdateTurnRequest* request,
                             clue::TurnResponse* response) override;
 
+    grpc::Status DeleteTurn(grpc::ServerContext* context, const clue::DeleteTurnRequest* request,
+                            clue::DeleteTurnResponse* response) override;
+
     grpc::Status UndoLastTurn(grpc::ServerContext* context, const clue::UndoRequest* request,
                               clue::UndoResponse* response) override;
 
