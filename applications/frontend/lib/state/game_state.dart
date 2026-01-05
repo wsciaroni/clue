@@ -39,8 +39,10 @@ class GameTurn {
 }
 
 class GameState extends ChangeNotifier {
-  final ClueClient _client = ClueClient();
+  final ClueClient _client;
   List<Player> _players = [];
+
+  GameState({ClueClient? client}) : _client = client ?? ClueClient();
   final List<GameTurn> _turnLog = [];
   List<LocalSolutionProbability> _solutionProbabilities = [];
   bool _gameStarted = false;
@@ -76,6 +78,8 @@ class GameState extends ChangeNotifier {
 
     try {
       await _client.initializeGame(playerNames, userHand);
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
     } catch (e) {
       debugPrint('Failed to initialize game on backend: $e');
     }
