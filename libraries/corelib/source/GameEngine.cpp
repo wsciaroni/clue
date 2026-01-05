@@ -236,6 +236,39 @@ bool GameEngine::solve_case_file() {
             changed = true;
         }
     }
+    // Logic Rule: If all but one of a category are known to be elsewhere (KNOWN_FALSE in Case File),
+    // then the last one must be in the Case File (KNOWN_TRUE).
+
+    std::vector<CardType> categories = {CardType::CARD_TYPE_SUSPECT, CardType::CARD_TYPE_WEAPON, CardType::CARD_TYPE_ROOM};
+    for (auto cat : categories) {
+        int unknown_count = 0;
+        CardId last_unknown;
+
+        for (const auto& card : m_all_cards) {
+            if (card.type != cat) continue;
+
+            if (m_case_file_state[card] == CardState::UNKNOWN) {
+                unknown_count++;
+                last_unknown = card;
+            } else if (m_case_file_state[card] == CardState::KNOWN_TRUE) {
+                // Already solved for this category
+                unknown_count = -1; // Flag as solved
+                break;
+            }
+        }
+
+        if (unknown_count == 1) {
+            // Found it!
+            m_case_file_state[last_unknown] = CardState::KNOWN_TRUE;
+
+            // Mark as FALSE for all players
+            for (int i = 0; i < m_init_request.num_players(); ++i) {
+                mark_card_false(i, last_unknown);
+            }
+            changed = true;
+        }
+    }
+
     return changed;
 }
 
