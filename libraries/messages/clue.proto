@@ -80,6 +80,8 @@ message TurnData {
   Card room = 4;
   int32 responder_player_index = 5; // -1 if no one responded
   optional Card card_shown = 6;
+  bool is_accusation = 7;
+  bool was_correct = 8;
 }
 
 message TurnEntry {

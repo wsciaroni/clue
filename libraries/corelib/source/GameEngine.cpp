@@ -46,6 +46,7 @@ void GameEngine::reset_state() {
     m_player_states.clear();
     m_case_file_state.clear();
     m_constraints.clear();
+    m_case_file_constraints.clear();
 
     int num_players = m_init_request.num_players();
 
@@ -129,67 +130,92 @@ void GameEngine::replay_game() {
 }
 
 void GameEngine::apply_turn_logic(const TurnData& data) {
-    int num_players = m_init_request.num_players();
-    int suggester_idx = data.suggester_player_index();
-    int responder_idx = data.responder_player_index();
-
     CardId s_id = to_card_id(data.suspect());
     CardId w_id = to_card_id(data.weapon());
     CardId r_id = to_card_id(data.room());
 
-    // Logic Rule 2: Players between A and B passed -> They DO NOT HAVE any of the 3 cards.
-    int current = (suggester_idx + 1) % num_players;
+    if (data.is_accusation()) {
+        // Accusation Logic
+        if (data.was_correct()) {
+            // The accusation was correct -> These 3 cards are the Case File
+            // Case File HAS them
+            // Mark case file true for each (this handles setting others to false)
+            // But we need to be careful: mark_card_true is for players.
+            // We'll set m_case_file_state directly and rely on solve_case_file or manually enforce.
+            // Actually, we can use a helper or just set state.
 
-    // If no one responded (-1), everyone else passed.
-    // If someone responded, everyone between passed.
+            // If Case File has S, then it is KNOWN_TRUE.
+            // Also implies no player has it.
+            // Let's create a helper or just do it here.
+            m_case_file_state[s_id] = CardState::KNOWN_TRUE;
+            m_case_file_state[w_id] = CardState::KNOWN_TRUE;
+            m_case_file_state[r_id] = CardState::KNOWN_TRUE;
 
-    // Stop condition for loop
-    int stop_at = (responder_idx == -1) ? suggester_idx : responder_idx;
-
-    if (responder_idx == -1) {
-        // Everyone passed (except suggester who we don't know about via passing)
-        // Loop wrapping around back to suggester
-         int loop_curr = (suggester_idx + 1) % num_players;
-         while (loop_curr != suggester_idx) {
-             mark_card_false(loop_curr, s_id);
-             mark_card_false(loop_curr, w_id);
-             mark_card_false(loop_curr, r_id);
-             loop_curr = (loop_curr + 1) % num_players;
-         }
-         // Suggestion was not refuted by anyone.
-         // If suggester doesn't have them, they are in the envelope.
-         // This is handled by reconcile/CaseFile logic implicitly if we know suggester hand.
-    } else {
-        // Passers
-        while (current != responder_idx) {
-            mark_card_false(current, s_id);
-            mark_card_false(current, w_id);
-            mark_card_false(current, r_id);
-            current = (current + 1) % num_players;
-        }
-
-        // Logic Rule 2: Responder MUST have (Mustard OR Rope OR Hall)
-        // If we know the card shown:
-        if (data.has_card_shown()) {
-            // Check if card_shown is actually set (proto3 optional or field presence)
-            // The proto definition says 'optional Card card_shown = 6;'
-            CardId c_id = to_card_id(data.card_shown());
-            mark_card_true(responder_idx, c_id);
+            // Because Case File has it, no player can have it.
+            for (int i = 0; i < m_init_request.num_players(); ++i) {
+                mark_card_false(i, s_id);
+                mark_card_false(i, w_id);
+                mark_card_false(i, r_id);
+            }
         } else {
-            // We don't know which one, create constraint
-            Constraint c;
-            c.player_index = responder_idx;
-            c.possible_cards.insert(s_id);
-            c.possible_cards.insert(w_id);
-            c.possible_cards.insert(r_id);
-            m_constraints.push_back(c);
+            // The accusation was incorrect -> Case File != {S, W, R}
+            // This means at least one of these cards is NOT in the case file.
+            std::set<CardId> constraint;
+            constraint.insert(s_id);
+            constraint.insert(w_id);
+            constraint.insert(r_id);
+            m_case_file_constraints.push_back(constraint);
+        }
+    } else {
+        // Suggestion Logic
+        int num_players = m_init_request.num_players();
+        int suggester_idx = data.suggester_player_index();
+        int responder_idx = data.responder_player_index();
+
+        // Logic Rule 2: Players between A and B passed -> They DO NOT HAVE any of the 3 cards.
+        int current = (suggester_idx + 1) % num_players;
+
+        // If no one responded (-1), everyone else passed.
+        // If someone responded, everyone between passed.
+
+        if (responder_idx == -1) {
+            // Everyone passed (except suggester who we don't know about via passing)
+            // Loop wrapping around back to suggester
+             int loop_curr = (suggester_idx + 1) % num_players;
+             while (loop_curr != suggester_idx) {
+                 mark_card_false(loop_curr, s_id);
+                 mark_card_false(loop_curr, w_id);
+                 mark_card_false(loop_curr, r_id);
+                 loop_curr = (loop_curr + 1) % num_players;
+             }
+             // Suggestion was not refuted by anyone.
+        } else {
+            // Passers
+            while (current != responder_idx) {
+                mark_card_false(current, s_id);
+                mark_card_false(current, w_id);
+                mark_card_false(current, r_id);
+                current = (current + 1) % num_players;
+            }
+
+            // Logic Rule 2: Responder MUST have (Mustard OR Rope OR Hall)
+            // If we know the card shown:
+            if (data.has_card_shown()) {
+                // Check if card_shown is actually set (proto3 optional or field presence)
+                // The proto definition says 'optional Card card_shown = 6;'
+                CardId c_id = to_card_id(data.card_shown());
+                mark_card_true(responder_idx, c_id);
+            } else {
+                // We don't know which one, create constraint
+                Constraint c;
+                c.player_index = responder_idx;
+                c.possible_cards.insert(s_id);
+                c.possible_cards.insert(w_id);
+                c.possible_cards.insert(r_id);
+                m_constraints.push_back(c);
+            }
         }
     }
-
-    // Note: Rule 2 says "Player A does NOT have Mustard... unless bluffing".
-    // We usually don't assume Player A *doesn't* have them just because they suggested them.
-    // Standard strategy often involves suggesting cards you have to confuse others.
-    // So we do NOT mark suggester as NOT having them.
 }
 
 void GameEngine::reconcile() {
@@ -210,8 +236,72 @@ bool GameEngine::solve_elimination() {
 
 bool GameEngine::solve_case_file() {
     bool changed = false;
+
+    // 1. Solve Constraints on Case File (Incorrect Accusations)
+    auto it = m_case_file_constraints.begin();
+    while (it != m_case_file_constraints.end()) {
+        std::set<CardId>& c = *it;
+
+        // Constraint: At least one card in 'c' is NOT in Case File.
+        // If we know a card IS in Case File, remove it from 'c' (it satisfied the "part of the tuple", but we are looking for the one that ISN'T).
+        // Wait. "At least one is NOT in Case File".
+        // Equivalent to: NOT (All are in Case File).
+        // If we know A is in Case File, then (A, B, C) being incorrect -> (B, C) must have a false one.
+        // So yes, remove Known TRUEs from the set.
+
+        auto cit = c.begin();
+        while (cit != c.end()) {
+            CardState s = m_case_file_state[*cit];
+            if (s == CardState::KNOWN_FALSE) {
+                // This card is NOT in Case File.
+                // So the constraint "At least one is NOT in Case File" is satisfied!
+                c.clear(); // Clear to signal satisfaction
+                break;
+            } else if (s == CardState::KNOWN_TRUE) {
+                // This card IS in Case File. It doesn't help satisfy "At least one is NOT".
+                // Remove it.
+                cit = c.erase(cit);
+                changed = true; // Constraint simplified
+            } else {
+                ++cit;
+            }
+        }
+
+        if (c.empty()) {
+            // Satisfied or empty
+             it = m_case_file_constraints.erase(it);
+             continue;
+        }
+
+        if (c.size() == 1) {
+             // Only one left: It MUST NOT be in the Case File.
+             CardId not_in_cf = *c.begin();
+             if (m_case_file_state[not_in_cf] != CardState::KNOWN_FALSE) {
+                 m_case_file_state[not_in_cf] = CardState::KNOWN_FALSE;
+                 changed = true;
+             }
+             it = m_case_file_constraints.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    // 2. Standard Case File deductions
     for (const auto& card : m_all_cards) {
-        if (m_case_file_state[card] != CardState::UNKNOWN) continue;
+        if (m_case_file_state[card] != CardState::UNKNOWN) {
+             // If known true, make sure we mark others of this type as false
+             if (m_case_file_state[card] == CardState::KNOWN_TRUE) {
+                 for (const auto& other : m_all_cards) {
+                    if (other.type == card.type && other != card) {
+                        if (m_case_file_state[other] != CardState::KNOWN_FALSE) {
+                            m_case_file_state[other] = CardState::KNOWN_FALSE;
+                            changed = true;
+                        }
+                    }
+                }
+             }
+             continue;
+        }
 
         bool all_players_false = true;
         for (int i = 0; i < m_init_request.num_players(); ++i) {

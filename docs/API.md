@@ -128,6 +128,10 @@ Submits a new turn to the backend. The backend appends this turn to the history 
     *   `suspect`, `weapon`, `room`: The cards in the suggestion.
     *   `responder_player_index`: Who showed a card. Set to `-1` if **No One** showed a card.
     *   `card_shown` (Optional): The specific card shown (if known to the user).
+    *   `is_accusation`: Boolean indicating if this was an Accusation (final guess).
+    *   `was_correct`: Boolean, relevant only if `is_accusation` is true.
+        *   If `true`: The game ends, and the Case File is set to `{suspect, weapon, room}`.
+        *   If `false`: The Case File CANNOT be exactly `{suspect, weapon, room}`.
 *   **Response:** `TurnResponse` (success, error_message)
 
 **Scenario 1: Player Responds**

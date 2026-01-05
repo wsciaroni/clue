@@ -79,6 +79,12 @@ private:
     std::map<CardId, CardState> m_case_file_state;
     // Constraints list
     std::vector<Constraint> m_constraints;
+    // Case File constraints (e.g. Accusation incorrect -> Case File does not have {S, W, R})
+    // Each set represents a tuple of cards where AT LEAST ONE is NOT in the Case File.
+    // Actually, "Incorrect Accusation" means (CaseFile != S OR CaseFile != W OR CaseFile != R).
+    // Which is equivalent to: NOT (CaseFile == S AND CaseFile == W AND CaseFile == R).
+    // Since Case File has exactly one of each type, this means at least one card in the accusation is NOT in the case file.
+    std::vector<std::set<CardId>> m_case_file_constraints;
 
     // --- Core Logic Methods ---
 
