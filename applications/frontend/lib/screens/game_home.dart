@@ -4,6 +4,9 @@ import '../state/game_state.dart';
 import 'game_log_screen.dart';
 import 'deduction_grid_screen.dart';
 
+import 'solution_screen.dart';
+import 'constraint_list_screen.dart';
+
 class GameHome extends StatefulWidget {
   const GameHome({super.key});
 
@@ -17,6 +20,8 @@ class _GameHomeState extends State<GameHome> {
   final List<Widget> _screens = [
     const GameLogScreen(),
     const DeductionGridScreen(),
+    const ConstraintListScreen(),
+    const SolutionScreen(),
   ];
 
   @override
@@ -35,19 +40,25 @@ class _GameHomeState extends State<GameHome> {
                   title: const Text('Reset Game?'),
                   content: const Text('This will clear all data.'),
                   actions: [
-                    TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancel')),
+                    TextButton(
+                      onPressed: () => Navigator.pop(c),
+                      child: const Text('Cancel'),
+                    ),
                     TextButton(
                       onPressed: () {
                         context.read<GameState>().reset();
                         Navigator.pop(c);
                       },
-                      child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                      child: const Text(
+                        'Reset',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ],
                 ),
               );
             },
-          )
+          ),
         ],
       ),
       body: _screens[_currentIndex],
@@ -62,10 +73,19 @@ class _GameHomeState extends State<GameHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'Game Log',
+            backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
             label: 'Deduction Grid',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt),
+            label: 'Constraints',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.lightbulb),
+            label: 'Solution',
           ),
         ],
       ),

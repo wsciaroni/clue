@@ -62,21 +62,7 @@ class ClueClient {
       );
     }
 
-    final turnData = TurnData()
-      ..suggesterPlayerIndex = _getPlayerIndex(turn.askingPlayer.name)
-      ..suspect = _convertToProtoCard(turn.suspect)
-      ..weapon = _convertToProtoCard(turn.weapon)
-      ..room = _convertToProtoCard(turn.room);
-
-    if (turn.answeringPlayer.name.toUpperCase() == 'NO ONE') {
-       turnData.responderPlayerIndex = -1;
-    } else {
-       turnData.responderPlayerIndex = _getPlayerIndex(turn.answeringPlayer.name);
-    }
-
-    if (turn.specificCardShown != null) {
-      turnData.cardShown = _convertToProtoCard(turn.specificCardShown!);
-    }
+    final turnData = _buildTurnData(turn);
 
     final request = TurnRequest()
       ..gameId = _gameId!
@@ -91,6 +77,61 @@ class ClueClient {
       debugPrint('Error recording turn: $e');
       rethrow;
     }
+  }
+
+  Future<void> updateTurn(String turnId, state.GameTurn newTurn) async {
+    if (_gameId == null) {
+      throw Exception('Game ID is null');
+    }
+
+    final turnData = _buildTurnData(newTurn);
+    final request = UpdateTurnRequest()
+      ..gameId = _gameId!
+      ..turnId = turnId
+      ..newData = turnData;
+
+    try {
+      final response = await _stub.updateTurn(request);
+      if (!response.success) {
+        throw Exception('Failed to update turn: ${response.errorMessage}');
+      }
+    } catch (e) {
+      debugPrint('Error updating turn: $e');
+      rethrow;
+    }
+  }
+
+  // Fetch turn history to get IDs
+  Future<List<TurnEntry>> fetchTurnHistory() async {
+    if (_gameId == null) return [];
+    final request = GetHistoryRequest()..gameId = _gameId!;
+    try {
+      final response = await _stub.getTurnHistory(request);
+      return response.history;
+    } catch (e) {
+      debugPrint('Error fetching history: $e');
+      return [];
+    }
+  }
+
+  TurnData _buildTurnData(state.GameTurn turn) {
+    final turnData = TurnData()
+      ..suggesterPlayerIndex = _getPlayerIndex(turn.askingPlayer.name)
+      ..suspect = _convertToProtoCard(turn.suspect)
+      ..weapon = _convertToProtoCard(turn.weapon)
+      ..room = _convertToProtoCard(turn.room);
+
+    if (turn.answeringPlayer == null) {
+      turnData.responderPlayerIndex = -1;
+    } else {
+      turnData.responderPlayerIndex =
+          _getPlayerIndex(turn.answeringPlayer!.name);
+    }
+
+    if (turn.specificCardShown != null) {
+      turnData.cardShown = _convertToProtoCard(turn.specificCardShown!);
+    }
+    return turnData;
   }
 
   Future<GameStateResponse> fetchGameState() async {

@@ -32,7 +32,7 @@ class _TurnFormState extends State<TurnForm> {
   GameCard? _selectedWeapon;
   GameCard? _selectedRoom;
 
-  bool _cardShown = false;
+  bool _someoneAnswered = true;
   GameCard? _specificCardShown;
 
   @override
@@ -48,7 +48,7 @@ class _TurnFormState extends State<TurnForm> {
       _selectedSuspect = widget.initialTurn!.suspect;
       _selectedWeapon = widget.initialTurn!.weapon;
       _selectedRoom = widget.initialTurn!.room;
-      _cardShown = widget.initialTurn!.cardShown;
+      _someoneAnswered = widget.initialTurn!.answeringPlayer != null;
       _specificCardShown = widget.initialTurn!.specificCardShown;
     } else {
       _askingPlayer = null;
@@ -56,7 +56,7 @@ class _TurnFormState extends State<TurnForm> {
       _selectedSuspect = null;
       _selectedWeapon = null;
       _selectedRoom = null;
-      _cardShown = false;
+      _someoneAnswered = true;
       _specificCardShown = null;
     }
   }
@@ -68,8 +68,8 @@ class _TurnFormState extends State<TurnForm> {
         suspect: _selectedSuspect!,
         weapon: _selectedWeapon!,
         room: _selectedRoom!,
-        answeringPlayer: _answeringPlayer!,
-        cardShown: _cardShown,
+        answeringPlayer: _someoneAnswered ? _answeringPlayer : null,
+        cardShown: _someoneAnswered,
         specificCardShown: _specificCardShown,
       );
 
@@ -77,20 +77,12 @@ class _TurnFormState extends State<TurnForm> {
 
       if (widget.clearOnSubmit) {
         setState(() {
-           // Keep asking player? The original code kept nothing or something.
-           // Original code: _answeringPlayer = null; _cardShown = false; _specificCardShown = null; _selectedSuspect = null...
-           // Let's clear everything except maybe asking player?
-           // The original code commented out // _askingPlayer = null;
-           // So it implicitly KEPT askingPlayer.
-           // But let's just clear mandatory fields that change.
-
            _answeringPlayer = null;
-           _cardShown = false;
+           _someoneAnswered = true;
            _specificCardShown = null;
            _selectedSuspect = null;
            _selectedWeapon = null;
            _selectedRoom = null;
-           // We keep _askingPlayer as is convenient.
         });
       }
     }
@@ -101,29 +93,13 @@ class _TurnFormState extends State<TurnForm> {
       const DropdownMenuItem<GameCard>(value: null, child: Text('Unknown / Private')),
     ];
 
-    // Helper to add unique items.
-    // Logic: The options for "Which card?" should primarily be the selected Suspect, Weapon, and Room.
-    // However, if we are Editing, and the saved `_specificCardShown` is somehow NOT one of the currently selected 3
-    // (e.g. state drift or partial update), we must include it to avoid crash.
-    // BUT normally, it should be one of them.
-    // If `_specificCardShown` matches one of them by equality, we should use the *current* instance from selectedX to be clean,
-    // although `GameCard` equality should suffice.
-
-    // We'll create a set of candidates from the current selection.
     final candidates = {
       if (_selectedSuspect != null) _selectedSuspect!,
       if (_selectedWeapon != null) _selectedWeapon!,
       if (_selectedRoom != null) _selectedRoom!,
     };
 
-    // If _specificCardShown is set but not in candidates (e.g. initializing or user changed a dropdown above),
-    // we should technically include it to prevent crash, OR allow it to be deselected.
-    // Ideally, if the user changes Suspect, and the old Suspect was the specific card shown, we should probably clear specific card.
-    // But for now, let's just ensure the list contains the value if it exists.
-
     if (_specificCardShown != null && !candidates.contains(_specificCardShown)) {
-       // It's an orphan value. We add it so the dropdown can display it (prevent crash),
-       // likely the user will change it or it's a transient state.
        items.add(DropdownMenuItem(value: _specificCardShown, child: Text(_specificCardShown!.name)));
     }
 
@@ -144,7 +120,7 @@ class _TurnFormState extends State<TurnForm> {
           // Who asked?
           DropdownButtonFormField<Player>(
             decoration: const InputDecoration(labelText: 'Who Asked?'),
-            initialValue: _askingPlayer,
+            value: _askingPlayer,
             items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
             onChanged: (val) => setState(() => _askingPlayer = val),
             validator: (val) => val == null ? 'Required' : null,
@@ -153,7 +129,7 @@ class _TurnFormState extends State<TurnForm> {
           // Suspect
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Suspect'),
-            initialValue: _selectedSuspect,
+            value: _selectedSuspect,
             items: GameConstants.suspects.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() {
               if (_specificCardShown == _selectedSuspect) {
@@ -167,7 +143,7 @@ class _TurnFormState extends State<TurnForm> {
           // Weapon
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Weapon'),
-            initialValue: _selectedWeapon,
+            value: _selectedWeapon,
             items: GameConstants.weapons.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() {
               if (_specificCardShown == _selectedWeapon) {
@@ -181,7 +157,7 @@ class _TurnFormState extends State<TurnForm> {
           // Room
           DropdownButtonFormField<GameCard>(
             decoration: const InputDecoration(labelText: 'Room'),
-            initialValue: _selectedRoom,
+            value: _selectedRoom,
             items: GameConstants.rooms.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
             onChanged: (val) => setState(() {
               if (_specificCardShown == _selectedRoom) {
@@ -192,37 +168,40 @@ class _TurnFormState extends State<TurnForm> {
             validator: (val) => val == null ? 'Required' : null,
           ),
 
-          // Who Answered?
-          DropdownButtonFormField<Player>(
-            decoration: const InputDecoration(labelText: 'Who Answered?'),
-            initialValue: _answeringPlayer,
-            items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
-            onChanged: (val) => setState(() => _answeringPlayer = val),
-            validator: (val) {
-              if (val == null) return 'Required';
-              if (val == _askingPlayer) return 'Asker cannot answer';
-              return null;
-            },
-          ),
-
           SwitchListTile(
-            title: const Text('Did they show a card?'),
-            value: _cardShown,
+            title: const Text('Did someone answer?'),
+            value: _someoneAnswered,
             onChanged: (val) {
               setState(() {
-                _cardShown = val;
-                if (!val) _specificCardShown = null;
+                _someoneAnswered = val;
+                if (!val) {
+                  _answeringPlayer = null;
+                  _specificCardShown = null;
+                }
               });
             },
           ),
 
-          if (_cardShown)
+          if (_someoneAnswered) ...[
+            DropdownButtonFormField<Player>(
+              decoration: const InputDecoration(labelText: 'Who Answered?'),
+              value: _answeringPlayer,
+              items: widget.players.map((p) => DropdownMenuItem(value: p, child: Text(p.name))).toList(),
+              onChanged: (val) => setState(() => _answeringPlayer = val),
+              validator: (val) {
+                if (val == null) return 'Required';
+                if (val == _askingPlayer) return 'Asker cannot answer';
+                return null;
+              },
+            ),
+
             DropdownButtonFormField<GameCard>(
               decoration: const InputDecoration(labelText: 'Which card? (Optional/Private)'),
-              initialValue: _specificCardShown,
+              value: _specificCardShown,
               items: _buildCardShownItems(),
               onChanged: (val) => setState(() => _specificCardShown = val),
             ),
+          ],
 
           const SizedBox(height: 20),
           ElevatedButton(
