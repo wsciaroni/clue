@@ -9,9 +9,10 @@ enum DeductionStatus {
 
 class Player {
   final String name;
+  final int cardCount;
   final Map<GameCard, DeductionStatus> cardStatus;
 
-  Player({required this.name}) : cardStatus = {};
+  Player({required this.name, this.cardCount = 0}) : cardStatus = {};
 
   void setStatus(GameCard card, DeductionStatus status) {
     cardStatus[card] = status;

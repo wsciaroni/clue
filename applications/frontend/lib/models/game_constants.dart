@@ -53,4 +53,12 @@ class GameConstants {
   ];
 
   static List<GameCard> get allCards => [...suspects, ...weapons, ...rooms];
+
+  static GameCard? getCardByName(String name) {
+    try {
+      return allCards.firstWhere((c) => c.name == name);
+    } catch (_) {
+      return null;
+    }
+  }
 }
