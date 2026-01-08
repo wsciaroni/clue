@@ -12,18 +12,28 @@ class ClueClient {
   String? _gameId;
   List<String> _playerNames = [];
 
-  ClueClient() {
-    String host = 'localhost';
-    if (!kIsWeb && Platform.isAndroid) {
-      host = '10.0.2.2';
+  ClueClient({ClueGameServiceClient? stub, ClientChannel? channel}) {
+    if (channel != null) {
+      _channel = channel;
+    } else {
+      String host = 'localhost';
+      if (!kIsWeb && Platform.isAndroid) {
+        host = '10.0.2.2';
+      }
+
+      _channel = ClientChannel(
+        host,
+        port: 50051,
+        options:
+            const ChannelOptions(credentials: ChannelCredentials.insecure()),
+      );
     }
 
-    _channel = ClientChannel(
-      host,
-      port: 50051,
-      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
-    );
-    _stub = ClueGameServiceClient(_channel);
+    if (stub != null) {
+      _stub = stub;
+    } else {
+      _stub = ClueGameServiceClient(_channel);
+    }
   }
 
   Future<void> initializeGame(
@@ -171,8 +181,8 @@ class ClueClient {
   int _getPlayerIndex(String name) {
     int index = _playerNames.indexOf(name);
     if (index == -1) {
-       debugPrint("Warning: Player $name not found in local list $_playerNames");
-       return 0; // Default or throw?
+      debugPrint("Error: Player $name not found in local list $_playerNames");
+      throw StateError("Player $name not found in local list $_playerNames");
     }
     return index;
   }
