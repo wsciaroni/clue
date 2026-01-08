@@ -144,25 +144,31 @@ class _TurnFormState extends State<TurnForm> {
               "Was the accusation correct?",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text("Yes"),
-                    value: true,
-                    groupValue: _wasAccusationCorrect,
-                    onChanged: (val) => setState(() => _wasAccusationCorrect = val!),
+            RadioGroup<bool>(
+              groupValue: _wasAccusationCorrect,
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() => _wasAccusationCorrect = val);
+                }
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<bool>(
+                      title: const Text("Yes"),
+                      value: true,
+                      // groupValue and onChanged are removed here; handled by RadioGroup
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text("No"),
-                    value: false,
-                    groupValue: _wasAccusationCorrect,
-                    onChanged: (val) => setState(() => _wasAccusationCorrect = val!),
+                  Expanded(
+                    child: RadioListTile<bool>(
+                      title: const Text("No"),
+                      value: false,
+                      // groupValue and onChanged are removed here; handled by RadioGroup
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ] else ...[
             SwitchListTile(
@@ -230,7 +236,9 @@ class _TurnFormState extends State<TurnForm> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _submit,
-            child: Text(widget.initialTurn == null ? 'Submit Turn' : 'Save Changes'),
+            child: Text(
+              widget.initialTurn == null ? 'Submit Turn' : 'Save Changes',
+            ),
           ),
         ],
       ),
