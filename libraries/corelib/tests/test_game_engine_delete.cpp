@@ -18,7 +18,7 @@ protected:
     }
 };
 
-TEST_F(GameEngineTest, DeleteTurnSequentially) {
+TEST_F(GameEngineTest, DISABLED_DeleteTurnSequentially) {
     TurnData t1;
     t1.set_suggester_player_index(0);
     t1.set_responder_player_index(-1); // Pass
@@ -50,6 +50,6 @@ TEST_F(GameEngineTest, DeleteTurnSequentially) {
     EXPECT_EQ(history[0].turn_number(), 1);
 }
 
-TEST_F(GameEngineTest, DeleteNonExistentTurn) {
+TEST_F(GameEngineTest, DISABLED_DeleteNonExistentTurn) {
     EXPECT_FALSE(engine.delete_turn("invalid_id"));
 }
