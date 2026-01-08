@@ -6,6 +6,30 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/grpc/grpc
   GIT_TAG        v1.62.0
 )
+
+# --- START: SILENCE GRPC & DEPENDENCY TESTS ---
+
+# 1. Save your current testing state
+set(PAST_BUILD_TESTING ${BUILD_TESTING})
+
+# 2. Force turn off testing globally for these deps
+set(BUILD_TESTING OFF CACHE BOOL "Disable tests globally for deps" FORCE)
+
+# 3. Explicitly disable gRPC and Protobuf tests
+set(gRPC_BUILD_TESTS OFF CACHE BOOL "Disable gRPC tests" FORCE)
+set(protobuf_BUILD_TESTS OFF CACHE BOOL "Disable Protobuf tests" FORCE)
+set(protobuf_BUILD_EXAMPLES OFF CACHE BOOL "Disable Protobuf examples" FORCE)
+
+# 4. Explicitly disable Abseil (absl) tests - The heavy hitter
+set(ABSL_BUILD_TESTING OFF CACHE BOOL "Disable Abseil tests" FORCE)
+set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Disable Abseil using GTest" FORCE)
+
+# 5. Disable Benchmark and Re2 tests (often pulled in by gRPC)
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable Benchmark tests" FORCE)
+set(RE2_BUILD_TESTING OFF CACHE BOOL "Disable Re2 tests" FORCE)
+
+# --- END: SILENCE GRPC & DEPENDENCY TESTS ---
+
 set(gRPC_BUILD_TESTS OFF)
 set(protobuf_BUILD_TESTS OFF)
 set(gRPC_INSTALL OFF)
@@ -17,6 +41,9 @@ set(gRPC_SSL_PROVIDER "module")
 set(gRPC_PROTOBUF_PROVIDER "module")
 
 FetchContent_MakeAvailable(gRPC)
+
+# 6. Restore your project's testing state so YOUR tests still build
+set(BUILD_TESTING ${PAST_BUILD_TESTING} CACHE BOOL "Restore testing" FORCE)
 
 # 2. Define executables/libraries for generation
 # Since we are building from source, targets like `libprotobuf`, `grpc++`, `protoc` should be available.
