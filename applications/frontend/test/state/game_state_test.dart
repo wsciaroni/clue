@@ -39,7 +39,43 @@ class MockClueClient extends ClueClient {
 
     response.solutionProbabilities.add(prob);
 
+    // If this is the second call (triggered by recordTurn in the test),
+    // return the expected deductions for the "no one answered" scenario.
+    if (fetchGameStateCallCount > 1) {
+      void addRow(proto.Card card) {
+        final row = proto.GridRow()..card = card;
+        // Alice (Asker) - status unaffected/unknown
+        row.playerStates
+            .add(proto.CellState()..status = proto.CellState_Status.UNKNOWN);
+        // Bob - Does Not Have
+        row.playerStates.add(
+            proto.CellState()..status = proto.CellState_Status.DOES_NOT_HAVE);
+        // Charlie - Does Not Have
+        row.playerStates.add(
+            proto.CellState()..status = proto.CellState_Status.DOES_NOT_HAVE);
+        response.rows.add(row);
+      }
+
+      // Col Mustard
+      addRow(proto.Card()
+        ..type = proto.CardType.CARD_TYPE_SUSPECT
+        ..suspect = proto.Suspect.SUSPECT_COL_MUSTARD);
+      // Candlestick (Index 0)
+      addRow(proto.Card()
+        ..type = proto.CardType.CARD_TYPE_WEAPON
+        ..weapon = proto.Weapon.WEAPON_CANDLESTICK);
+      // Kitchen (Index 0)
+      addRow(proto.Card()
+        ..type = proto.CardType.CARD_TYPE_ROOM
+        ..room = proto.Room.ROOM_KITCHEN);
+    }
+
     return response;
+  }
+
+  @override
+  Future<List<proto.TurnEntry>> getTurnHistory() async {
+    return [];
   }
 }
 
