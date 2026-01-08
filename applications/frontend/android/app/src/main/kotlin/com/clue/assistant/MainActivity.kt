@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.clue.assistant
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -3,7 +3,7 @@
 
 using namespace clue;
 
-class GameEngineTest : public ::testing::Test {
+class GameEngineDeleteTest : public ::testing::Test {
 protected:
     GameEngine engine;
 
@@ -18,7 +18,7 @@ protected:
     }
 };
 
-TEST_F(GameEngineTest, DISABLED_DeleteTurnSequentially) {
+TEST_F(GameEngineDeleteTest, DeleteTurnSequentially) {
     TurnData t1;
     t1.set_suggester_player_index(0);
     t1.set_responder_player_index(-1); // Pass
@@ -50,6 +50,6 @@ TEST_F(GameEngineTest, DISABLED_DeleteTurnSequentially) {
     EXPECT_EQ(history[0].turn_number(), 1);
 }
 
-TEST_F(GameEngineTest, DISABLED_DeleteNonExistentTurn) {
+TEST_F(GameEngineDeleteTest, DeleteNonExistentTurn) {
     EXPECT_FALSE(engine.delete_turn("invalid_id"));
 }
