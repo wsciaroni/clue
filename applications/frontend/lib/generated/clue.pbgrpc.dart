@@ -56,6 +56,14 @@ class ClueGameServiceClient extends $grpc.Client {
     return $createUnaryCall(_$updateTurn, request, options: options);
   }
 
+  /// Removes a specific turn by ID
+  $grpc.ResponseFuture<$0.DeleteTurnResponse> deleteTurn(
+    $0.DeleteTurnRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$deleteTurn, request, options: options);
+  }
+
   /// Removes the last turn
   $grpc.ResponseFuture<$0.UndoResponse> undoLastTurn(
     $0.UndoRequest request, {
@@ -97,6 +105,11 @@ class ClueGameServiceClient extends $grpc.Client {
           '/clue.ClueGameService/UpdateTurn',
           ($0.UpdateTurnRequest value) => value.writeToBuffer(),
           $0.TurnResponse.fromBuffer);
+  static final _$deleteTurn =
+      $grpc.ClientMethod<$0.DeleteTurnRequest, $0.DeleteTurnResponse>(
+          '/clue.ClueGameService/DeleteTurn',
+          ($0.DeleteTurnRequest value) => value.writeToBuffer(),
+          $0.DeleteTurnResponse.fromBuffer);
   static final _$undoLastTurn =
       $grpc.ClientMethod<$0.UndoRequest, $0.UndoResponse>(
           '/clue.ClueGameService/UndoLastTurn',
@@ -140,6 +153,13 @@ abstract class ClueGameServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UpdateTurnRequest.fromBuffer(value),
         ($0.TurnResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.DeleteTurnRequest, $0.DeleteTurnResponse>(
+        'DeleteTurn',
+        deleteTurn_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.DeleteTurnRequest.fromBuffer(value),
+        ($0.DeleteTurnResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UndoRequest, $0.UndoResponse>(
         'UndoLastTurn',
         undoLastTurn_Pre,
@@ -186,6 +206,14 @@ abstract class ClueGameServiceBase extends $grpc.Service {
 
   $async.Future<$0.TurnResponse> updateTurn(
       $grpc.ServiceCall call, $0.UpdateTurnRequest request);
+
+  $async.Future<$0.DeleteTurnResponse> deleteTurn_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.DeleteTurnRequest> $request) async {
+    return deleteTurn($call, await $request);
+  }
+
+  $async.Future<$0.DeleteTurnResponse> deleteTurn(
+      $grpc.ServiceCall call, $0.DeleteTurnRequest request);
 
   $async.Future<$0.UndoResponse> undoLastTurn_Pre(
       $grpc.ServiceCall $call, $async.Future<$0.UndoRequest> $request) async {

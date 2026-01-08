@@ -924,14 +924,148 @@ class UpdateTurnRequest extends $pb.GeneratedMessage {
   TurnData ensureNewData() => $_ensure(2);
 }
 
-class TurnResponse extends $pb.GeneratedMessage {
-  factory TurnResponse({
+class DeleteTurnRequest extends $pb.GeneratedMessage {
+  factory DeleteTurnRequest({
+    $core.String? gameId,
+    $core.String? turnId,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    if (turnId != null) result.turnId = turnId;
+    return result;
+  }
+
+  DeleteTurnRequest._();
+
+  factory DeleteTurnRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteTurnRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteTurnRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..aOS(2, _omitFieldNames ? '' : 'turnId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteTurnRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteTurnRequest copyWith(void Function(DeleteTurnRequest) updates) =>
+      super.copyWith((message) => updates(message as DeleteTurnRequest))
+          as DeleteTurnRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteTurnRequest create() => DeleteTurnRequest._();
+  @$core.override
+  DeleteTurnRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DeleteTurnRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteTurnRequest>(create);
+  static DeleteTurnRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get gameId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set gameId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get turnId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set turnId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTurnId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTurnId() => $_clearField(2);
+}
+
+class DeleteTurnResponse extends $pb.GeneratedMessage {
+  factory DeleteTurnResponse({
     $core.bool? success,
     $core.String? errorMessage,
   }) {
     final result = create();
     if (success != null) result.success = success;
     if (errorMessage != null) result.errorMessage = errorMessage;
+    return result;
+  }
+
+  DeleteTurnResponse._();
+
+  factory DeleteTurnResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteTurnResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteTurnResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteTurnResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteTurnResponse copyWith(void Function(DeleteTurnResponse) updates) =>
+      super.copyWith((message) => updates(message as DeleteTurnResponse))
+          as DeleteTurnResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteTurnResponse create() => DeleteTurnResponse._();
+  @$core.override
+  DeleteTurnResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DeleteTurnResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteTurnResponse>(create);
+  static DeleteTurnResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get errorMessage => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set errorMessage($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasErrorMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearErrorMessage() => $_clearField(2);
+}
+
+class TurnResponse extends $pb.GeneratedMessage {
+  factory TurnResponse({
+    $core.bool? success,
+    $core.String? errorMessage,
+    $core.String? turnId,
+  }) {
+    final result = create();
+    if (success != null) result.success = success;
+    if (errorMessage != null) result.errorMessage = errorMessage;
+    if (turnId != null) result.turnId = turnId;
     return result;
   }
 
@@ -950,6 +1084,7 @@ class TurnResponse extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'success')
     ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
+    ..aOS(3, _omitFieldNames ? '' : 'turnId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -988,6 +1123,15 @@ class TurnResponse extends $pb.GeneratedMessage {
   $core.bool hasErrorMessage() => $_has(1);
   @$pb.TagNumber(2)
   void clearErrorMessage() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get turnId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set turnId($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasTurnId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTurnId() => $_clearField(3);
 }
 
 class UndoRequest extends $pb.GeneratedMessage {

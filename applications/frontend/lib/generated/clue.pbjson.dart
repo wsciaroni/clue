@@ -372,19 +372,48 @@ final $typed_data.Uint8List updateTurnRequestDescriptor = $convert.base64Decode(
     'gCIAEoCVIGdHVybklkEikKCG5ld19kYXRhGAMgASgLMg4uY2x1ZS5UdXJuRGF0YVIHbmV3RGF0'
     'YQ==');
 
-@$core.Deprecated('Use turnResponseDescriptor instead')
-const TurnResponse$json = {
-  '1': 'TurnResponse',
+@$core.Deprecated('Use deleteTurnRequestDescriptor instead')
+const DeleteTurnRequest$json = {
+  '1': 'DeleteTurnRequest',
+  '2': [
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+    {'1': 'turn_id', '3': 2, '4': 1, '5': 9, '10': 'turnId'},
+  ],
+};
+
+/// Descriptor for `DeleteTurnRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteTurnRequestDescriptor = $convert.base64Decode(
+    'ChFEZWxldGVUdXJuUmVxdWVzdBIXCgdnYW1lX2lkGAEgASgJUgZnYW1lSWQSFwoHdHVybl9pZB'
+    'gCIAEoCVIGdHVybklk');
+
+@$core.Deprecated('Use deleteTurnResponseDescriptor instead')
+const DeleteTurnResponse$json = {
+  '1': 'DeleteTurnResponse',
   '2': [
     {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
   ],
 };
 
+/// Descriptor for `DeleteTurnResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteTurnResponseDescriptor = $convert.base64Decode(
+    'ChJEZWxldGVUdXJuUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIjCg1lcnJvcl'
+    '9tZXNzYWdlGAIgASgJUgxlcnJvck1lc3NhZ2U=');
+
+@$core.Deprecated('Use turnResponseDescriptor instead')
+const TurnResponse$json = {
+  '1': 'TurnResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
+    {'1': 'turn_id', '3': 3, '4': 1, '5': 9, '10': 'turnId'},
+  ],
+};
+
 /// Descriptor for `TurnResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List turnResponseDescriptor = $convert.base64Decode(
     'CgxUdXJuUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIjCg1lcnJvcl9tZXNzYW'
-    'dlGAIgASgJUgxlcnJvck1lc3NhZ2U=');
+    'dlGAIgASgJUgxlcnJvck1lc3NhZ2USFwoHdHVybl9pZBgDIAEoCVIGdHVybklk');
 
 @$core.Deprecated('Use undoRequestDescriptor instead')
 const UndoRequest$json = {
