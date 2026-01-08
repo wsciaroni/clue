@@ -12,6 +12,9 @@ service ClueGameService {
   // Modifies an existing turn in the history and REPLAYS the game state
   rpc UpdateTurn (UpdateTurnRequest) returns (TurnResponse);
 
+  // Removes a specific turn by ID
+  rpc DeleteTurn (DeleteTurnRequest) returns (DeleteTurnResponse);
+
   // Removes the last turn
   rpc UndoLastTurn (UndoRequest) returns (UndoResponse);
 
@@ -143,7 +146,14 @@ message UpdateTurnRequest {
   TurnData new_data = 3;
 }
 
-message TurnResponse { bool success = 1; string error_message = 2; }
+message DeleteTurnRequest {
+  string game_id = 1;
+  string turn_id = 2;
+}
+
+message DeleteTurnResponse { bool success = 1; string error_message = 2; }
+
+message TurnResponse { bool success = 1; string error_message = 2; string turn_id = 3; }
 message UndoRequest { string game_id = 1; }
 message UndoResponse { bool success = 1; }
 message GetHistoryRequest { string game_id = 1; }

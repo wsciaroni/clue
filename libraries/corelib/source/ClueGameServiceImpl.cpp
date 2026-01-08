@@ -98,6 +98,25 @@ grpc::Status ClueGameServiceImpl::UpdateTurn(grpc::ServerContext* context, const
     return grpc::Status::OK;
 }
 
+grpc::Status ClueGameServiceImpl::DeleteTurn(grpc::ServerContext* context, const clue::DeleteTurnRequest* request,
+                                             clue::DeleteTurnResponse* response) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto engine = get_game(request->game_id());
+    if (!engine) {
+        response->set_success(false);
+        response->set_error_message("Game not found");
+        return grpc::Status::OK;
+    }
+
+    if (engine->delete_turn(request->turn_id())) {
+        response->set_success(true);
+    } else {
+        response->set_success(false);
+        response->set_error_message("Turn not found");
+    }
+    return grpc::Status::OK;
+}
+
 grpc::Status ClueGameServiceImpl::UndoLastTurn(grpc::ServerContext* context, const clue::UndoRequest* request,
                                                clue::UndoResponse* response) {
     std::lock_guard<std::mutex> lock(m_mutex);

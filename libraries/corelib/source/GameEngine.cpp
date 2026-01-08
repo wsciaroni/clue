@@ -109,6 +109,25 @@ bool GameEngine::update_turn(const std::string& turn_id, const TurnData& new_dat
     return true;
 }
 
+bool GameEngine::delete_turn(const std::string& turn_id) {
+    auto it = std::find_if(m_history.begin(), m_history.end(),
+        [&](const TurnEntry& entry) { return entry.turn_id() == turn_id; });
+
+    if (it == m_history.end()) return false;
+
+    m_history.erase(it);
+
+    // Re-index turn numbers to keep them sequential
+    int turn_num = 1;
+    for (auto& entry : m_history) {
+        entry.set_turn_number(turn_num++);
+    }
+    m_next_turn_number = turn_num;
+
+    replay_game();
+    return true;
+}
+
 bool GameEngine::undo_last_turn() {
     if (m_history.empty()) return false;
     m_history.pop_back();

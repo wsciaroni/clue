@@ -6,6 +6,7 @@ import '../services/clue_client.dart';
 import '../generated/clue.pb.dart' as proto;
 
 class GameTurn {
+  final String? id; // Sync with backend ID
   final Player askingPlayer;
   final GameCard suspect;
   final GameCard weapon;
@@ -16,6 +17,7 @@ class GameTurn {
   final bool wasCorrect;
 
   GameTurn({
+    this.id,
     required this.askingPlayer,
     required this.suspect,
     required this.weapon,
@@ -51,7 +53,7 @@ class GameState extends ChangeNotifier {
   List<Player> _players = [];
 
   GameState({ClueClient? client}) : _client = client ?? ClueClient();
-  final List<GameTurn> _turnLog = [];
+  List<GameTurn> _turnLog = [];
   List<LocalSolutionProbability> _solutionProbabilities = [];
   bool _gameStarted = false;
 
@@ -59,11 +61,6 @@ class GameState extends ChangeNotifier {
   List<GameTurn> get turnLog => _turnLog;
   List<LocalSolutionProbability> get solutionProbabilities => _solutionProbabilities;
   bool get gameStarted => _gameStarted;
-
-  // The "User" is assumed to be the first player for simplicity in this version,
-  // or we can explicitly track which player object represents the user.
-  // For now, let's assume the user enters themselves first or selects themselves.
-  // We'll add a helper to identifying the main user if needed.
 
   Future<void> startGame(
     List<String> playerNames,
@@ -73,11 +70,10 @@ class GameState extends ChangeNotifier {
 
     // Logic: If the user enters their hand, we find the "User" player (assuming first one or matching name)
     // and mark those cards as 'hasIt'.
-    // For this implementation, let's assume the first player in the list is the user.
     if (_players.isNotEmpty) {
       for (var card in userHand) {
         _players.first.setStatus(card, DeductionStatus.hasIt);
-        // Consequently, all other players do NOT have this card (if it's unique, which standard Clue cards are)
+        // Consequently, all other players do NOT have this card
         for (var i = 1; i < _players.length; i++) {
           _players[i].setStatus(card, DeductionStatus.doesNotHaveIt);
         }
@@ -97,57 +93,102 @@ class GameState extends ChangeNotifier {
   }
 
   Future<void> recordTurn(GameTurn turn) async {
-    _turnLog.insert(0, turn); // Add to top of list
-
-    // Basic Deduction Logic (Client-side immediate feedback)
-    if (turn.answeringPlayer == null) {
-       // If No one answered, then everyone (except the asker) does NOT have any of the three cards.
-       for (var p in _players) {
-         if (p != turn.askingPlayer) {
-           p.setStatus(turn.suspect, DeductionStatus.doesNotHaveIt);
-           p.setStatus(turn.weapon, DeductionStatus.doesNotHaveIt);
-           p.setStatus(turn.room, DeductionStatus.doesNotHaveIt);
-         }
-       }
-    } else {
-      // Answering player showed a card. They have AT LEAST one of them.
-      // If specific card is known:
-      if (turn.specificCardShown != null) {
-        turn.answeringPlayer!.setStatus(
-          turn.specificCardShown!,
-          DeductionStatus.hasIt,
-        );
-        // Other players do not have it
-        for (var p in _players) {
-          if (p != turn.answeringPlayer!) {
-            p.setStatus(turn.specificCardShown!, DeductionStatus.doesNotHaveIt);
-          }
-        }
-      }
-    }
+    // Optimistic Update
+    _turnLog.insert(0, turn);
     notifyListeners();
 
     try {
       await _client.submitTurn(turn);
+      await _syncTurnHistory();
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
     } catch (e) {
       debugPrint('Failed to sync turn or fetch deductions: $e');
+      // Revert optimism if needed? Or just show error.
     }
+  }
+
+  Future<void> updateTurn(GameTurn turn) async {
+    if (turn.id == null) {
+      debugPrint("Cannot update turn without ID");
+      return;
+    }
+
+    try {
+      await _client.updateTurn(turn.id!, turn);
+      await _syncTurnHistory();
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
+    } catch (e) {
+      debugPrint('Failed to update turn: $e');
+    }
+  }
+
+  Future<void> deleteTurn(GameTurn turn) async {
+     if (turn.id == null) {
+      debugPrint("Cannot delete turn without ID");
+      return;
+    }
+
+    try {
+      await _client.deleteTurn(turn.id!);
+      await _syncTurnHistory();
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
+    } catch (e) {
+       debugPrint('Failed to delete turn: $e');
+    }
+  }
+
+  Future<void> _syncTurnHistory() async {
+    try {
+      final history = await _client.getTurnHistory();
+      _turnLog = history.reversed.map((entry) => _protoToGameTurn(entry)).toList();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to sync history: $e');
+    }
+  }
+
+  GameTurn _protoToGameTurn(proto.TurnEntry entry) {
+    final data = entry.data;
+
+    // Find players
+    Player asking = _players.length > data.suggesterPlayerIndex
+      ? _players[data.suggesterPlayerIndex]
+      : Player(name: "Unknown");
+
+    Player? answering;
+    if (data.responderPlayerIndex != -1 && _players.length > data.responderPlayerIndex) {
+      answering = _players[data.responderPlayerIndex];
+    }
+
+    GameCard suspect = _protoToGameCard(data.suspect) ?? GameConstants.suspects.first;
+    GameCard weapon = _protoToGameCard(data.weapon) ?? GameConstants.weapons.first;
+    GameCard room = _protoToGameCard(data.room) ?? GameConstants.rooms.first;
+    GameCard? shown = data.hasCardShown() ? _protoToGameCard(data.cardShown) : null;
+
+    return GameTurn(
+      id: entry.turnId,
+      askingPlayer: asking,
+      suspect: suspect,
+      weapon: weapon,
+      room: room,
+      answeringPlayer: answering,
+      specificCardShown: shown,
+      isAccusation: data.isAccusation,
+      wasCorrect: data.wasCorrect,
+    );
   }
 
   void _updateDeductions(proto.GameStateResponse response) {
     // GameStateResponse has rows. Each row has a card and player states.
     for (var row in response.rows) {
-      // Find the GameCard for this row
-      // Map proto card back to GameCard.
-      // Try by type and enum value.
       GameCard? gameCard = _protoToGameCard(row.card);
 
       if (gameCard == null) continue;
 
       // Iterate over players
-      // player_states is a list, indices match players order in InitGame
       for (int i = 0; i < row.playerStates.length; i++) {
         if (i >= _players.length) break;
 
@@ -260,15 +301,6 @@ class GameState extends ChangeNotifier {
         return null;
     }
   }
-
-  // CardType _mapProtoCardType(proto.CardType type) {
-  //   switch (type) {
-  //     case proto.CardType.CARD_TYPE_SUSPECT: return CardType.suspect;
-  //     case proto.CardType.CARD_TYPE_WEAPON: return CardType.weapon;
-  //     case proto.CardType.CARD_TYPE_ROOM: return CardType.room;
-  //     default: return CardType.suspect; // Fallback
-  //   }
-  // }
 
   DeductionStatus? _mapProtoStatus(proto.CellState_Status status) {
     switch (status) {

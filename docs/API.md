@@ -248,6 +248,32 @@ Frontend -> Backend: GetGameState() (Refresh)
 @enduml
 ```
 
+### Delete Turn (DeleteTurn)
+
+Removes a specific turn by its ID.
+
+*   **RPC:** `DeleteTurn`
+*   **Request:** `DeleteTurnRequest` (game_id, turn_id)
+*   **Response:** `DeleteTurnResponse` (success)
+
+```plantuml
+@startuml
+actor User
+participant Frontend
+participant Backend
+
+User -> Frontend: Delete Turn #2
+Frontend -> Backend: DeleteTurn(id=2)
+activate Backend
+Backend -> Backend: Find Turn #2
+Backend -> Backend: Remove Turn
+Backend -> Backend: Replay History
+Backend --> Frontend: Success
+deactivate Backend
+Frontend -> Backend: GetGameState() (Refresh)
+@enduml
+```
+
 ### Update Turn (UpdateTurn)
 
 Modifies a specific past turn. This triggers a full state recalculation (Replay) on the backend to ensure consistency.

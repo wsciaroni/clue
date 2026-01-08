@@ -53,6 +53,9 @@ public:
     // Modifies an existing turn and replays the game
     bool update_turn(const std::string& turn_id, const TurnData& new_data);
 
+    // Removes a specific turn by ID and replays
+    bool delete_turn(const std::string& turn_id);
+
     // Removes the last turn and replays
     bool undo_last_turn();
 

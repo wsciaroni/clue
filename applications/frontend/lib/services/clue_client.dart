@@ -62,6 +62,90 @@ class ClueClient {
       );
     }
 
+    final turnData = _mapTurnData(turn);
+
+    final request = TurnRequest()
+      ..gameId = _gameId!
+      ..data = turnData;
+
+    try {
+      final response = await _stub.recordTurn(request);
+      if (!response.success) {
+        throw Exception('Failed to record turn: ${response.errorMessage}');
+      }
+    } catch (e) {
+      debugPrint('Error recording turn: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateTurn(String turnId, state.GameTurn turn) async {
+    if (_gameId == null) throw Exception("Game ID null");
+
+    final turnData = _mapTurnData(turn);
+    final request = UpdateTurnRequest()
+      ..gameId = _gameId!
+      ..turnId = turnId
+      ..newData = turnData;
+
+    try {
+      final response = await _stub.updateTurn(request);
+      if (!response.success) {
+        throw Exception('Failed to update turn: ${response.errorMessage}');
+      }
+    } catch (e) {
+      debugPrint('Error updating turn: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteTurn(String turnId) async {
+    if (_gameId == null) throw Exception("Game ID null");
+
+    final request = DeleteTurnRequest()
+      ..gameId = _gameId!
+      ..turnId = turnId;
+
+    try {
+      final response = await _stub.deleteTurn(request);
+      if (!response.success) {
+        throw Exception('Failed to delete turn: ${response.errorMessage}');
+      }
+    } catch (e) {
+      debugPrint('Error deleting turn: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<TurnEntry>> getTurnHistory() async {
+    if (_gameId == null) return [];
+    final request = GetHistoryRequest()..gameId = _gameId!;
+
+    try {
+      final response = await _stub.getTurnHistory(request);
+      return response.history;
+    } catch (e) {
+      debugPrint('Error fetching history: $e');
+      return [];
+    }
+  }
+
+  Future<GameStateResponse> fetchGameState() async {
+    if (_gameId == null) {
+      debugPrint('Game ID is null, cannot fetch game state.');
+      return GameStateResponse(); // Return empty
+    }
+    final request = GameStateRequest()..gameId = _gameId!;
+
+    try {
+      return await _stub.getGameState(request);
+    } catch (e) {
+      debugPrint('Error fetching game state: $e');
+      rethrow;
+    }
+  }
+
+  TurnData _mapTurnData(state.GameTurn turn) {
     final turnData = TurnData()
       ..suggesterPlayerIndex = _getPlayerIndex(turn.askingPlayer.name)
       ..suspect = _convertToProtoCard(turn.suspect)
@@ -80,35 +164,7 @@ class ClueClient {
 
     turnData.isAccusation = turn.isAccusation;
     turnData.wasCorrect = turn.wasCorrect;
-
-    final request = TurnRequest()
-      ..gameId = _gameId!
-      ..data = turnData;
-
-    try {
-      final response = await _stub.recordTurn(request);
-      if (!response.success) {
-        throw Exception('Failed to record turn: ${response.errorMessage}');
-      }
-    } catch (e) {
-      debugPrint('Error recording turn: $e');
-      rethrow;
-    }
-  }
-
-  Future<GameStateResponse> fetchGameState() async {
-    if (_gameId == null) {
-      debugPrint('Game ID is null, cannot fetch game state.');
-      return GameStateResponse(); // Return empty
-    }
-    final request = GameStateRequest()..gameId = _gameId!;
-
-    try {
-      return await _stub.getGameState(request);
-    } catch (e) {
-      debugPrint('Error fetching game state: $e');
-      rethrow;
-    }
+    return turnData;
   }
 
   // Helper to find index
