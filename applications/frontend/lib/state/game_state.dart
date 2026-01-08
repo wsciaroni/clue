@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/game_constants.dart';
 import '../models/player.dart';
@@ -28,6 +29,59 @@ class GameTurn {
     this.wasCorrect = false,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'askingPlayer': askingPlayer.name,
+      'suspect': suspect.name,
+      'weapon': weapon.name,
+      'room': room.name,
+      'answeringPlayer': answeringPlayer?.name,
+      'specificCardShown': specificCardShown?.name,
+      'isAccusation': isAccusation,
+      'wasCorrect': wasCorrect,
+    };
+  }
+
+  static GameTurn? fromJson(Map<String, dynamic> json, List<Player> players) {
+    try {
+      final askingName = json['askingPlayer'] as String;
+      final asking = players.firstWhere((p) => p.name == askingName);
+
+      final suspect = GameConstants.getCardByName(json['suspect'] as String);
+      final weapon = GameConstants.getCardByName(json['weapon'] as String);
+      final room = GameConstants.getCardByName(json['room'] as String);
+
+      if (suspect == null || weapon == null || room == null) return null;
+
+      Player? answering;
+      if (json['answeringPlayer'] != null) {
+        final answeringName = json['answeringPlayer'] as String;
+        try {
+          answering = players.firstWhere((p) => p.name == answeringName);
+        } catch (_) {}
+      }
+
+      GameCard? shown;
+      if (json['specificCardShown'] != null) {
+        shown = GameConstants.getCardByName(json['specificCardShown'] as String);
+      }
+
+      return GameTurn(
+        askingPlayer: asking,
+        suspect: suspect,
+        weapon: weapon,
+        room: room,
+        answeringPlayer: answering,
+        specificCardShown: shown,
+        isAccusation: json['isAccusation'] ?? false,
+        wasCorrect: json['wasCorrect'] ?? false,
+      );
+    } catch (e) {
+      debugPrint('Error deserializing turn: $e');
+      return null;
+    }
+  }
+
   @override
   String toString() {
     if (isAccusation) {
@@ -51,6 +105,7 @@ class GameTurn {
 class GameState extends ChangeNotifier {
   final ClueClient _client;
   List<Player> _players = [];
+  List<GameCard> _userHand = [];
 
   GameState({ClueClient? client}) : _client = client ?? ClueClient();
   List<GameTurn> _turnLog = [];
@@ -64,9 +119,15 @@ class GameState extends ChangeNotifier {
 
   Future<void> startGame(
     List<String> playerNames,
-    List<GameCard> userHand,
-  ) async {
-    _players = playerNames.map((name) => Player(name: name)).toList();
+    List<GameCard> userHand, {
+    List<int>? cardCounts,
+  }) async {
+    _userHand = userHand;
+    _players = [];
+    for (int i = 0; i < playerNames.length; i++) {
+      int count = (cardCounts != null && i < cardCounts.length) ? cardCounts[i] : 0;
+      _players.add(Player(name: playerNames[i], cardCount: count));
+    }
 
     // Logic: If the user enters their hand, we find the "User" player (assuming first one or matching name)
     // and mark those cards as 'hasIt'.
@@ -90,6 +151,53 @@ class GameState extends ChangeNotifier {
 
     _gameStarted = true;
     notifyListeners();
+  }
+
+  String toJson() {
+    final data = {
+      'players': _players
+          .map((p) => {'name': p.name, 'cardCount': p.cardCount})
+          .toList(),
+      'userHand': _userHand.map((c) => c.name).toList(),
+      'turns': _turnLog.reversed.map((t) => t.toJson()).toList(), // Save in chronological order
+    };
+    return jsonEncode(data);
+  }
+
+  Future<void> loadGame(String jsonString) async {
+    try {
+      final data = jsonDecode(jsonString);
+      final playersData = (data['players'] as List).cast<Map<String, dynamic>>();
+      final handData = (data['userHand'] as List).cast<String>();
+      final turnData = (data['turns'] as List).cast<Map<String, dynamic>>();
+
+      final playerNames = playersData.map((p) => p['name'] as String).toList();
+      final cardCounts = playersData.map((p) => p['cardCount'] as int).toList();
+
+      final userHand = handData
+          .map((name) => GameConstants.getCardByName(name))
+          .whereType<GameCard>()
+          .toList();
+
+      // Initialize Game
+      await startGame(playerNames, userHand, cardCounts: cardCounts);
+
+      // Replay Turns
+      // We must replay them one by one.
+      for (var tJson in turnData) {
+        final turn = GameTurn.fromJson(tJson, _players);
+        if (turn != null) {
+          // Use recordTurn but wait for it.
+          // Note: recordTurn puts it at index 0 of _turnLog (reversed order for UI),
+          // but we are reading them chronologically.
+          await recordTurn(turn);
+        }
+      }
+
+    } catch (e) {
+      debugPrint("Failed to load game: $e");
+      rethrow;
+    }
   }
 
   Future<void> recordTurn(GameTurn turn) async {

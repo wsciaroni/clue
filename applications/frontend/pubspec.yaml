@@ -37,6 +37,8 @@ dependencies:
   provider: ^6.1.2
   grpc: ^5.1.0
   protobuf: ^6.0.0
+  file_picker: ^10.3.8
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

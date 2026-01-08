@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/file_manager/file_manager.dart';
 import '../state/game_state.dart';
 import 'game_log_screen.dart';
 import 'deduction_grid_screen.dart';
@@ -30,6 +31,32 @@ class _GameHomeState extends State<GameHome> {
       appBar: AppBar(
         title: const Text('Clue Assistant'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            tooltip: 'Save Game',
+            onPressed: () async {
+              try {
+                final jsonString = context.read<GameState>().toJson();
+                final String fileName =
+                    'clue_save_${DateTime.now().millisecondsSinceEpoch}.json';
+
+                final path =
+                    await FileManager().saveFile(fileName, jsonString);
+
+                if (path != null && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Game saved to $path')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to save game: $e')),
+                  );
+                }
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
