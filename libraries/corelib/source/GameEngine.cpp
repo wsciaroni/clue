@@ -58,20 +58,16 @@ void GameEngine::reset_state() {
         m_case_file_state[card] = CardState::UNKNOWN;
     }
 
-    // Process my hand (Player 0 - assuming "us" is always index 0 or derived from names?
-    // The spec says "User's hand = Known". We assume User is always a specific index.
-    // Usually Player 0 is the user in this context, or we match names.
-    // Let's assume user is index 0 for simplicity as per previous implementation logic.)
-
-    // Actually, check InitGameRequest. It has "my_hand".
-    // We'll assume "my_hand" belongs to the player at index 0 in "player_names" unless specified otherwise.
-    // The previous code assumed "us" is Player 0.
-
+    // Process my hand.
+    // The protocol and client (SetupScreen) agree that the user ("Me") is always at index 0.
+    // Therefore, cards in `my_hand` are assigned to Player 0.
     std::set<CardId> my_hand_ids;
-    for (const auto& card : m_init_request.my_hand()) {
-        CardId id = to_card_id(card);
-        mark_card_true(0, id); // User is Player 0
-        my_hand_ids.insert(id);
+    if (num_players > 0) {
+        for (const auto& card : m_init_request.my_hand()) {
+            CardId id = to_card_id(card);
+            mark_card_true(0, id); // User is Player 0
+            my_hand_ids.insert(id);
+        }
     }
 
     // Mark everything else as NOT in my hand (Player 0)
