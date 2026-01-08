@@ -171,8 +171,8 @@ class ClueClient {
   int _getPlayerIndex(String name) {
     int index = _playerNames.indexOf(name);
     if (index == -1) {
-       debugPrint("Warning: Player $name not found in local list $_playerNames");
-       return 0; // Default or throw?
+      debugPrint("Error: Player $name not found in local list $_playerNames");
+      throw StateError("Player $name not found in local list $_playerNames");
     }
     return index;
   }
