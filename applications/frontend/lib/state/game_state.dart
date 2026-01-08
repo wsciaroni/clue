@@ -203,6 +203,17 @@ class GameState extends ChangeNotifier {
   Future<void> recordTurn(GameTurn turn) async {
     // Optimistic Update
     _turnLog.insert(0, turn);
+
+    // Optimistic Deduction: If no one answered, then everyone (except asker) does not have the cards.
+    if (turn.answeringPlayer == null) {
+      for (var player in _players) {
+        if (player == turn.askingPlayer) continue;
+        player.setStatus(turn.suspect, DeductionStatus.doesNotHaveIt);
+        player.setStatus(turn.weapon, DeductionStatus.doesNotHaveIt);
+        player.setStatus(turn.room, DeductionStatus.doesNotHaveIt);
+      }
+    }
+
     notifyListeners();
 
     try {
