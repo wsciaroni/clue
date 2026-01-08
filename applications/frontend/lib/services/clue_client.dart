@@ -12,28 +12,18 @@ class ClueClient {
   String? _gameId;
   List<String> _playerNames = [];
 
-  ClueClient({ClueGameServiceClient? stub, ClientChannel? channel}) {
-    if (channel != null) {
-      _channel = channel;
-    } else {
-      String host = 'localhost';
-      if (!kIsWeb && Platform.isAndroid) {
-        host = '10.0.2.2';
-      }
-
-      _channel = ClientChannel(
-        host,
-        port: 50051,
-        options:
-            const ChannelOptions(credentials: ChannelCredentials.insecure()),
-      );
+  ClueClient() {
+    String host = 'localhost';
+    if (!kIsWeb && Platform.isAndroid) {
+      host = '10.0.2.2';
     }
 
-    if (stub != null) {
-      _stub = stub;
-    } else {
-      _stub = ClueGameServiceClient(_channel);
-    }
+    _channel = ClientChannel(
+      host,
+      port: 50051,
+      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+    );
+    _stub = ClueGameServiceClient(_channel);
   }
 
   Future<void> initializeGame(
