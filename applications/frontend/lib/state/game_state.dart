@@ -142,7 +142,7 @@ class GameState extends ChangeNotifier {
     }
 
     try {
-      await _client.initializeGame(playerNames, userHand);
+      await _client.initializeGame(playerNames, userHand, cardCounts: cardCounts);
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
     } catch (e) {

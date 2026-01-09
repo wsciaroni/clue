@@ -371,3 +371,42 @@ TEST_F(CaseFileEliminationTest, SolveByElimination_Rooms) {
     GameStateResponse state = engine.get_game_state_response();
     EXPECT_FLOAT_EQ(get_probability(state, CardType::CARD_TYPE_ROOM, 9), 1.0f);
 }
+
+TEST_F(GameEngineTest, HandSizeLogic) {
+    // Re-init with card counts
+    InitGameRequest req;
+    req.set_num_players(3);
+    req.add_player_names("Me");
+    req.add_player_names("Player1");
+    req.add_player_names("Player2");
+
+    // Player 1 has 1 card.
+    req.add_player_card_counts(0); // Me
+    req.add_player_card_counts(1); // Player 1
+    req.add_player_card_counts(0); // Player 2
+
+    engine.initialize_game(req);
+
+    // Initial state: P1 cards are UNKNOWN
+    GameStateResponse state = engine.get_game_state_response();
+    EXPECT_EQ(get_status(state, 1, CardType::CARD_TYPE_WEAPON, WEAPON_ROPE), CellState::UNKNOWN);
+
+    // Show P1 has Rope
+    TurnData t;
+    t.set_suggester_player_index(0);
+    *t.mutable_suspect() = create_suspect(SUSPECT_COL_MUSTARD);
+    *t.mutable_weapon() = create_weapon(WEAPON_ROPE);
+    *t.mutable_room() = create_room(ROOM_HALL);
+    t.set_responder_player_index(1);
+    *t.mutable_card_shown() = create_weapon(WEAPON_ROPE);
+
+    engine.record_turn(t);
+
+    // P1 has Rope. Since P1 has only 1 card, all others should be DOES_NOT_HAVE.
+    state = engine.get_game_state_response();
+    EXPECT_EQ(get_status(state, 1, CardType::CARD_TYPE_WEAPON, WEAPON_ROPE), CellState::HAS);
+
+    // Check another card
+    EXPECT_EQ(get_status(state, 1, CardType::CARD_TYPE_SUSPECT, SUSPECT_COL_MUSTARD), CellState::DOES_NOT_HAVE);
+    EXPECT_EQ(get_status(state, 1, CardType::CARD_TYPE_ROOM, ROOM_LIBRARY), CellState::DOES_NOT_HAVE);
+}

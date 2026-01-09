@@ -120,6 +120,10 @@ private:
     // Helpers
     CardId to_card_id(const Card& c) const;
     Card from_card_id(const CardId& id) const;
+
+    // Hand size tracking
+    std::vector<int> m_player_card_counts;
+    bool solve_hand_size();
 };
 
 } // namespace clue

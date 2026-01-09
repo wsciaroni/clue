@@ -28,12 +28,16 @@ class ClueClient {
 
   Future<void> initializeGame(
     List<String> players,
-    List<model.GameCard> userHand,
-  ) async {
+    List<model.GameCard> userHand, {
+    List<int>? cardCounts,
+  }) async {
     _playerNames = List.from(players);
     final request = InitGameRequest()..numPlayers = players.length;
 
     request.playerNames.addAll(players);
+    if (cardCounts != null) {
+      request.playerCardCounts.addAll(cardCounts);
+    }
 
     // Convert model.GameCard to generated Card
     for (var card in userHand) {

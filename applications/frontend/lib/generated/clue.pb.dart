@@ -635,11 +635,14 @@ class InitGameRequest extends $pb.GeneratedMessage {
     $core.int? numPlayers,
     $core.Iterable<$core.String>? playerNames,
     $core.Iterable<Card>? myHand,
+    $core.Iterable<$core.int>? playerCardCounts,
   }) {
     final result = create();
     if (numPlayers != null) result.numPlayers = numPlayers;
     if (playerNames != null) result.playerNames.addAll(playerNames);
     if (myHand != null) result.myHand.addAll(myHand);
+    if (playerCardCounts != null)
+      result.playerCardCounts.addAll(playerCardCounts);
     return result;
   }
 
@@ -659,6 +662,8 @@ class InitGameRequest extends $pb.GeneratedMessage {
     ..aI(1, _omitFieldNames ? '' : 'numPlayers')
     ..pPS(2, _omitFieldNames ? '' : 'playerNames')
     ..pPM<Card>(3, _omitFieldNames ? '' : 'myHand', subBuilder: Card.create)
+    ..p<$core.int>(
+        4, _omitFieldNames ? '' : 'playerCardCounts', $pb.PbFieldType.K3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -694,6 +699,9 @@ class InitGameRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $pb.PbList<Card> get myHand => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $pb.PbList<$core.int> get playerCardCounts => $_getList(3);
 }
 
 class InitGameResponse extends $pb.GeneratedMessage {

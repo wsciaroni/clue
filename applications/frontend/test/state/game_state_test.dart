@@ -13,8 +13,9 @@ class MockClueClient extends ClueClient {
   @override
   Future<void> initializeGame(
     List<String> players,
-    List<GameCard> userHand,
-  ) async {
+    List<GameCard> userHand, {
+    List<int>? cardCounts,
+  }) async {
     return;
   }
 

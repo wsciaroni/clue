@@ -28,6 +28,16 @@ void GameEngine::initialize_game(const InitGameRequest& request) {
     m_history.clear();
     m_next_turn_number = 1;
 
+    // Populate card counts
+    m_player_card_counts.clear();
+    for (int count : request.player_card_counts()) {
+        m_player_card_counts.push_back(count);
+    }
+    // Pad if necessary (though shouldn't happen with correct client)
+    while (m_player_card_counts.size() < (size_t)request.num_players()) {
+        m_player_card_counts.push_back(0);
+    }
+
     register_card_types();
     reset_state();
 }
@@ -240,6 +250,7 @@ void GameEngine::reconcile() {
         changed |= solve_elimination();
         changed |= solve_case_file();
         changed |= solve_constraints();
+        changed |= solve_hand_size();
     }
 }
 
@@ -377,6 +388,36 @@ bool GameEngine::solve_case_file() {
     return changed;
 }
 
+bool GameEngine::solve_hand_size() {
+    bool changed = false;
+    int num_players = m_init_request.num_players();
+
+    for (int i = 0; i < num_players; ++i) {
+        int target_count = m_player_card_counts[i];
+        if (target_count <= 0) continue; // No info or 0 cards
+
+        // Count KNOWN_TRUE cards
+        int held_count = 0;
+        for (const auto& card : m_all_cards) {
+            if (m_player_states[i][card] == CardState::KNOWN_TRUE) {
+                held_count++;
+            }
+        }
+
+        if (held_count == target_count) {
+            // Player has all their cards. All others must be KNOWN_FALSE.
+            for (const auto& card : m_all_cards) {
+                 if (m_player_states[i][card] != CardState::KNOWN_TRUE &&
+                     m_player_states[i][card] != CardState::KNOWN_FALSE) {
+                     mark_card_false(i, card);
+                     changed = true;
+                 }
+            }
+        }
+    }
+    return changed;
+}
+
 bool GameEngine::solve_constraints() {
     bool changed = false;
     auto it = m_constraints.begin();
@@ -469,7 +510,11 @@ GameStateResponse GameEngine::get_game_state_response() const {
             p->set_name("Player " + std::to_string(i));
         }
         // Card count not explicitly tracked yet but required by proto
-        p->set_card_count(0);
+        if (i < m_player_card_counts.size()) {
+             p->set_card_count(m_player_card_counts[i]);
+        } else {
+             p->set_card_count(0);
+        }
     }
 
     // Rows
