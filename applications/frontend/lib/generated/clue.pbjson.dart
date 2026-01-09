@@ -311,6 +311,13 @@ const InitGameRequest$json = {
       '6': '.clue.Card',
       '10': 'myHand'
     },
+    {
+      '1': 'player_card_counts',
+      '3': 4,
+      '4': 3,
+      '5': 5,
+      '10': 'playerCardCounts'
+    },
   ],
 };
 
@@ -318,7 +325,8 @@ const InitGameRequest$json = {
 final $typed_data.Uint8List initGameRequestDescriptor = $convert.base64Decode(
     'Cg9Jbml0R2FtZVJlcXVlc3QSHwoLbnVtX3BsYXllcnMYASABKAVSCm51bVBsYXllcnMSIQoMcG'
     'xheWVyX25hbWVzGAIgAygJUgtwbGF5ZXJOYW1lcxIjCgdteV9oYW5kGAMgAygLMgouY2x1ZS5D'
-    'YXJkUgZteUhhbmQ=');
+    'YXJkUgZteUhhbmQSLAoScGxheWVyX2NhcmRfY291bnRzGAQgAygFUhBwbGF5ZXJDYXJkQ291bn'
+    'Rz');
 
 @$core.Deprecated('Use initGameResponseDescriptor instead')
 const InitGameResponse$json = {

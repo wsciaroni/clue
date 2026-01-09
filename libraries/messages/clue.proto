@@ -127,6 +127,7 @@ message InitGameRequest {
   int32 num_players = 1;
   repeated string player_names = 2;
   repeated Card my_hand = 3;
+  repeated int32 player_card_counts = 4;
 }
 
 message InitGameResponse {
