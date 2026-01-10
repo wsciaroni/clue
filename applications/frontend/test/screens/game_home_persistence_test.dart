@@ -5,7 +5,6 @@ import 'package:frontend/screens/game_home.dart';
 import 'package:frontend/state/game_state.dart';
 import 'package:frontend/models/player.dart';
 import 'package:frontend/models/game_constants.dart';
-import 'package:frontend/generated/clue.pb.dart' as proto;
 import 'package:frontend/models/solution_probability.dart';
 
 class MockGameState extends ChangeNotifier implements GameState {
