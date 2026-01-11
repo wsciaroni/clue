@@ -111,7 +111,8 @@ class GameLogScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: const Text("Delete Turn?"),
         content: const Text(
-            "Are you sure you want to delete this turn? This action cannot be undone."),
+          "Are you sure you want to delete this turn? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -121,9 +122,9 @@ class GameLogScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(ctx);
               context.read<GameState>().deleteTurn(turn);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Turn Deleted')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Turn Deleted')));
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
           ),
