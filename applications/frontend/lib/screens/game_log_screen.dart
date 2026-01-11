@@ -28,6 +28,7 @@ class GameLogScreen extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit),
+                      tooltip: 'Edit Turn',
                       onPressed: () {
                          Navigator.push(
                           context,
@@ -39,6 +40,7 @@ class GameLogScreen extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),
+                      tooltip: 'Delete Turn',
                       onPressed: () => _confirmDelete(context, turn),
                     ),
                   ],
