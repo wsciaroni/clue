@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter: Frontend",
+            "request": "launch",
+            "type": "dart",
+            "program": "${workspaceFolder}/applications/frontend/lib/main.dart",
+            "cwd": "${workspaceFolder}/applications/frontend",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "C++: Backend",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/applications/backend/clue_backend",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/applications/backend",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack (Backend + Frontend)",
+            "configurations": ["C++: Backend", "Flutter: Frontend"]
+        }
+    ]
+}
