@@ -237,11 +237,20 @@ class _SetupScreenState extends State<SetupScreen> {
             }),
             Row(
               children: [
-                IconButton(onPressed: _addPlayer, icon: const Icon(Icons.add_circle), color: Colors.green),
-                const Text('Add Player'),
+                TextButton.icon(
+                  onPressed: _playerControllers.length < 6 ? _addPlayer : null,
+                  icon: const Icon(Icons.add_circle),
+                  label: const Text('Add Player'),
+                  style: TextButton.styleFrom(foregroundColor: Colors.green),
+                ),
                 const SizedBox(width: 20),
-                IconButton(onPressed: _removePlayer, icon: const Icon(Icons.remove_circle), color: Colors.red),
-                const Text('Remove Player'),
+                TextButton.icon(
+                  onPressed:
+                      _playerControllers.length > 2 ? _removePlayer : null,
+                  icon: const Icon(Icons.remove_circle),
+                  label: const Text('Remove Player'),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                ),
               ],
             ),
             const Divider(height: 32),
