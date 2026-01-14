@@ -60,6 +60,8 @@ class MockGameState extends ChangeNotifier implements GameState {
   @override
   Future<void> loadGame(String jsonString) async {}
 
+  @override
+  void updateConnectionSettings(String? host, int? port) {}
 }
 
 void main() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/game_constants.dart';
 import '../state/game_state.dart';
 import '../services/file_manager/file_manager.dart';
@@ -29,8 +30,35 @@ class _SetupScreenState extends State<SetupScreen> {
     TextEditingController(text: '3'),
   ];
 
+  // Controllers for connection settings
+  final TextEditingController _hostController = TextEditingController();
+  final TextEditingController _portController = TextEditingController();
+
   // Selected cards for user's hand
   final Set<GameCard> _selectedHand = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadConnectionSettings();
+  }
+
+  Future<void> _loadConnectionSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _hostController.text = prefs.getString('connection_host') ?? '';
+      _portController.text = (prefs.getInt('connection_port') ?? '').toString();
+    });
+  }
+
+  Future<void> _saveConnectionSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('connection_host', _hostController.text);
+    int? port = int.tryParse(_portController.text);
+    if (port != null) {
+      await prefs.setInt('connection_port', port);
+    }
+  }
 
   void _addPlayer() {
     setState(() {
@@ -58,18 +86,31 @@ class _SetupScreenState extends State<SetupScreen> {
     });
   }
 
-  void _startGame() {
+  Future<void> _startGame() async {
     if (_formKey.currentState!.validate()) {
+      await _saveConnectionSettings();
+
+      if (mounted) {
+        final host = _hostController.text.isNotEmpty ? _hostController.text : null;
+        final port = int.tryParse(_portController.text);
+
+        if (host != null || port != null) {
+           context.read<GameState>().updateConnectionSettings(host, port);
+        }
+      }
+
       final names = _playerControllers.map((c) => c.text).toList();
       final counts = _cardCountControllers
           .map((c) => int.tryParse(c.text) ?? 0)
           .toList();
 
-      context.read<GameState>().startGame(
-        names,
-        _selectedHand.toList(),
-        cardCounts: counts,
-      );
+      if (mounted) {
+        context.read<GameState>().startGame(
+          names,
+          _selectedHand.toList(),
+          cardCounts: counts,
+        );
+      }
     }
   }
 
@@ -201,6 +242,41 @@ class _SetupScreenState extends State<SetupScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
+            ExpansionTile(
+              title: const Text('Connection Settings'),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _hostController,
+                          decoration: const InputDecoration(
+                            labelText: 'Host (Optional)',
+                            hintText: 'localhost',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _portController,
+                          decoration: const InputDecoration(
+                            labelText: 'Port (Optional)',
+                            hintText: '50051',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),
             const Text('Players', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ..._playerControllers.asMap().entries.map((entry) {
               return Padding(
