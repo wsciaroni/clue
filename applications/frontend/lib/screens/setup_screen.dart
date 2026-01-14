@@ -275,12 +275,16 @@ class _SetupScreenState extends State<SetupScreen> {
   }
 
   Widget _buildCardSection(String title, List<GameCard> cards) {
+    final selectedCount = cards.where((c) => _selectedHand.contains(c)).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
-          child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          child: Text(
+            '$title ($selectedCount)',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
         Wrap(
           spacing: 8.0,
