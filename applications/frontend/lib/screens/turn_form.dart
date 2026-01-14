@@ -144,33 +144,29 @@ class _TurnFormState extends State<TurnForm> {
               "Was the accusation correct?",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text("Yes"),
-                    value: true,
-                    groupValue: _wasAccusationCorrect,
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _wasAccusationCorrect = val);
-                      }
-                    },
+            RadioGroup<bool>(
+              groupValue: _wasAccusationCorrect,
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() => _wasAccusationCorrect = val);
+                }
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<bool>(
+                      title: const Text("Yes"),
+                      value: true,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text("No"),
-                    value: false,
-                    groupValue: _wasAccusationCorrect,
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _wasAccusationCorrect = val);
-                      }
-                    },
+                  Expanded(
+                    child: RadioListTile<bool>(
+                      title: const Text("No"),
+                      value: false,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ] else ...[
             SwitchListTile(

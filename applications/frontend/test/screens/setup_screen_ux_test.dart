@@ -32,14 +32,18 @@ class MockGameState extends ChangeNotifier implements GameState {
   @override
   String toJson() => "{}";
   @override
+  // ignore: override_on_non_overriding_member
   void fromJson(String json) {}
   @override
   Future<void> updateTurn(GameTurn turn) async {}
   @override
+  // ignore: override_on_non_overriding_member
   GameTurn? get lastDeletedTurn => null;
   @override
+  // ignore: override_on_non_overriding_member
   Future<void> undoDeleteTurn() async {}
   @override
+  // ignore: override_on_non_overriding_member
   Future<void> undoLastTurn() async {}
   @override
   Future<void> loadGame(String jsonString) async {}
