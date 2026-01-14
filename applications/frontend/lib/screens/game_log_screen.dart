@@ -16,38 +16,64 @@ class GameLogScreen extends StatelessWidget {
       children: [
         Expanded(
           flex: 4,
-          child: ListView.builder(
-            itemCount: gameState.turnLog.length,
-            itemBuilder: (context, index) {
-              final turn = gameState.turnLog[index];
-              return ListTile(
-                leading: Text('${gameState.turnLog.length - index}'),
-                title: Text(turn.toString()),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      tooltip: 'Edit Turn',
-                      onPressed: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditTurnScreen(turn: turn),
+          child: gameState.turnLog.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.history, size: 48, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text(
+                        'No turns recorded yet',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: gameState.turnLog.length,
+                  itemBuilder: (context, index) {
+                    final turn = gameState.turnLog[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.blueGrey[100],
+                        child: Text(
+                          '${gameState.turnLog.length - index}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      tooltip: 'Delete Turn',
-                      onPressed: () => _confirmDelete(context, turn),
-                    ),
-                  ],
+                        ),
+                      ),
+                      title: Text(turn.toString()),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            tooltip: 'Edit Turn',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditTurnScreen(turn: turn),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            tooltip: 'Delete Turn',
+                            onPressed: () => _confirmDelete(context, turn),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
         const Divider(),
         Expanded(
@@ -84,7 +110,9 @@ class GameLogScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text("Delete Turn?"),
-        content: const Text("Are you sure you want to delete this turn? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this turn? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -94,9 +122,9 @@ class GameLogScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(ctx);
               context.read<GameState>().deleteTurn(turn);
-              ScaffoldMessenger.of(context).showSnackBar(
-                 const SnackBar(content: Text('Turn Deleted')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Turn Deleted')));
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
           ),
