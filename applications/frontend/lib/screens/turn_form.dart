@@ -76,7 +76,10 @@ class _TurnFormState extends State<TurnForm> {
         children: [
           // Who asked?
           DropdownButtonFormField<Player>(
-            decoration: const InputDecoration(labelText: 'Who Asked?'),
+            decoration: const InputDecoration(
+              labelText: 'Who Asked?',
+              prefixIcon: Icon(Icons.person),
+            ),
             initialValue: _askingPlayer,
             items: widget.players
                 .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
@@ -87,7 +90,10 @@ class _TurnFormState extends State<TurnForm> {
 
           // Suspect
           DropdownButtonFormField<GameCard>(
-            decoration: const InputDecoration(labelText: 'Suspect'),
+            decoration: const InputDecoration(
+              labelText: 'Suspect',
+              prefixIcon: Icon(Icons.person),
+            ),
             initialValue: _selectedSuspect,
             items: GameConstants.suspects
                 .map((c) => DropdownMenuItem(value: c, child: Text(c.name)))
@@ -98,7 +104,10 @@ class _TurnFormState extends State<TurnForm> {
 
           // Weapon
           DropdownButtonFormField<GameCard>(
-            decoration: const InputDecoration(labelText: 'Weapon'),
+            decoration: const InputDecoration(
+              labelText: 'Weapon',
+              prefixIcon: Icon(Icons.build),
+            ),
             initialValue: _selectedWeapon,
             items: GameConstants.weapons
                 .map((c) => DropdownMenuItem(value: c, child: Text(c.name)))
@@ -109,7 +118,10 @@ class _TurnFormState extends State<TurnForm> {
 
           // Room
           DropdownButtonFormField<GameCard>(
-            decoration: const InputDecoration(labelText: 'Room'),
+            decoration: const InputDecoration(
+              labelText: 'Room',
+              prefixIcon: Icon(Icons.meeting_room),
+            ),
             initialValue: _selectedRoom,
             items: GameConstants.rooms
                 .map((c) => DropdownMenuItem(value: c, child: Text(c.name)))
@@ -188,7 +200,10 @@ class _TurnFormState extends State<TurnForm> {
             if (_someoneAnswered) ...[
               // Who Answered?
               DropdownButtonFormField<Player>(
-                decoration: const InputDecoration(labelText: 'Who Answered?'),
+                decoration: const InputDecoration(
+                  labelText: 'Who Answered?',
+                  prefixIcon: Icon(Icons.person),
+                ),
                 initialValue: _answeringPlayer,
                 items: widget.players
                     .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
@@ -205,6 +220,7 @@ class _TurnFormState extends State<TurnForm> {
               DropdownButtonFormField<GameCard>(
                 decoration: const InputDecoration(
                   labelText: 'Which card? (Optional/Private)',
+                  prefixIcon: Icon(Icons.visibility),
                 ),
                 initialValue: _specificCardShown,
                 items: [
