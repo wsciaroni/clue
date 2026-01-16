@@ -584,4 +584,45 @@ GameStateResponse GameEngine::get_game_state_response() const {
     return response;
 }
 
+std::vector<Recommendation> GameEngine::get_next_moves(std::optional<Room> room) const {
+    std::vector<Recommendation> recs;
+    if (room.has_value()) {
+        Recommendation r;
+        r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
+        r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
+        r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
+        r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
+        r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
+        r.mutable_room()->set_room(room.value());
+        r.set_benefit(0.5f);
+        recs.push_back(r);
+    } else {
+        // Return 9 recommendations, one for each room (1..9)
+        for (int i = 1; i <= 9; ++i) {
+            Recommendation r;
+            r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
+            r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
+            r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
+            r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
+            r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
+            r.mutable_room()->set_room(static_cast<Room>(i));
+            r.set_benefit(0.5f);
+            recs.push_back(r);
+        }
+    }
+    return recs;
+}
+
+Recommendation GameEngine::get_accusation_recommendation() const {
+    Recommendation r;
+    r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
+    r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
+    r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
+    r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
+    r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
+    r.mutable_room()->set_room(Room::ROOM_HALL);
+    r.set_benefit(1.0f);
+    return r;
+}
+
 } // namespace clue

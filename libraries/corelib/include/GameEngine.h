@@ -65,6 +65,14 @@ public:
     // Returns the full game state suitable for the frontend
     GameStateResponse get_game_state_response() const;
 
+    // Returns a list of suggested moves (suggestions)
+    // If room is specified, returns suggestions only for that room.
+    // Otherwise returns one suggestion per room.
+    std::vector<Recommendation> get_next_moves(std::optional<Room> room) const;
+
+    // Returns the best recommended accusation
+    Recommendation get_accusation_recommendation() const;
+
 private:
     // Game Configuration
     InitGameRequest m_init_request;

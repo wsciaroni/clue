@@ -23,6 +23,12 @@ service ClueGameService {
 
   // The Source of Truth. Frontend calls this to get the renderable grid.
   rpc GetGameState (GameStateRequest) returns (GameStateResponse);
+
+  // Returns suggested moves
+  rpc GetNextMoves (GetNextMovesRequest) returns (GetNextMovesResponse);
+
+  // Returns recommended accusation
+  rpc GetAccusationRecommendation (GetAccusationRecommendationRequest) returns (GetAccusationRecommendationResponse);
 }
 
 // --- Data Structures ---
@@ -121,6 +127,13 @@ message SolutionProbability {
   bool is_eliminated = 3;
 }
 
+message Recommendation {
+  Card suspect = 1;
+  Card weapon = 2;
+  Card room = 3;
+  float benefit = 4;
+}
+
 // --- RPC Messages ---
 
 message InitGameRequest {
@@ -166,4 +179,21 @@ message GameStateResponse {
   repeated PlayerInfo players = 2;
   repeated GridRow rows = 3;
   repeated SolutionProbability solution_probabilities = 4;
+}
+
+message GetNextMovesRequest {
+  string game_id = 1;
+  optional Room room = 2;
+}
+
+message GetNextMovesResponse {
+  repeated Recommendation recommendations = 1;
+}
+
+message GetAccusationRecommendationRequest {
+  string game_id = 1;
+}
+
+message GetAccusationRecommendationResponse {
+  Recommendation recommendation = 1;
 }
