@@ -3,7 +3,44 @@
 #include <random>
 #include <sstream>
 
-ClueGameServiceImpl::ClueGameServiceImpl() {}
+ClueGameServiceImpl::ClueGameServiceImpl(std::chrono::milliseconds game_timeout, std::chrono::milliseconds cleanup_interval)
+    : m_timeout(game_timeout), m_cleanup_interval(cleanup_interval), m_stop_cleanup(false) {
+    m_cleanup_thread = std::thread(&ClueGameServiceImpl::cleanup_loop, this);
+}
+
+ClueGameServiceImpl::~ClueGameServiceImpl() {
+    {
+        std::lock_guard<std::mutex> lock(m_cv_mutex);
+        m_stop_cleanup = true;
+    }
+    m_cv.notify_one();
+    if (m_cleanup_thread.joinable()) {
+        m_cleanup_thread.join();
+    }
+}
+
+void ClueGameServiceImpl::cleanup_loop() {
+    while (true) {
+        std::unique_lock<std::mutex> lock(m_cv_mutex);
+        m_cv.wait_for(lock, m_cleanup_interval, [this] { return m_stop_cleanup.load(); });
+
+        if (m_stop_cleanup) {
+            break;
+        }
+
+        // Perform cleanup
+        std::lock_guard<std::mutex> game_lock(m_mutex);
+        auto now = std::chrono::steady_clock::now();
+        for (auto it = m_games.begin(); it != m_games.end(); ) {
+            if (now - it->second.last_activity > m_timeout) {
+                // Remove expired game
+                it = m_games.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+}
 
 std::string ClueGameServiceImpl::generate_game_id() {
     static std::random_device rd;
@@ -20,7 +57,8 @@ std::string ClueGameServiceImpl::generate_game_id() {
 std::shared_ptr<clue::GameEngine> ClueGameServiceImpl::get_game(const std::string& game_id) {
     auto it = m_games.find(game_id);
     if (it != m_games.end()) {
-        return it->second;
+        it->second.last_activity = std::chrono::steady_clock::now();
+        return it->second.engine;
     }
     return nullptr;
 }
@@ -48,7 +86,7 @@ grpc::Status ClueGameServiceImpl::InitGame(grpc::ServerContext* context, const c
 
         auto engine = std::make_shared<clue::GameEngine>();
         engine->initialize_game(*request);
-        m_games[new_id] = engine;
+        m_games[new_id] = {engine, std::chrono::steady_clock::now()};
 
         response->set_success(true);
         response->set_game_id(new_id);
@@ -154,6 +192,7 @@ grpc::Status ClueGameServiceImpl::GetGameState(grpc::ServerContext* context, con
     }
 
     *response = engine->get_game_state_response();
+    response->set_game_id(request->game_id());
     return grpc::Status::OK;
 }
 

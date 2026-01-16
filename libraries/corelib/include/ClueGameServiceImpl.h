@@ -7,10 +7,17 @@
 #include <mutex>
 #include <map>
 #include <string>
+#include <chrono>
+#include <thread>
+#include <atomic>
+#include <condition_variable>
 
 class ClueGameServiceImpl final : public clue::ClueGameService::Service {
 public:
-    ClueGameServiceImpl();
+    // Default: 1 hour timeout, check every 1 minute
+    ClueGameServiceImpl(std::chrono::milliseconds game_timeout = std::chrono::hours(1),
+                        std::chrono::milliseconds cleanup_interval = std::chrono::minutes(1));
+    ~ClueGameServiceImpl() override;
 
     grpc::Status InitGame(grpc::ServerContext* context, const clue::InitGameRequest* request,
                           clue::InitGameResponse* response) override;
@@ -40,9 +47,23 @@ public:
                                              clue::GetAccusationRecommendationResponse* response) override;
 
 private:
-    std::mutex m_mutex;
-    std::map<std::string, std::shared_ptr<clue::GameEngine>> m_games;
+    struct GameSession {
+        std::shared_ptr<clue::GameEngine> engine;
+        std::chrono::steady_clock::time_point last_activity;
+    };
 
+    std::mutex m_mutex;
+    std::map<std::string, GameSession> m_games;
+
+    // Cleanup handling
+    std::chrono::milliseconds m_timeout;
+    std::chrono::milliseconds m_cleanup_interval;
+    std::thread m_cleanup_thread;
+    std::atomic<bool> m_stop_cleanup;
+    std::condition_variable m_cv;
+    std::mutex m_cv_mutex;
+
+    void cleanup_loop();
     std::shared_ptr<clue::GameEngine> get_game(const std::string& game_id);
     std::string generate_game_id();
 };
