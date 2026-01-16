@@ -62,6 +62,12 @@ class MockGameState extends ChangeNotifier implements GameState {
 
   @override
   void updateConnectionSettings(String? host, int? port) {}
+
+  @override
+  BackendStatus get connectionStatus => BackendStatus.connected;
+
+  @override
+  Future<void> checkConnectionForTesting() async {}
 }
 
 void main() {
