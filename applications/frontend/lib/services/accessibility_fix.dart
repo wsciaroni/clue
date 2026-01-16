@@ -28,29 +28,21 @@ class _AccessibilityFixMessenger extends BinaryMessenger {
         defaultTargetPlatform == TargetPlatform.windows) {
       if (message != null) {
         try {
-          final MethodCall call =
-              const StandardMethodCodec().decodeMethodCall(message);
-          if (call.method == 'announce') {
-            final dynamic args = call.arguments;
-            if (args is Map) {
-              final Map<dynamic, dynamic> argsMap = args;
-              if (!argsMap.containsKey('viewId')) {
-                // Clone and add viewId: 0 (implicit view)
-                // We cast to Map<String, dynamic> because StandardMethodCodec usually produces valid keys,
-                // and 'announce' arguments are known keys.
-                // However, let's be safe and copy to a new map.
-                final Map<String, dynamic> newArgs =
-                    Map<String, dynamic>.from(argsMap.cast<String, dynamic>());
-                newArgs['viewId'] = 0;
+          final dynamic decoded =
+              const StandardMessageCodec().decodeMessage(message);
+          if (decoded is Map) {
+            final Map<dynamic, dynamic> map = decoded;
+            if (map['type'] == 'announce' && !map.containsKey('viewId')) {
+              final Map<dynamic, dynamic> newMap =
+                  Map<dynamic, dynamic>.from(map);
+              newMap['viewId'] = 0;
 
-                final ByteData newMessage = const StandardMethodCodec()
-                    .encodeMethodCall(MethodCall(call.method, newArgs));
-                return _delegate.send(channel, newMessage);
-              }
+              final ByteData? newMessage =
+                  const StandardMessageCodec().encodeMessage(newMap);
+              return _delegate.send(channel, newMessage);
             }
           }
         } catch (e) {
-          // Fallback to original message if decoding fails
           debugPrint('Error intercepting accessibility message: $e');
         }
       }
