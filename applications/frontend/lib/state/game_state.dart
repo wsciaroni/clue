@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/game_constants.dart';
@@ -5,6 +6,12 @@ import '../models/player.dart';
 import '../models/solution_probability.dart';
 import '../services/clue_client.dart';
 import '../generated/clue.pb.dart' as proto;
+
+enum BackendStatus {
+  connected,
+  disconnected,
+  restoring,
+}
 
 class GameTurn {
   final String? id; // Sync with backend ID
@@ -112,13 +119,109 @@ class GameState extends ChangeNotifier {
   List<LocalSolutionProbability> _solutionProbabilities = [];
   bool _gameStarted = false;
 
+  // Connection Management
+  BackendStatus _connectionStatus = BackendStatus.disconnected;
+  Timer? _heartbeatTimer;
+
   List<Player> get players => _players;
   List<GameTurn> get turnLog => _turnLog;
   List<LocalSolutionProbability> get solutionProbabilities => _solutionProbabilities;
   bool get gameStarted => _gameStarted;
+  BackendStatus get connectionStatus => _connectionStatus;
 
   void updateConnectionSettings(String? host, int? port) {
     _client.connect(host: host, port: port);
+    // Restart heartbeat on new connection settings
+    _startHeartbeat();
+  }
+
+  void _startHeartbeat({bool checkImmediately = true}) {
+    _heartbeatTimer?.cancel();
+    // Check immediately
+    if (checkImmediately) {
+      _checkConnection();
+    }
+    // Then every 20 seconds
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 20), (_) {
+      _checkConnection();
+    });
+  }
+
+  @visibleForTesting
+  Future<void> checkConnectionForTesting() => _checkConnection();
+
+  Future<void> _checkConnection() async {
+    if (!_gameStarted) {
+      // If game hasn't started, we might just want to ping?
+      // Or we can assume we are "Disconnected" until we try to start?
+      // For now, let's only check if game started to keep it simple,
+      // or we can implement a specific Ping RPC.
+      // Since we don't have a game ID, fetchGameState() would return empty.
+      // We will skip checks if game hasn't started.
+      return;
+    }
+
+    // Don't check if we are in the middle of restoring
+    if (_connectionStatus == BackendStatus.restoring) return;
+
+    try {
+      final response = await _client.fetchGameState();
+
+      // If response is valid and has players/gameId, we are good.
+      // Note: GetGameState returns default object if not found.
+      // A valid game state should have players or a game ID.
+      // If game_id is empty, it means game not found.
+      if (response.gameId.isEmpty) {
+        debugPrint("Heartbeat: Connected but Game Not Found. Restoring...");
+        _updateStatus(BackendStatus.restoring);
+        await _restoreGameSession();
+      } else {
+        _updateStatus(BackendStatus.connected);
+      }
+    } catch (e) {
+      debugPrint("Heartbeat: Connection failed: $e");
+      _updateStatus(BackendStatus.disconnected);
+    }
+  }
+
+  void _updateStatus(BackendStatus newStatus) {
+    if (_connectionStatus != newStatus) {
+      _connectionStatus = newStatus;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _restoreGameSession() async {
+    try {
+      final playerNames = _players.map((p) => p.name).toList();
+      final cardCounts = _players.map((p) => p.cardCount).toList();
+
+      debugPrint("Restoring Game Session for ${playerNames.length} players...");
+
+      // 1. Re-initialize Game
+      await _client.initializeGame(playerNames, _userHand, cardCounts: cardCounts);
+
+      // 2. Replay Turns (Chronological Order)
+      // _turnLog is stored in reverse chronological order (newest first).
+      // We need to reverse it to submit in order.
+      final turnsToReplay = _turnLog.reversed.toList();
+
+      for (var turn in turnsToReplay) {
+         await _client.submitTurn(turn);
+      }
+
+      // 3. Sync Final State
+      final gameStateResponse = await _client.fetchGameState();
+      _updateDeductions(gameStateResponse);
+
+      debugPrint("Game Session Restored Successfully.");
+      _updateStatus(BackendStatus.connected);
+    } catch (e) {
+      debugPrint("Failed to restore game session: $e");
+      // Stay in restoring or go to disconnected?
+      // If init failed, we are likely disconnected or backend error.
+      _updateStatus(BackendStatus.disconnected);
+    }
   }
 
   Future<void> startGame(
@@ -149,11 +252,14 @@ class GameState extends ChangeNotifier {
       await _client.initializeGame(playerNames, userHand, cardCounts: cardCounts);
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
+      _updateStatus(BackendStatus.connected); // Success
     } catch (e) {
       debugPrint('Failed to initialize game on backend: $e');
+      _updateStatus(BackendStatus.disconnected);
     }
 
     _gameStarted = true;
+    _startHeartbeat(checkImmediately: false); // Start monitoring
     notifyListeners();
   }
 
@@ -214,8 +320,10 @@ class GameState extends ChangeNotifier {
       await _syncTurnHistory();
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
+      _updateStatus(BackendStatus.connected);
     } catch (e) {
       debugPrint('Failed to sync turn or fetch deductions: $e');
+      _updateStatus(BackendStatus.disconnected);
       // Revert optimism if needed? Or just show error.
     }
   }
@@ -231,8 +339,10 @@ class GameState extends ChangeNotifier {
       await _syncTurnHistory();
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
+      _updateStatus(BackendStatus.connected);
     } catch (e) {
       debugPrint('Failed to update turn: $e');
+      _updateStatus(BackendStatus.disconnected);
     }
   }
 
@@ -247,8 +357,10 @@ class GameState extends ChangeNotifier {
       await _syncTurnHistory();
       final gameStateResponse = await _client.fetchGameState();
       _updateDeductions(gameStateResponse);
+      _updateStatus(BackendStatus.connected);
     } catch (e) {
        debugPrint('Failed to delete turn: $e');
+       _updateStatus(BackendStatus.disconnected);
     }
   }
 
@@ -259,6 +371,8 @@ class GameState extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Failed to sync history: $e');
+      // If this fails, connection is suspect
+      rethrow; // Let the caller handle connection status update
     }
   }
 
@@ -349,7 +463,7 @@ class GameState extends ChangeNotifier {
         }
       }
       return null;
-  }
+    }
 
   String? _mapSuspectToName(proto.Suspect s) {
     switch (s) {
@@ -434,6 +548,14 @@ class GameState extends ChangeNotifier {
     _turnLog.clear();
     _solutionProbabilities = [];
     _gameStarted = false;
+    _heartbeatTimer?.cancel();
+    _connectionStatus = BackendStatus.disconnected;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _heartbeatTimer?.cancel();
+    super.dispose();
   }
 }
