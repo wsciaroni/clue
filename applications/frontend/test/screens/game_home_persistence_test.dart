@@ -6,6 +6,7 @@ import 'package:frontend/state/game_state.dart';
 import 'package:frontend/models/player.dart';
 import 'package:frontend/models/game_constants.dart';
 import 'package:frontend/models/solution_probability.dart';
+import 'package:frontend/models/recommendation.dart';
 
 class MockGameState extends ChangeNotifier implements GameState {
   @override
@@ -62,6 +63,12 @@ class MockGameState extends ChangeNotifier implements GameState {
 
   @override
   void updateConnectionSettings(String? host, int? port) {}
+
+  @override
+  Future<List<Recommendation>> getSuggestions({String? roomName}) async => [];
+
+  @override
+  Future<Recommendation?> getAccusationRecommendation() async => null;
 }
 
 void main() {

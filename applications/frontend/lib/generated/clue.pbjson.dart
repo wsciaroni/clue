@@ -297,6 +297,30 @@ final $typed_data.Uint8List solutionProbabilityDescriptor = $convert.base64Decod
     'oLcHJvYmFiaWxpdHkYAiABKAJSC3Byb2JhYmlsaXR5EiMKDWlzX2VsaW1pbmF0ZWQYAyABKAhS'
     'DGlzRWxpbWluYXRlZA==');
 
+@$core.Deprecated('Use recommendationDescriptor instead')
+const Recommendation$json = {
+  '1': 'Recommendation',
+  '2': [
+    {
+      '1': 'suspect',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.clue.Card',
+      '10': 'suspect'
+    },
+    {'1': 'weapon', '3': 2, '4': 1, '5': 11, '6': '.clue.Card', '10': 'weapon'},
+    {'1': 'room', '3': 3, '4': 1, '5': 11, '6': '.clue.Card', '10': 'room'},
+    {'1': 'benefit', '3': 4, '4': 1, '5': 2, '10': 'benefit'},
+  ],
+};
+
+/// Descriptor for `Recommendation`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List recommendationDescriptor = $convert.base64Decode(
+    'Cg5SZWNvbW1lbmRhdGlvbhIkCgdzdXNwZWN0GAEgASgLMgouY2x1ZS5DYXJkUgdzdXNwZWN0Ei'
+    'IKBndlYXBvbhgCIAEoCzIKLmNsdWUuQ2FyZFIGd2VhcG9uEh4KBHJvb20YAyABKAsyCi5jbHVl'
+    'LkNhcmRSBHJvb20SGAoHYmVuZWZpdBgEIAEoAlIHYmVuZWZpdA==');
+
 @$core.Deprecated('Use initGameRequestDescriptor instead')
 const InitGameRequest$json = {
   '1': 'InitGameRequest',
@@ -522,3 +546,84 @@ final $typed_data.Uint8List gameStateResponseDescriptor = $convert.base64Decode(
     'gCIAMoCzIQLmNsdWUuUGxheWVySW5mb1IHcGxheWVycxIhCgRyb3dzGAMgAygLMg0uY2x1ZS5H'
     'cmlkUm93UgRyb3dzElAKFnNvbHV0aW9uX3Byb2JhYmlsaXRpZXMYBCADKAsyGS5jbHVlLlNvbH'
     'V0aW9uUHJvYmFiaWxpdHlSFXNvbHV0aW9uUHJvYmFiaWxpdGllcw==');
+
+@$core.Deprecated('Use getNextMovesRequestDescriptor instead')
+const GetNextMovesRequest$json = {
+  '1': 'GetNextMovesRequest',
+  '2': [
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+    {
+      '1': 'room',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.clue.Room',
+      '9': 0,
+      '10': 'room',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_room'},
+  ],
+};
+
+/// Descriptor for `GetNextMovesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getNextMovesRequestDescriptor = $convert.base64Decode(
+    'ChNHZXROZXh0TW92ZXNSZXF1ZXN0EhcKB2dhbWVfaWQYASABKAlSBmdhbWVJZBIjCgRyb29tGA'
+    'IgASgOMgouY2x1ZS5Sb29tSABSBHJvb22IAQFCBwoFX3Jvb20=');
+
+@$core.Deprecated('Use getNextMovesResponseDescriptor instead')
+const GetNextMovesResponse$json = {
+  '1': 'GetNextMovesResponse',
+  '2': [
+    {
+      '1': 'recommendations',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.clue.Recommendation',
+      '10': 'recommendations'
+    },
+  ],
+};
+
+/// Descriptor for `GetNextMovesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getNextMovesResponseDescriptor = $convert.base64Decode(
+    'ChRHZXROZXh0TW92ZXNSZXNwb25zZRI+Cg9yZWNvbW1lbmRhdGlvbnMYASADKAsyFC5jbHVlLl'
+    'JlY29tbWVuZGF0aW9uUg9yZWNvbW1lbmRhdGlvbnM=');
+
+@$core.Deprecated('Use getAccusationRecommendationRequestDescriptor instead')
+const GetAccusationRecommendationRequest$json = {
+  '1': 'GetAccusationRecommendationRequest',
+  '2': [
+    {'1': 'game_id', '3': 1, '4': 1, '5': 9, '10': 'gameId'},
+  ],
+};
+
+/// Descriptor for `GetAccusationRecommendationRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAccusationRecommendationRequestDescriptor =
+    $convert.base64Decode(
+        'CiJHZXRBY2N1c2F0aW9uUmVjb21tZW5kYXRpb25SZXF1ZXN0EhcKB2dhbWVfaWQYASABKAlSBm'
+        'dhbWVJZA==');
+
+@$core.Deprecated('Use getAccusationRecommendationResponseDescriptor instead')
+const GetAccusationRecommendationResponse$json = {
+  '1': 'GetAccusationRecommendationResponse',
+  '2': [
+    {
+      '1': 'recommendation',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.clue.Recommendation',
+      '10': 'recommendation'
+    },
+  ],
+};
+
+/// Descriptor for `GetAccusationRecommendationResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAccusationRecommendationResponseDescriptor =
+    $convert.base64Decode(
+        'CiNHZXRBY2N1c2F0aW9uUmVjb21tZW5kYXRpb25SZXNwb25zZRI8Cg5yZWNvbW1lbmRhdGlvbh'
+        'gBIAEoCzIULmNsdWUuUmVjb21tZW5kYXRpb25SDnJlY29tbWVuZGF0aW9u');

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/game_constants.dart';
 import '../models/player.dart';
 import '../models/solution_probability.dart';
+import '../models/recommendation.dart';
 import '../services/clue_client.dart';
 import '../generated/clue.pb.dart' as proto;
 
@@ -119,6 +120,14 @@ class GameState extends ChangeNotifier {
 
   void updateConnectionSettings(String? host, int? port) {
     _client.connect(host: host, port: port);
+  }
+
+  Future<List<Recommendation>> getSuggestions({String? roomName}) async {
+    return _client.getSuggestions(roomName: roomName);
+  }
+
+  Future<Recommendation?> getAccusationRecommendation() async {
+    return _client.getAccusationRecommendation();
   }
 
   Future<void> startGame(

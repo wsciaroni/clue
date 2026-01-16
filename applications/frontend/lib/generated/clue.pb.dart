@@ -630,6 +630,102 @@ class SolutionProbability extends $pb.GeneratedMessage {
   void clearIsEliminated() => $_clearField(3);
 }
 
+class Recommendation extends $pb.GeneratedMessage {
+  factory Recommendation({
+    Card? suspect,
+    Card? weapon,
+    Card? room,
+    $core.double? benefit,
+  }) {
+    final result = create();
+    if (suspect != null) result.suspect = suspect;
+    if (weapon != null) result.weapon = weapon;
+    if (room != null) result.room = room;
+    if (benefit != null) result.benefit = benefit;
+    return result;
+  }
+
+  Recommendation._();
+
+  factory Recommendation.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory Recommendation.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'Recommendation',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOM<Card>(1, _omitFieldNames ? '' : 'suspect', subBuilder: Card.create)
+    ..aOM<Card>(2, _omitFieldNames ? '' : 'weapon', subBuilder: Card.create)
+    ..aOM<Card>(3, _omitFieldNames ? '' : 'room', subBuilder: Card.create)
+    ..aD(4, _omitFieldNames ? '' : 'benefit', fieldType: $pb.PbFieldType.OF)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  Recommendation clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  Recommendation copyWith(void Function(Recommendation) updates) =>
+      super.copyWith((message) => updates(message as Recommendation))
+          as Recommendation;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Recommendation create() => Recommendation._();
+  @$core.override
+  Recommendation createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static Recommendation getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<Recommendation>(create);
+  static Recommendation? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Card get suspect => $_getN(0);
+  @$pb.TagNumber(1)
+  set suspect(Card value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSuspect() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuspect() => $_clearField(1);
+  @$pb.TagNumber(1)
+  Card ensureSuspect() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Card get weapon => $_getN(1);
+  @$pb.TagNumber(2)
+  set weapon(Card value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasWeapon() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearWeapon() => $_clearField(2);
+  @$pb.TagNumber(2)
+  Card ensureWeapon() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  Card get room => $_getN(2);
+  @$pb.TagNumber(3)
+  set room(Card value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasRoom() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRoom() => $_clearField(3);
+  @$pb.TagNumber(3)
+  Card ensureRoom() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $core.double get benefit => $_getN(3);
+  @$pb.TagNumber(4)
+  set benefit($core.double value) => $_setFloat(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasBenefit() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearBenefit() => $_clearField(4);
+}
+
 class InitGameRequest extends $pb.GeneratedMessage {
   factory InitGameRequest({
     $core.int? numPlayers,
@@ -1481,6 +1577,242 @@ class GameStateResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $pb.PbList<SolutionProbability> get solutionProbabilities => $_getList(3);
+}
+
+class GetNextMovesRequest extends $pb.GeneratedMessage {
+  factory GetNextMovesRequest({
+    $core.String? gameId,
+    Room? room,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    if (room != null) result.room = room;
+    return result;
+  }
+
+  GetNextMovesRequest._();
+
+  factory GetNextMovesRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNextMovesRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNextMovesRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..aE<Room>(2, _omitFieldNames ? '' : 'room', enumValues: Room.values)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNextMovesRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNextMovesRequest copyWith(void Function(GetNextMovesRequest) updates) =>
+      super.copyWith((message) => updates(message as GetNextMovesRequest))
+          as GetNextMovesRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetNextMovesRequest create() => GetNextMovesRequest._();
+  @$core.override
+  GetNextMovesRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetNextMovesRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNextMovesRequest>(create);
+  static GetNextMovesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get gameId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set gameId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  Room get room => $_getN(1);
+  @$pb.TagNumber(2)
+  set room(Room value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasRoom() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRoom() => $_clearField(2);
+}
+
+class GetNextMovesResponse extends $pb.GeneratedMessage {
+  factory GetNextMovesResponse({
+    $core.Iterable<Recommendation>? recommendations,
+  }) {
+    final result = create();
+    if (recommendations != null) result.recommendations.addAll(recommendations);
+    return result;
+  }
+
+  GetNextMovesResponse._();
+
+  factory GetNextMovesResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNextMovesResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNextMovesResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..pPM<Recommendation>(1, _omitFieldNames ? '' : 'recommendations',
+        subBuilder: Recommendation.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNextMovesResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNextMovesResponse copyWith(void Function(GetNextMovesResponse) updates) =>
+      super.copyWith((message) => updates(message as GetNextMovesResponse))
+          as GetNextMovesResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetNextMovesResponse create() => GetNextMovesResponse._();
+  @$core.override
+  GetNextMovesResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetNextMovesResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNextMovesResponse>(create);
+  static GetNextMovesResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $pb.PbList<Recommendation> get recommendations => $_getList(0);
+}
+
+class GetAccusationRecommendationRequest extends $pb.GeneratedMessage {
+  factory GetAccusationRecommendationRequest({
+    $core.String? gameId,
+  }) {
+    final result = create();
+    if (gameId != null) result.gameId = gameId;
+    return result;
+  }
+
+  GetAccusationRecommendationRequest._();
+
+  factory GetAccusationRecommendationRequest.fromBuffer(
+          $core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetAccusationRecommendationRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetAccusationRecommendationRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'gameId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAccusationRecommendationRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAccusationRecommendationRequest copyWith(
+          void Function(GetAccusationRecommendationRequest) updates) =>
+      super.copyWith((message) =>
+              updates(message as GetAccusationRecommendationRequest))
+          as GetAccusationRecommendationRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetAccusationRecommendationRequest create() =>
+      GetAccusationRecommendationRequest._();
+  @$core.override
+  GetAccusationRecommendationRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetAccusationRecommendationRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetAccusationRecommendationRequest>(
+          create);
+  static GetAccusationRecommendationRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get gameId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set gameId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasGameId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameId() => $_clearField(1);
+}
+
+class GetAccusationRecommendationResponse extends $pb.GeneratedMessage {
+  factory GetAccusationRecommendationResponse({
+    Recommendation? recommendation,
+  }) {
+    final result = create();
+    if (recommendation != null) result.recommendation = recommendation;
+    return result;
+  }
+
+  GetAccusationRecommendationResponse._();
+
+  factory GetAccusationRecommendationResponse.fromBuffer(
+          $core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetAccusationRecommendationResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetAccusationRecommendationResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'clue'),
+      createEmptyInstance: create)
+    ..aOM<Recommendation>(1, _omitFieldNames ? '' : 'recommendation',
+        subBuilder: Recommendation.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAccusationRecommendationResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAccusationRecommendationResponse copyWith(
+          void Function(GetAccusationRecommendationResponse) updates) =>
+      super.copyWith((message) =>
+              updates(message as GetAccusationRecommendationResponse))
+          as GetAccusationRecommendationResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetAccusationRecommendationResponse create() =>
+      GetAccusationRecommendationResponse._();
+  @$core.override
+  GetAccusationRecommendationResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetAccusationRecommendationResponse getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
+          GetAccusationRecommendationResponse>(create);
+  static GetAccusationRecommendationResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Recommendation get recommendation => $_getN(0);
+  @$pb.TagNumber(1)
+  set recommendation(Recommendation value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasRecommendation() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRecommendation() => $_clearField(1);
+  @$pb.TagNumber(1)
+  Recommendation ensureRecommendation() => $_ensure(0);
 }
 
 const $core.bool _omitFieldNames =

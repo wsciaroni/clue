@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:grpc/grpc.dart';
-import '../generated/clue.pbgrpc.dart';
+import '../generated/clue.pbgrpc.dart' as proto;
 import '../models/game_constants.dart'
     as model; // To avoid conflict with generated Card
+import '../models/recommendation.dart';
 import '../state/game_state.dart' as state;
 
 class ClueClient {
-  late ClueGameServiceClient _stub;
+  late proto.ClueGameServiceClient _stub;
   late ClientChannel _channel;
   String? _gameId;
   List<String> _playerNames = [];
@@ -39,7 +40,7 @@ class ClueClient {
       port: finalPort,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
     );
-    _stub = ClueGameServiceClient(_channel);
+    _stub = proto.ClueGameServiceClient(_channel);
     _isInitialized = true;
   }
 
@@ -49,7 +50,7 @@ class ClueClient {
     List<int>? cardCounts,
   }) async {
     _playerNames = List.from(players);
-    final request = InitGameRequest()..numPlayers = players.length;
+    final request = proto.InitGameRequest()..numPlayers = players.length;
 
     request.playerNames.addAll(players);
     if (cardCounts != null) {
@@ -85,7 +86,7 @@ class ClueClient {
 
     final turnData = _mapTurnData(turn);
 
-    final request = TurnRequest()
+    final request = proto.TurnRequest()
       ..gameId = _gameId!
       ..data = turnData;
 
@@ -104,7 +105,7 @@ class ClueClient {
     if (_gameId == null) throw Exception("Game ID null");
 
     final turnData = _mapTurnData(turn);
-    final request = UpdateTurnRequest()
+    final request = proto.UpdateTurnRequest()
       ..gameId = _gameId!
       ..turnId = turnId
       ..newData = turnData;
@@ -123,7 +124,7 @@ class ClueClient {
   Future<void> deleteTurn(String turnId) async {
     if (_gameId == null) throw Exception("Game ID null");
 
-    final request = DeleteTurnRequest()
+    final request = proto.DeleteTurnRequest()
       ..gameId = _gameId!
       ..turnId = turnId;
 
@@ -138,9 +139,9 @@ class ClueClient {
     }
   }
 
-  Future<List<TurnEntry>> getTurnHistory() async {
+  Future<List<proto.TurnEntry>> getTurnHistory() async {
     if (_gameId == null) return [];
-    final request = GetHistoryRequest()..gameId = _gameId!;
+    final request = proto.GetHistoryRequest()..gameId = _gameId!;
 
     try {
       final response = await _stub.getTurnHistory(request);
@@ -151,12 +152,12 @@ class ClueClient {
     }
   }
 
-  Future<GameStateResponse> fetchGameState() async {
+  Future<proto.GameStateResponse> fetchGameState() async {
     if (_gameId == null) {
       debugPrint('Game ID is null, cannot fetch game state.');
-      return GameStateResponse(); // Return empty
+      return proto.GameStateResponse(); // Return empty
     }
-    final request = GameStateRequest()..gameId = _gameId!;
+    final request = proto.GameStateRequest()..gameId = _gameId!;
 
     try {
       return await _stub.getGameState(request);
@@ -166,8 +167,143 @@ class ClueClient {
     }
   }
 
-  TurnData _mapTurnData(state.GameTurn turn) {
-    final turnData = TurnData()
+  Future<List<Recommendation>> getSuggestions({String? roomName}) async {
+    if (_gameId == null) return [];
+    final request = proto.GetNextMovesRequest()..gameId = _gameId!;
+    if (roomName != null) {
+      request.room = _mapRoom(roomName);
+    }
+
+    try {
+      final response = await _stub.getNextMoves(request);
+      return response.recommendations
+          .map((r) => _mapProtoRecommendation(r))
+          .whereType<Recommendation>()
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching suggestions: $e');
+      return [];
+    }
+  }
+
+  Future<Recommendation?> getAccusationRecommendation() async {
+    if (_gameId == null) return null;
+    final request = proto.GetAccusationRecommendationRequest()..gameId = _gameId!;
+
+    try {
+      final response = await _stub.getAccusationRecommendation(request);
+      return _mapProtoRecommendation(response.recommendation);
+    } catch (e) {
+      debugPrint('Error fetching accusation recommendation: $e');
+      return null;
+    }
+  }
+
+  Recommendation? _mapProtoRecommendation(
+    proto.Recommendation recommendation,
+  ) {
+    final suspect = _protoToGameCard(recommendation.suspect);
+    final weapon = _protoToGameCard(recommendation.weapon);
+    final room = _protoToGameCard(recommendation.room);
+
+    if (suspect != null && weapon != null && room != null) {
+      return Recommendation(
+        suspect: suspect,
+        weapon: weapon,
+        room: room,
+        benefit: recommendation.benefit.toDouble(),
+      );
+    }
+    return null;
+  }
+
+  model.GameCard? _protoToGameCard(proto.Card card) {
+    String? targetName;
+    if (card.type == proto.CardType.CARD_TYPE_SUSPECT) {
+      targetName = _mapSuspectToName(card.suspect);
+    } else if (card.type == proto.CardType.CARD_TYPE_WEAPON) {
+      targetName = _mapWeaponToName(card.weapon);
+    } else if (card.type == proto.CardType.CARD_TYPE_ROOM) {
+      targetName = _mapRoomToName(card.room);
+    }
+
+    if (targetName != null) {
+      try {
+        return model.GameConstants.allCards.firstWhere(
+          (c) => c.name == targetName,
+        );
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  String? _mapSuspectToName(proto.Suspect s) {
+    switch (s) {
+      case proto.Suspect.SUSPECT_COL_MUSTARD:
+        return 'Colonel Mustard';
+      case proto.Suspect.SUSPECT_PROF_PLUM:
+        return 'Professor Plum';
+      case proto.Suspect.SUSPECT_MR_GREEN:
+        return 'Mr. Green';
+      case proto.Suspect.SUSPECT_MRS_PEACOCK:
+        return 'Mrs. Peacock';
+      case proto.Suspect.SUSPECT_MISS_SCARLET:
+        return 'Miss Scarlet';
+      case proto.Suspect.SUSPECT_MRS_WHITE:
+        return 'Mrs. White';
+      default:
+        return null;
+    }
+  }
+
+  String? _mapWeaponToName(proto.Weapon w) {
+    switch (w) {
+      case proto.Weapon.WEAPON_KNIFE:
+        return 'Knife';
+      case proto.Weapon.WEAPON_CANDLESTICK:
+        return 'Candlestick';
+      case proto.Weapon.WEAPON_REVOLVER:
+        return 'Revolver';
+      case proto.Weapon.WEAPON_ROPE:
+        return 'Rope';
+      case proto.Weapon.WEAPON_LEAD_PIPE:
+        return 'Lead Pipe';
+      case proto.Weapon.WEAPON_WRENCH:
+        return 'Wrench';
+      default:
+        return null;
+    }
+  }
+
+  String? _mapRoomToName(proto.Room r) {
+    switch (r) {
+      case proto.Room.ROOM_HALL:
+        return 'Hall';
+      case proto.Room.ROOM_LOUNGE:
+        return 'Lounge';
+      case proto.Room.ROOM_DINING_ROOM:
+        return 'Dining Room';
+      case proto.Room.ROOM_KITCHEN:
+        return 'Kitchen';
+      case proto.Room.ROOM_BALLROOM:
+        return 'Ballroom';
+      case proto.Room.ROOM_CONSERVATORY:
+        return 'Conservatory';
+      case proto.Room.ROOM_BILLIARD_ROOM:
+        return 'Billiard Room';
+      case proto.Room.ROOM_LIBRARY:
+        return 'Library';
+      case proto.Room.ROOM_STUDY:
+        return 'Study';
+      default:
+        return null;
+    }
+  }
+
+  proto.TurnData _mapTurnData(state.GameTurn turn) {
+    final turnData = proto.TurnData()
       ..suggesterPlayerIndex = _getPlayerIndex(turn.askingPlayer.name)
       ..suspect = _convertToProtoCard(turn.suspect)
       ..weapon = _convertToProtoCard(turn.weapon)
@@ -204,83 +340,83 @@ class ClueClient {
     }
   }
 
-  Card _convertToProtoCard(model.GameCard card) {
-    final protoCard = Card();
+  proto.Card _convertToProtoCard(model.GameCard card) {
+    final protoCard = proto.Card();
 
     if (card.type == model.CardType.suspect) {
-      protoCard.type = CardType.CARD_TYPE_SUSPECT;
+      protoCard.type = proto.CardType.CARD_TYPE_SUSPECT;
       protoCard.suspect = _mapSuspect(card.name);
     } else if (card.type == model.CardType.weapon) {
-      protoCard.type = CardType.CARD_TYPE_WEAPON;
+      protoCard.type = proto.CardType.CARD_TYPE_WEAPON;
       protoCard.weapon = _mapWeapon(card.name);
     } else if (card.type == model.CardType.room) {
-      protoCard.type = CardType.CARD_TYPE_ROOM;
+      protoCard.type = proto.CardType.CARD_TYPE_ROOM;
       protoCard.room = _mapRoom(card.name);
     }
 
     return protoCard;
   }
 
-  Suspect _mapSuspect(String name) {
+  proto.Suspect _mapSuspect(String name) {
     switch (name) {
       case 'Colonel Mustard':
-        return Suspect.SUSPECT_COL_MUSTARD;
+        return proto.Suspect.SUSPECT_COL_MUSTARD;
       case 'Professor Plum':
-        return Suspect.SUSPECT_PROF_PLUM;
+        return proto.Suspect.SUSPECT_PROF_PLUM;
       case 'Mr. Green':
-        return Suspect.SUSPECT_MR_GREEN;
+        return proto.Suspect.SUSPECT_MR_GREEN;
       case 'Mrs. Peacock':
-        return Suspect.SUSPECT_MRS_PEACOCK;
+        return proto.Suspect.SUSPECT_MRS_PEACOCK;
       case 'Miss Scarlet':
-        return Suspect.SUSPECT_MISS_SCARLET;
+        return proto.Suspect.SUSPECT_MISS_SCARLET;
       case 'Mrs. White':
-        return Suspect.SUSPECT_MRS_WHITE;
+        return proto.Suspect.SUSPECT_MRS_WHITE;
       default:
-        return Suspect.SUSPECT_UNKNOWN;
+        return proto.Suspect.SUSPECT_UNKNOWN;
     }
   }
 
-  Weapon _mapWeapon(String name) {
+  proto.Weapon _mapWeapon(String name) {
     switch (name) {
       case 'Knife':
-        return Weapon.WEAPON_KNIFE;
+        return proto.Weapon.WEAPON_KNIFE;
       case 'Candlestick':
-        return Weapon.WEAPON_CANDLESTICK;
+        return proto.Weapon.WEAPON_CANDLESTICK;
       case 'Revolver':
-        return Weapon.WEAPON_REVOLVER;
+        return proto.Weapon.WEAPON_REVOLVER;
       case 'Rope':
-        return Weapon.WEAPON_ROPE;
+        return proto.Weapon.WEAPON_ROPE;
       case 'Lead Pipe':
-        return Weapon.WEAPON_LEAD_PIPE;
+        return proto.Weapon.WEAPON_LEAD_PIPE;
       case 'Wrench':
-        return Weapon.WEAPON_WRENCH;
+        return proto.Weapon.WEAPON_WRENCH;
       default:
-        return Weapon.WEAPON_UNKNOWN;
+        return proto.Weapon.WEAPON_UNKNOWN;
     }
   }
 
-  Room _mapRoom(String name) {
+  proto.Room _mapRoom(String name) {
     switch (name) {
       case 'Hall':
-        return Room.ROOM_HALL;
+        return proto.Room.ROOM_HALL;
       case 'Lounge':
-        return Room.ROOM_LOUNGE;
+        return proto.Room.ROOM_LOUNGE;
       case 'Dining Room':
-        return Room.ROOM_DINING_ROOM;
+        return proto.Room.ROOM_DINING_ROOM;
       case 'Kitchen':
-        return Room.ROOM_KITCHEN;
+        return proto.Room.ROOM_KITCHEN;
       case 'Ballroom':
-        return Room.ROOM_BALLROOM;
+        return proto.Room.ROOM_BALLROOM;
       case 'Conservatory':
-        return Room.ROOM_CONSERVATORY;
+        return proto.Room.ROOM_CONSERVATORY;
       case 'Billiard Room':
-        return Room.ROOM_BILLIARD_ROOM;
+        return proto.Room.ROOM_BILLIARD_ROOM;
       case 'Library':
-        return Room.ROOM_LIBRARY;
+        return proto.Room.ROOM_LIBRARY;
       case 'Study':
-        return Room.ROOM_STUDY;
+        return proto.Room.ROOM_STUDY;
       default:
-        return Room.ROOM_UNKNOWN;
+        return proto.Room.ROOM_UNKNOWN;
     }
   }
 }
