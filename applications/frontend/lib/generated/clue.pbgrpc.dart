@@ -88,6 +88,24 @@ class ClueGameServiceClient extends $grpc.Client {
     return $createUnaryCall(_$getGameState, request, options: options);
   }
 
+  /// Returns suggested moves
+  $grpc.ResponseFuture<$0.GetNextMovesResponse> getNextMoves(
+    $0.GetNextMovesRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$getNextMoves, request, options: options);
+  }
+
+  /// Returns recommended accusation
+  $grpc.ResponseFuture<$0.GetAccusationRecommendationResponse>
+      getAccusationRecommendation(
+    $0.GetAccusationRecommendationRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$getAccusationRecommendation, request,
+        options: options);
+  }
+
   // method descriptors
 
   static final _$initGame =
@@ -125,6 +143,17 @@ class ClueGameServiceClient extends $grpc.Client {
           '/clue.ClueGameService/GetGameState',
           ($0.GameStateRequest value) => value.writeToBuffer(),
           $0.GameStateResponse.fromBuffer);
+  static final _$getNextMoves =
+      $grpc.ClientMethod<$0.GetNextMovesRequest, $0.GetNextMovesResponse>(
+          '/clue.ClueGameService/GetNextMoves',
+          ($0.GetNextMovesRequest value) => value.writeToBuffer(),
+          $0.GetNextMovesResponse.fromBuffer);
+  static final _$getAccusationRecommendation = $grpc.ClientMethod<
+          $0.GetAccusationRecommendationRequest,
+          $0.GetAccusationRecommendationResponse>(
+      '/clue.ClueGameService/GetAccusationRecommendation',
+      ($0.GetAccusationRecommendationRequest value) => value.writeToBuffer(),
+      $0.GetAccusationRecommendationResponse.fromBuffer);
 }
 
 @$pb.GrpcServiceName('clue.ClueGameService')
@@ -181,6 +210,25 @@ abstract class ClueGameServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GameStateRequest.fromBuffer(value),
         ($0.GameStateResponse value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.GetNextMovesRequest, $0.GetNextMovesResponse>(
+            'GetNextMoves',
+            getNextMoves_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $0.GetNextMovesRequest.fromBuffer(value),
+            ($0.GetNextMovesResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetAccusationRecommendationRequest,
+            $0.GetAccusationRecommendationResponse>(
+        'GetAccusationRecommendation',
+        getAccusationRecommendation_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.GetAccusationRecommendationRequest.fromBuffer(value),
+        ($0.GetAccusationRecommendationResponse value) =>
+            value.writeToBuffer()));
   }
 
   $async.Future<$0.InitGameResponse> initGame_Pre($grpc.ServiceCall $call,
@@ -239,4 +287,23 @@ abstract class ClueGameServiceBase extends $grpc.Service {
 
   $async.Future<$0.GameStateResponse> getGameState(
       $grpc.ServiceCall call, $0.GameStateRequest request);
+
+  $async.Future<$0.GetNextMovesResponse> getNextMoves_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$0.GetNextMovesRequest> $request) async {
+    return getNextMoves($call, await $request);
+  }
+
+  $async.Future<$0.GetNextMovesResponse> getNextMoves(
+      $grpc.ServiceCall call, $0.GetNextMovesRequest request);
+
+  $async.Future<$0.GetAccusationRecommendationResponse>
+      getAccusationRecommendation_Pre($grpc.ServiceCall $call,
+          $async.Future<$0.GetAccusationRecommendationRequest> $request) async {
+    return getAccusationRecommendation($call, await $request);
+  }
+
+  $async.Future<$0.GetAccusationRecommendationResponse>
+      getAccusationRecommendation($grpc.ServiceCall call,
+          $0.GetAccusationRecommendationRequest request);
 }

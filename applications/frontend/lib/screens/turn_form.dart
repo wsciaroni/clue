@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/game_constants.dart';
 import '../models/player.dart';
+import '../models/recommendation.dart';
 import '../state/game_state.dart';
+import 'recommendation_selection_screen.dart';
 
 class TurnForm extends StatefulWidget {
   final List<Player> players;
@@ -128,6 +131,12 @@ class _TurnFormState extends State<TurnForm> {
                 .toList(),
             onChanged: (val) => setState(() => _selectedRoom = val),
             validator: (val) => val == null ? 'Required' : null,
+          ),
+
+          TextButton.icon(
+            onPressed: _getRecommendation,
+            icon: const Icon(Icons.lightbulb),
+            label: const Text("Recommend"),
           ),
 
           const SizedBox(height: 10),
@@ -259,6 +268,81 @@ class _TurnFormState extends State<TurnForm> {
         ],
       ),
     );
+  }
+
+  Future<void> _getRecommendation() async {
+    final gameState = context.read<GameState>();
+
+    if (_isAccusation) {
+      final rec = await gameState.getAccusationRecommendation();
+      if (!mounted) return;
+      if (rec != null) {
+        _showRecommendationDialog(rec);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No accusation recommendation found.')),
+        );
+      }
+    } else {
+      final recs = await gameState.getSuggestions(
+        roomName: _selectedRoom?.name,
+      );
+      if (!mounted) return;
+
+      if (recs.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No suggestions found.')));
+      } else if (recs.length == 1) {
+        _showRecommendationDialog(recs.first);
+      } else {
+        // Multiple recommendations -> Go to selection screen
+        final selected = await Navigator.push<Recommendation>(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => RecommendationSelectionScreen(recommendations: recs),
+          ),
+        );
+        if (selected != null) {
+          _applyRecommendation(selected);
+        }
+      }
+    }
+  }
+
+  void _showRecommendationDialog(Recommendation rec) {
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text("Recommendation"),
+            content: Text(
+              "We recommend asking about:\n\nSuspect: ${rec.suspect.name}\nWeapon: ${rec.weapon.name}\nRoom: ${rec.room.name}\n\nBenefit: ${rec.benefit.toStringAsFixed(2)}",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _applyRecommendation(rec);
+                },
+                child: const Text("Use"),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _applyRecommendation(Recommendation rec) {
+    setState(() {
+      _selectedSuspect = rec.suspect;
+      _selectedWeapon = rec.weapon;
+      _selectedRoom = rec.room;
+    });
   }
 
   void _submit() {
