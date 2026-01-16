@@ -69,6 +69,12 @@ class MockGameState extends ChangeNotifier implements GameState {
 
   @override
   Future<Recommendation?> getAccusationRecommendation() async => null;
+
+  @override
+  BackendStatus get connectionStatus => BackendStatus.connected;
+
+  @override
+  Future<void> checkConnectionForTesting() async {}
 }
 
 void main() {

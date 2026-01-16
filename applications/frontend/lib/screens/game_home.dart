@@ -4,6 +4,7 @@ import '../services/file_manager/file_manager.dart';
 import '../state/game_state.dart';
 import 'game_log_screen.dart';
 import 'deduction_grid_screen.dart';
+import 'widgets/connection_status_indicator.dart';
 
 import 'solution_screen.dart';
 import 'constraint_list_screen.dart';
@@ -31,6 +32,7 @@ class _GameHomeState extends State<GameHome> {
       appBar: AppBar(
         title: const Text('Clue Assistant'),
         actions: [
+          const ConnectionStatusIndicator(),
           IconButton(
             icon: const Icon(Icons.save),
             tooltip: 'Save Game',
@@ -93,6 +95,10 @@ class _GameHomeState extends State<GameHome> {
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -103,7 +109,6 @@ class _GameHomeState extends State<GameHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'Game Log',
-            backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
