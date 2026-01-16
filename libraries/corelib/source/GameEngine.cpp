@@ -38,6 +38,11 @@ void GameEngine::initialize_game(const InitGameRequest& request) {
         m_player_card_counts.push_back(0);
     }
 
+    // Initialize Solver
+    std::vector<Card> my_hand_vec;
+    for(const auto& c : request.my_hand()) my_hand_vec.push_back(c);
+    m_solver.initialize(request.num_players(), my_hand_vec, m_player_card_counts);
+
     register_card_types();
     reset_state();
 }
@@ -148,6 +153,12 @@ std::vector<TurnEntry> GameEngine::get_history() const {
 
 void GameEngine::replay_game() {
     reset_state();
+
+    // Reset Solver
+    std::vector<Card> my_hand_vec;
+    for(const auto& c : m_init_request.my_hand()) my_hand_vec.push_back(c);
+    m_solver.initialize(m_init_request.num_players(), my_hand_vec, m_player_card_counts);
+
     for (const auto& entry : m_history) {
         apply_turn_logic(entry.data());
         reconcile();
@@ -155,6 +166,9 @@ void GameEngine::replay_game() {
 }
 
 void GameEngine::apply_turn_logic(const TurnData& data) {
+    // Update Solver
+    m_solver.process_turn(data, m_player_card_counts);
+
     CardId s_id = to_card_id(data.suspect());
     CardId w_id = to_card_id(data.weapon());
     CardId r_id = to_card_id(data.room());
@@ -585,44 +599,16 @@ GameStateResponse GameEngine::get_game_state_response() const {
 }
 
 std::vector<Recommendation> GameEngine::get_next_moves(std::optional<Room> room) const {
-    std::vector<Recommendation> recs;
-    if (room.has_value()) {
-        Recommendation r;
-        r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
-        r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
-        r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
-        r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
-        r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
-        r.mutable_room()->set_room(room.value());
-        r.set_benefit(0.5f);
-        recs.push_back(r);
-    } else {
-        // Return 9 recommendations, one for each room (1..9)
-        for (int i = 1; i <= 9; ++i) {
-            Recommendation r;
-            r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
-            r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
-            r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
-            r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
-            r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
-            r.mutable_room()->set_room(static_cast<Room>(i));
-            r.set_benefit(0.5f);
-            recs.push_back(r);
-        }
-    }
-    return recs;
+    return m_solver.get_suggestions(room);
 }
 
 Recommendation GameEngine::get_accusation_recommendation() const {
-    Recommendation r;
-    r.mutable_suspect()->set_type(CardType::CARD_TYPE_SUSPECT);
-    r.mutable_suspect()->set_suspect(Suspect::SUSPECT_COL_MUSTARD);
-    r.mutable_weapon()->set_type(CardType::CARD_TYPE_WEAPON);
-    r.mutable_weapon()->set_weapon(Weapon::WEAPON_KNIFE);
-    r.mutable_room()->set_type(CardType::CARD_TYPE_ROOM);
-    r.mutable_room()->set_room(Room::ROOM_HALL);
-    r.set_benefit(1.0f);
-    return r;
+    auto rec = m_solver.get_accusation_recommendation();
+    if (rec.has_value()) {
+        return rec.value();
+    }
+    Recommendation empty;
+    return empty; // Default empty
 }
 
 } // namespace clue
