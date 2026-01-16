@@ -11,19 +11,36 @@ class ClueClient {
   late ClientChannel _channel;
   String? _gameId;
   List<String> _playerNames = [];
+  // Keep track of initialization to allow shutdown on re-connect
+  bool _isInitialized = false;
 
   ClueClient() {
-    String host = 'localhost';
-    if (!kIsWeb && Platform.isAndroid) {
-      host = '10.0.2.2';
+    // Default connection
+    connect();
+  }
+
+  /// Connects to the backend service.
+  /// If host/port are not provided, defaults to localhost:50051 (or 10.0.2.2 for Android).
+  void connect({String? host, int? port}) {
+    if (_isInitialized) {
+      _channel.shutdown();
     }
 
+    String finalHost = host ?? 'localhost';
+    if (host == null && !kIsWeb && Platform.isAndroid) {
+      finalHost = '10.0.2.2';
+    }
+    int finalPort = port ?? 50051;
+
+    debugPrint('Connecting to Clue Backend at $finalHost:$finalPort');
+
     _channel = ClientChannel(
-      host,
-      port: 50051,
+      finalHost,
+      port: finalPort,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
     );
     _stub = ClueGameServiceClient(_channel);
+    _isInitialized = true;
   }
 
   Future<void> initializeGame(
@@ -182,7 +199,9 @@ class ClueClient {
   }
 
   Future<void> shutdown() async {
-    await _channel.shutdown();
+    if (_isInitialized) {
+      await _channel.shutdown();
+    }
   }
 
   Card _convertToProtoCard(model.GameCard card) {
