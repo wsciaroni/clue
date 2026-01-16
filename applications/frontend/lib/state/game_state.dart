@@ -117,6 +117,10 @@ class GameState extends ChangeNotifier {
   List<LocalSolutionProbability> get solutionProbabilities => _solutionProbabilities;
   bool get gameStarted => _gameStarted;
 
+  void updateConnectionSettings(String? host, int? port) {
+    _client.connect(host: host, port: port);
+  }
+
   Future<void> startGame(
     List<String> playerNames,
     List<GameCard> userHand, {
