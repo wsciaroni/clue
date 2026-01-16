@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
-  GIT_TAG        v1.62.0
+  GIT_TAG        v1.75.0
 )
 
 # --- START: SILENCE GRPC & DEPENDENCY TESTS ---
