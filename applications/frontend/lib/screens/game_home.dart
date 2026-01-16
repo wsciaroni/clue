@@ -93,6 +93,10 @@ class _GameHomeState extends State<GameHome> {
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -103,7 +107,6 @@ class _GameHomeState extends State<GameHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'Game Log',
-            backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_on),
