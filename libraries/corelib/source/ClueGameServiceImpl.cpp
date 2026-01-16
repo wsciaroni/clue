@@ -156,3 +156,36 @@ grpc::Status ClueGameServiceImpl::GetGameState(grpc::ServerContext* context, con
     *response = engine->get_game_state_response();
     return grpc::Status::OK;
 }
+
+grpc::Status ClueGameServiceImpl::GetNextMoves(grpc::ServerContext* context, const clue::GetNextMovesRequest* request,
+                                               clue::GetNextMovesResponse* response) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto engine = get_game(request->game_id());
+    if (!engine) {
+        return grpc::Status::OK;
+    }
+
+    std::optional<clue::Room> room;
+    if (request->has_room()) {
+        room = request->room();
+    }
+
+    std::vector<clue::Recommendation> recs = engine->get_next_moves(room);
+    for (const auto& r : recs) {
+        *response->add_recommendations() = r;
+    }
+
+    return grpc::Status::OK;
+}
+
+grpc::Status ClueGameServiceImpl::GetAccusationRecommendation(grpc::ServerContext* context, const clue::GetAccusationRecommendationRequest* request,
+                                                              clue::GetAccusationRecommendationResponse* response) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto engine = get_game(request->game_id());
+    if (!engine) {
+        return grpc::Status::OK;
+    }
+
+    *response->mutable_recommendation() = engine->get_accusation_recommendation();
+    return grpc::Status::OK;
+}

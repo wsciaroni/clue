@@ -33,6 +33,12 @@ public:
     grpc::Status GetGameState(grpc::ServerContext* context, const clue::GameStateRequest* request,
                               clue::GameStateResponse* response) override;
 
+    grpc::Status GetNextMoves(grpc::ServerContext* context, const clue::GetNextMovesRequest* request,
+                              clue::GetNextMovesResponse* response) override;
+
+    grpc::Status GetAccusationRecommendation(grpc::ServerContext* context, const clue::GetAccusationRecommendationRequest* request,
+                                             clue::GetAccusationRecommendationResponse* response) override;
+
 private:
     std::mutex m_mutex;
     std::map<std::string, std::shared_ptr<clue::GameEngine>> m_games;
