@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'services/accessibility_fix.dart';
 import 'state/game_state.dart';
 import 'screens/setup_screen.dart';
 import 'screens/game_home.dart';
 
 void main() {
+  AccessibilityFixBinding.ensureInitialized();
   runApp(const ClueApp());
 }
 
