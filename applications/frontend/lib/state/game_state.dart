@@ -135,10 +135,12 @@ class GameState extends ChangeNotifier {
     _startHeartbeat();
   }
 
-  void _startHeartbeat() {
+  void _startHeartbeat({bool checkImmediately = true}) {
     _heartbeatTimer?.cancel();
     // Check immediately
-    _checkConnection();
+    if (checkImmediately) {
+      _checkConnection();
+    }
     // Then every 20 seconds
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       _checkConnection();
@@ -257,7 +259,7 @@ class GameState extends ChangeNotifier {
     }
 
     _gameStarted = true;
-    _startHeartbeat(); // Start monitoring
+    _startHeartbeat(checkImmediately: false); // Start monitoring
     notifyListeners();
   }
 
