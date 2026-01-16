@@ -133,11 +133,35 @@ class _TurnFormState extends State<TurnForm> {
             validator: (val) => val == null ? 'Required' : null,
           ),
 
-          TextButton.icon(
-            onPressed: _getRecommendation,
-            icon: const Icon(Icons.lightbulb),
-            label: const Text("Recommend"),
-          ),
+          if (_isAccusation)
+            TextButton.icon(
+              onPressed: () => _getRecommendation(useSelectedRoom: false),
+              icon: const Icon(Icons.lightbulb),
+              label: const Text("Recommend Accusation"),
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed:
+                        _selectedRoom == null
+                            ? null
+                            : () => _getRecommendation(useSelectedRoom: true),
+                    icon: const Icon(Icons.lightbulb),
+                    label: const Text("Room Hint"),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => _getRecommendation(useSelectedRoom: false),
+                    icon: const Icon(Icons.list_alt),
+                    label: const Text("All Hints"),
+                  ),
+                ),
+              ],
+            ),
 
           const SizedBox(height: 10),
           ToggleButtons(
@@ -270,7 +294,7 @@ class _TurnFormState extends State<TurnForm> {
     );
   }
 
-  Future<void> _getRecommendation() async {
+  Future<void> _getRecommendation({required bool useSelectedRoom}) async {
     final gameState = context.read<GameState>();
 
     if (_isAccusation) {
@@ -285,7 +309,7 @@ class _TurnFormState extends State<TurnForm> {
       }
     } else {
       final recs = await gameState.getSuggestions(
-        roomName: _selectedRoom?.name,
+        roomName: useSelectedRoom ? _selectedRoom?.name : null,
       );
       if (!mounted) return;
 
@@ -301,7 +325,8 @@ class _TurnFormState extends State<TurnForm> {
           context,
           MaterialPageRoute(
             builder:
-                (context) => RecommendationSelectionScreen(recommendations: recs),
+                (context) =>
+                    RecommendationSelectionScreen(recommendations: recs),
           ),
         );
         if (selected != null) {
