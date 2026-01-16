@@ -133,11 +133,32 @@ class _TurnFormState extends State<TurnForm> {
             validator: (val) => val == null ? 'Required' : null,
           ),
 
-          TextButton.icon(
-            onPressed: _getRecommendation,
-            icon: const Icon(Icons.lightbulb),
-            label: const Text("Recommend"),
-          ),
+          if (_isAccusation)
+            TextButton.icon(
+              onPressed: _getAccusationRecommendation,
+              icon: const Icon(Icons.lightbulb),
+              label: const Text("Recommend Accusation"),
+            )
+          else
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed:
+                        _selectedRoom == null ? null : _getRoomSuggestion,
+                    icon: const Icon(Icons.lightbulb_outline),
+                    label: const Text("Room Hint"),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: _getAllSuggestions,
+                    icon: const Icon(Icons.lightbulb),
+                    label: const Text("All Hints"),
+                  ),
+                ),
+              ],
+            ),
 
           const SizedBox(height: 10),
           ToggleButtons(
@@ -270,43 +291,51 @@ class _TurnFormState extends State<TurnForm> {
     );
   }
 
-  Future<void> _getRecommendation() async {
+  Future<void> _getAccusationRecommendation() async {
     final gameState = context.read<GameState>();
-
-    if (_isAccusation) {
-      final rec = await gameState.getAccusationRecommendation();
-      if (!mounted) return;
-      if (rec != null) {
-        _showRecommendationDialog(rec);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No accusation recommendation found.')),
-        );
-      }
+    final rec = await gameState.getAccusationRecommendation();
+    if (!mounted) return;
+    if (rec != null) {
+      _showRecommendationDialog(rec);
     } else {
-      final recs = await gameState.getSuggestions(
-        roomName: _selectedRoom?.name,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No accusation recommendation found.')),
       );
-      if (!mounted) return;
+    }
+  }
 
-      if (recs.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No suggestions found.')));
-      } else if (recs.length == 1) {
-        _showRecommendationDialog(recs.first);
-      } else {
-        // Multiple recommendations -> Go to selection screen
-        final selected = await Navigator.push<Recommendation>(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => RecommendationSelectionScreen(recommendations: recs),
-          ),
-        );
-        if (selected != null) {
-          _applyRecommendation(selected);
-        }
+  Future<void> _getRoomSuggestion() async {
+    await _getSuggestion(roomName: _selectedRoom?.name);
+  }
+
+  Future<void> _getAllSuggestions() async {
+    await _getSuggestion(roomName: null);
+  }
+
+  Future<void> _getSuggestion({String? roomName}) async {
+    final gameState = context.read<GameState>();
+    final recs = await gameState.getSuggestions(
+      roomName: roomName,
+    );
+    if (!mounted) return;
+
+    if (recs.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No suggestions found.')));
+    } else if (recs.length == 1) {
+      _showRecommendationDialog(recs.first);
+    } else {
+      // Multiple recommendations -> Go to selection screen
+      final selected = await Navigator.push<Recommendation>(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => RecommendationSelectionScreen(recommendations: recs),
+        ),
+      );
+      if (selected != null) {
+        _applyRecommendation(selected);
       }
     }
   }
