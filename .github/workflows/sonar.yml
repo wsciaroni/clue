@@ -29,15 +29,15 @@ jobs:
         with:
           path: ${{ github.workspace }}/.ccache
           # KEY: Always unique so we SAVE the new cache at the end of this run
-          key: ${{ runner.os }}-ccache-${{ github.ref_name }}-${{ github.sha }}
+          key: ${{ runner.os }}-sonar-ccache-${{ github.ref_name }}-${{ github.sha }}
 
           # RESTORE KEYS: The "Waterfall" logic
           # GitHub searches these prefixes in order.
           restore-keys: |
-            ${{ runner.os }}-ccache-${{ github.ref_name }}-
-            ${{ runner.os }}-ccache-dev-
-            ${{ runner.os }}-ccache-master-
-            ${{ runner.os }}-ccache-
+            ${{ runner.os }}-sonar-ccache-${{ github.ref_name }}-
+            ${{ runner.os }}-sonar-ccache-dev-
+            ${{ runner.os }}-sonar-ccache-master-
+            ${{ runner.os }}-sonar-ccache-
 
       - name: Configure CMake (Coverage)
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
