@@ -10,6 +10,8 @@ jobs:
   sonar-scan:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,14 +21,32 @@ jobs:
       - name: Install C++ dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build
+          sudo apt-get install -y ninja-build ccache
           pip install gcovr
 
+      - name: Setup ccache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.ccache
+          # KEY: Always unique so we SAVE the new cache at the end of this run
+          key: ${{ runner.os }}-ccache-${{ github.ref_name }}-${{ github.sha }}
+
+          # RESTORE KEYS: The "Waterfall" logic
+          # GitHub searches these prefixes in order.
+          restore-keys: |
+            ${{ runner.os }}-ccache-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-dev-
+            ${{ runner.os }}-ccache-master-
+            ${{ runner.os }}-ccache-
+
       - name: Configure CMake (Coverage)
-        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build C++
         run: cmake --build build
+
+      - name: Ccache Stats
+        run: ccache -s
 
       - name: Test C++
         working-directory: build
