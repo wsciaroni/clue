@@ -147,5 +147,51 @@ void main() {
       expect(mockGameState.host, '10.0.0.5');
       expect(mockGameState.port, isNull);
     });
+
+    testWidgets('Card selection counters update correctly',
+        (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 2000));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider<GameState>.value(
+            value: mockGameState,
+            child: const SetupScreen(),
+          ),
+        ),
+      );
+
+      // Initial state: Selected: 0 / 3 (default "Cards" value is 3)
+      expect(find.textContaining('Selected: 0 / 3'), findsOneWidget);
+      expect(find.text('Suspects (0)'), findsOneWidget);
+
+      // Select a card (e.g. Colonel Mustard)
+      await tester.tap(find.text('Colonel Mustard'));
+      await tester.pump();
+
+      // Verify updates
+      expect(find.textContaining('Selected: 1 / 3'), findsOneWidget);
+      expect(find.text('Suspects (1)'), findsOneWidget);
+      expect(find.text('Weapons (0)'), findsOneWidget);
+
+      // Select another card (e.g. Knife)
+      await tester.ensureVisible(find.text('Knife'));
+      await tester.tap(find.text('Knife'));
+      await tester.pump();
+
+      expect(find.textContaining('Selected: 2 / 3'), findsOneWidget);
+      expect(find.text('Suspects (1)'), findsOneWidget);
+      expect(find.text('Weapons (1)'), findsOneWidget);
+
+      // Change card count input for "Me" (Index 0)
+      // The text field with label 'Cards' at index 0 (User's row)
+      // Note: There are multiple 'Cards' fields. The first one is for Me.
+      final cardsFields = find.widgetWithText(TextFormField, 'Cards');
+      await tester.enterText(cardsFields.first, '5');
+      await tester.pump();
+
+      // Verify expected count updated
+      expect(find.textContaining('Selected: 2 / 5'), findsOneWidget);
+    });
   });
 }

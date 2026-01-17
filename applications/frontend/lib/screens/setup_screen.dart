@@ -41,6 +41,25 @@ class _SetupScreenState extends State<SetupScreen> {
   void initState() {
     super.initState();
     _loadConnectionSettings();
+    _cardCountControllers[0].addListener(_onMyCardCountChanged);
+  }
+
+  @override
+  void dispose() {
+    _cardCountControllers[0].removeListener(_onMyCardCountChanged);
+    for (var controller in _playerControllers) {
+      controller.dispose();
+    }
+    for (var controller in _cardCountControllers) {
+      controller.dispose();
+    }
+    _hostController.dispose();
+    _portController.dispose();
+    super.dispose();
+  }
+
+  void _onMyCardCountChanged() {
+    setState(() {});
   }
 
   Future<void> _loadConnectionSettings() async {
@@ -330,7 +349,24 @@ class _SetupScreenState extends State<SetupScreen> {
               ],
             ),
             const Divider(height: 32),
-            const Text('My Hand', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                const Text('My Hand',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(width: 8),
+                Text(
+                  '(Selected: ${_selectedHand.length} / ${int.tryParse(_cardCountControllers[0].text) ?? 0})',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: _selectedHand.length ==
+                            (int.tryParse(_cardCountControllers[0].text) ?? 0)
+                        ? Colors.green
+                        : Colors.orange,
+                  ),
+                ),
+              ],
+            ),
             const Text('Select the cards currently in your hand.'),
             const SizedBox(height: 10),
 
@@ -351,12 +387,15 @@ class _SetupScreenState extends State<SetupScreen> {
   }
 
   Widget _buildCardSection(String title, List<GameCard> cards) {
+    final selectedCount = cards.where((c) => _selectedHand.contains(c)).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
-          child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          child: Text('$title ($selectedCount)',
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ),
         Wrap(
           spacing: 8.0,
