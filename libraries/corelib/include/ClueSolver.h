@@ -55,6 +55,7 @@ private:
 
     // Helpers
     void reset_probabilities();
+    void enforce_constraints();
     void normalize_row(int card_index);
     float calculate_entropy_case_file() const;
     float calculate_entropy(const std::vector<float>& probs) const;
