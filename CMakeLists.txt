@@ -7,6 +7,19 @@ project ("clue_game")
 
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(ENABLE_COVERAGE "Enable code coverage generation" OFF)
+
+if(ENABLE_COVERAGE)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_options(--coverage)
+        add_link_options(--coverage)
+        message(STATUS "Code coverage enabled")
+    else()
+        message(WARNING "Code coverage enabled but not supported for this compiler")
+    endif()
+endif()
 
 # To organize projects in VisualStudio:
 if(MSVC)

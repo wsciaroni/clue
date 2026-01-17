@@ -1,0 +1,64 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches: [ "master", "main", "dev" ]
+  pull_request:
+    branches: [ "master", "main", "dev" ]
+
+jobs:
+  sonar-scan:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      # --- C++ Coverage ---
+      - name: Install C++ dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          pip install gcovr
+
+      - name: Configure CMake (Coverage)
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build C++
+        run: cmake --build build
+
+      - name: Test C++
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Generate C++ Coverage
+        run: gcovr -r . --sonarqube > coverage.xml
+
+      # --- Dart Coverage ---
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Dart Tests
+        working-directory: applications/frontend
+        run: |
+          flutter pub get
+          flutter test --coverage
+
+      # --- SonarCloud Scan ---
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=wsciaroni
+            -Dsonar.projectKey=wsciaroni_clue
+            -Dsonar.sources=applications/frontend/lib,libraries
+            -Dsonar.tests=applications/frontend/test,libraries
+            -Dsonar.test.inclusions=**/*test*.cpp,**/*test*.dart,**/test/**/*
+            -Dsonar.dart.lcov.reportPaths=applications/frontend/coverage/lcov.info
+            -Dsonar.coverageReportPaths=coverage.xml
+            -Dsonar.cfamily.compile-commands=build/compile_commands.json
