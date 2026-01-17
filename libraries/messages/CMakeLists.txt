@@ -5,6 +5,8 @@ FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
   GIT_TAG        v1.75.0
+  GIT_PROGRESS TRUE
+  GIT_SHALLOW TRUE
 )
 
 # --- START: SILENCE GRPC & DEPENDENCY TESTS ---
