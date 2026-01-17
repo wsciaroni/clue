@@ -30,6 +30,9 @@ class _SetupScreenState extends State<SetupScreen> {
     TextEditingController(text: '3'),
   ];
 
+  // FocusNodes for player names
+  final List<FocusNode> _nameFocusNodes = [];
+
   // Controllers for connection settings
   final TextEditingController _hostController = TextEditingController();
   final TextEditingController _portController = TextEditingController();
@@ -40,7 +43,27 @@ class _SetupScreenState extends State<SetupScreen> {
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < _playerControllers.length; i++) {
+      _nameFocusNodes.add(FocusNode());
+    }
     _loadConnectionSettings();
+  }
+
+  @override
+  void dispose() {
+    for (final node in _nameFocusNodes) {
+      node.dispose();
+    }
+    _nameFocusNodes.clear();
+    // Controllers should also ideally be disposed if they are local,
+    // but _playerControllers are initialized in field so they are kept.
+    // Usually one should dispose them too.
+    // But sticking to the task: focus nodes.
+    _hostController.dispose();
+    _portController.dispose();
+    for (var c in _playerControllers) c.dispose();
+    for (var c in _cardCountControllers) c.dispose();
+    super.dispose();
   }
 
   Future<void> _loadConnectionSettings() async {
@@ -61,18 +84,26 @@ class _SetupScreenState extends State<SetupScreen> {
   }
 
   void _addPlayer() {
+    final newFocusNode = FocusNode();
     setState(() {
       _playerControllers.add(TextEditingController(text: 'Player ${_playerControllers.length + 1}'));
       _cardCountControllers.add(TextEditingController(text: '3'));
+      _nameFocusNodes.add(newFocusNode);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      newFocusNode.requestFocus();
     });
   }
 
   void _removePlayer() {
     if (_playerControllers.length > 2) {
-      setState(() {
-        _playerControllers.removeLast();
-        _cardCountControllers.removeLast();
-      });
+      final node = _nameFocusNodes.removeLast();
+      node.dispose();
+      final pController = _playerControllers.removeLast();
+      pController.dispose();
+      final cController = _cardCountControllers.removeLast();
+      cController.dispose();
+      setState(() {});
     }
   }
 
@@ -287,6 +318,7 @@ class _SetupScreenState extends State<SetupScreen> {
                       flex: 3,
                       child: TextFormField(
                         controller: entry.value,
+                        focusNode: _nameFocusNodes[entry.key],
                         decoration: InputDecoration(
                           labelText: entry.key == 0 ? 'My Name (User)' : 'Player ${entry.key + 1}',
                           border: const OutlineInputBorder(),
