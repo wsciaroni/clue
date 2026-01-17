@@ -225,6 +225,38 @@ void ClueSolver::normalize_row(int card_index) {
     }
 }
 
+void ClueSolver::enforce_constraints() {
+    // Categories: Suspects (0-5), Weapons (6-11), Rooms (12-20)
+    std::vector<std::pair<int, int>> ranges = {{0, 6}, {6, 12}, {12, 21}};
+
+    for (const auto& range : ranges) {
+        int start = range.first;
+        int end = range.second;
+        int cf_index = m_num_players;
+
+        // Check if any card in this category is KNOWN to be in Case File
+        int known_cf_card = -1;
+        for (int i = start; i < end; ++i) {
+            if (m_probabilities[i][cf_index] >= 0.99f) {
+                known_cf_card = i;
+                break;
+            }
+        }
+
+        if (known_cf_card != -1) {
+            // If one card is in CF, all others in this category are NOT in CF.
+            for (int i = start; i < end; ++i) {
+                if (i != known_cf_card) {
+                    // Set P(CF) = 0
+                    m_probabilities[i][cf_index] = 0.0f;
+                    // Renormalize to distribute remaining probability to players
+                    normalize_row(i);
+                }
+            }
+        }
+    }
+}
+
 void ClueSolver::process_turn(const TurnData& turn, const std::vector<int>& card_counts) {
     // 1. Identification
     int suggester = turn.suggester_player_index();
@@ -285,6 +317,9 @@ void ClueSolver::process_turn(const TurnData& turn, const std::vector<int>& card
             // Ignored for marginal solver approximation for now.
         }
     }
+
+    // Enforce mutual exclusivity constraints for Case File categories
+    enforce_constraints();
 }
 
 void ClueSolver::update_belief_pass(int player_index, int s_idx, int w_idx, int r_idx) {
