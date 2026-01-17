@@ -393,8 +393,19 @@ class _TurnFormState extends State<TurnForm> {
       widget.onSubmit(turn);
 
       if (widget.initialTurn == null) {
+        // Calculate next player
+        Player? nextPlayer = _askingPlayer;
+        if (_askingPlayer != null && widget.players.isNotEmpty) {
+          final currentIndex = widget.players.indexOf(_askingPlayer!);
+          if (currentIndex != -1) {
+            final nextIndex = (currentIndex + 1) % widget.players.length;
+            nextPlayer = widget.players[nextIndex];
+          }
+        }
+
         // Only clear if creating new turn
         setState(() {
+          _askingPlayer = nextPlayer;
           _answeringPlayer = null;
           _someoneAnswered = true;
           _specificCardShown = null;
