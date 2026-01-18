@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build ccache
-          pip install gcovr
+          pip install fastcov
 
       - name: Setup ccache
         uses: actions/cache@v3
@@ -53,7 +53,9 @@ jobs:
         run: ctest --output-on-failure
 
       - name: Generate C++ Coverage
-        run: gcovr -r . --sonarqube > coverage.xml
+        run: |
+          fastcov --lcov -o coverage.info
+          python3 utils/lcov2sonar.py coverage.info coverage.xml
 
       # --- Dart Coverage ---
       - uses: subosito/flutter-action@v2
