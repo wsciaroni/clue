@@ -36,6 +36,7 @@ class _TurnFormState extends State<TurnForm> {
 
   bool _someoneAnswered = true;
   GameCard? _specificCardShown;
+  bool _isLoadingRecommendation = false;
 
   @override
   void initState() {
@@ -135,8 +136,16 @@ class _TurnFormState extends State<TurnForm> {
 
           if (_isAccusation)
             TextButton.icon(
-              onPressed: _getAccusationRecommendation,
-              icon: const Icon(Icons.lightbulb),
+              onPressed:
+                  _isLoadingRecommendation ? null : _getAccusationRecommendation,
+              icon:
+                  _isLoadingRecommendation
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : const Icon(Icons.lightbulb),
               label: const Text("Recommend Accusation"),
             )
           else
@@ -145,15 +154,32 @@ class _TurnFormState extends State<TurnForm> {
                 Expanded(
                   child: TextButton.icon(
                     onPressed:
-                        _selectedRoom == null ? null : _getRoomSuggestion,
-                    icon: const Icon(Icons.lightbulb_outline),
+                        _isLoadingRecommendation || _selectedRoom == null
+                            ? null
+                            : _getRoomSuggestion,
+                    icon:
+                        _isLoadingRecommendation
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Icon(Icons.lightbulb_outline),
                     label: const Text("Room Hint"),
                   ),
                 ),
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: _getAllSuggestions,
-                    icon: const Icon(Icons.lightbulb),
+                    onPressed:
+                        _isLoadingRecommendation ? null : _getAllSuggestions,
+                    icon:
+                        _isLoadingRecommendation
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Icon(Icons.lightbulb),
                     label: const Text("All Hints"),
                   ),
                 ),
@@ -292,15 +318,20 @@ class _TurnFormState extends State<TurnForm> {
   }
 
   Future<void> _getAccusationRecommendation() async {
-    final gameState = context.read<GameState>();
-    final rec = await gameState.getAccusationRecommendation();
-    if (!mounted) return;
-    if (rec != null) {
-      _showRecommendationDialog(rec);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No accusation recommendation found.')),
-      );
+    setState(() => _isLoadingRecommendation = true);
+    try {
+      final gameState = context.read<GameState>();
+      final rec = await gameState.getAccusationRecommendation();
+      if (!mounted) return;
+      if (rec != null) {
+        _showRecommendationDialog(rec);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No accusation recommendation found.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoadingRecommendation = false);
     }
   }
 
@@ -313,30 +344,33 @@ class _TurnFormState extends State<TurnForm> {
   }
 
   Future<void> _getSuggestion({String? roomName}) async {
-    final gameState = context.read<GameState>();
-    final recs = await gameState.getSuggestions(
-      roomName: roomName,
-    );
-    if (!mounted) return;
+    setState(() => _isLoadingRecommendation = true);
+    try {
+      final gameState = context.read<GameState>();
+      final recs = await gameState.getSuggestions(roomName: roomName);
+      if (!mounted) return;
 
-    if (recs.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No suggestions found.')));
-    } else if (recs.length == 1) {
-      _showRecommendationDialog(recs.first);
-    } else {
-      // Multiple recommendations -> Go to selection screen
-      final selected = await Navigator.push<Recommendation>(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => RecommendationSelectionScreen(recommendations: recs),
-        ),
-      );
-      if (selected != null) {
-        _applyRecommendation(selected);
+      if (recs.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No suggestions found.')));
+      } else if (recs.length == 1) {
+        _showRecommendationDialog(recs.first);
+      } else {
+        // Multiple recommendations -> Go to selection screen
+        final selected = await Navigator.push<Recommendation>(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => RecommendationSelectionScreen(recommendations: recs),
+          ),
+        );
+        if (selected != null) {
+          _applyRecommendation(selected);
+        }
       }
+    } finally {
+      if (mounted) setState(() => _isLoadingRecommendation = false);
     }
   }
 
