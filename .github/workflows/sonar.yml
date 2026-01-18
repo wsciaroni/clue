@@ -1,0 +1,88 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches: [ "master", "main", "dev" ]
+  pull_request:
+    branches: [ "master", "main", "dev" ]
+
+jobs:
+  sonar-scan:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      # --- C++ Coverage ---
+      - name: Install C++ dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build ccache
+          pip install gcovr
+
+      - name: Setup ccache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.ccache
+          # KEY: Always unique so we SAVE the new cache at the end of this run
+          key: ${{ runner.os }}-sonar-ccache-${{ github.ref_name }}-${{ github.sha }}
+
+          # RESTORE KEYS: The "Waterfall" logic
+          # GitHub searches these prefixes in order.
+          restore-keys: |
+            ${{ runner.os }}-sonar-ccache-${{ github.ref_name }}-
+            ${{ runner.os }}-sonar-ccache-dev-
+            ${{ runner.os }}-sonar-ccache-master-
+            ${{ runner.os }}-sonar-ccache-
+
+      - name: Configure CMake (Coverage)
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build C++
+        run: cmake --build build
+
+      - name: Ccache Stats
+        run: ccache -s
+
+      - name: Test C++
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Generate C++ Coverage
+        run: gcovr -r . --sonarqube > coverage.xml
+
+      # --- Dart Coverage ---
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Dart Tests
+        working-directory: applications/frontend
+        run: |
+          flutter pub get
+          flutter test --coverage
+
+      # --- SonarCloud Scan ---
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=wsciaroni
+            -Dsonar.projectKey=wsciaroni_clue
+            -Dsonar.sources=applications/frontend/lib,libraries
+            -Dsonar.tests=applications/frontend/test,libraries
+            -Dsonar.test.inclusions=**/*test*.cpp,**/*test*.dart,**/test/**/*
+            -Dsonar.dart.lcov.reportPaths=applications/frontend/coverage/lcov.info
+            -Dsonar.coverageReportPaths=coverage.xml
+            -Dsonar.cfamily.compile-commands=build/compile_commands.json
+
+      # Delete the build directory to make space for the ccache tar which needs more space in order to be created.
+      - name: Delete Build Dir
+        run: rm -rf build
