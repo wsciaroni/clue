@@ -82,3 +82,7 @@ jobs:
             -Dsonar.dart.lcov.reportPaths=applications/frontend/coverage/lcov.info
             -Dsonar.coverageReportPaths=coverage.xml
             -Dsonar.cfamily.compile-commands=build/compile_commands.json
+
+      # Delete the build directory to make space for the ccache tar which needs more space in order to be created.
+      - name: Delete Build Dir
+        run: rm -rf build
