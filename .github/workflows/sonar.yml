@@ -21,7 +21,7 @@ jobs:
       - name: Install C++ dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build ccache
+          sudo apt-get install -y ninja-build ccache valgrind
           pip install fastcov
 
       - name: Setup ccache
@@ -51,6 +51,25 @@ jobs:
       - name: Test C++
         working-directory: build
         run: ctest --output-on-failure
+
+      - name: Run Valgrind
+        working-directory: build
+        run: |
+          find libraries -name "*_unittests" -type f -executable | while read test_exe; do
+             name=$(basename "$test_exe")
+             valgrind --xml=yes --xml-file="${name}.valgrind.xml" --leak-check=full --show-leak-kinds=all --track-origins=yes "$test_exe"
+          done
+
+      - name: Process Valgrind Reports
+        run: |
+           reports=""
+           for f in build/*.valgrind.xml; do
+             if [ -e "$f" ]; then
+               python3 utils/valgrind2sonar.py "$f" "${f}.json"
+               if [ -z "$reports" ]; then reports="${f}.json"; else reports="$reports,${f}.json"; fi
+             fi
+           done
+           echo "VALGRIND_REPORTS=$reports" >> $GITHUB_ENV
 
       - name: Generate C++ Coverage
         run: |
@@ -83,6 +102,7 @@ jobs:
             -Dsonar.test.inclusions=**/*test*.cpp,**/*test*.dart,**/test/**/*
             -Dsonar.dart.lcov.reportPaths=applications/frontend/coverage/lcov.info
             -Dsonar.coverageReportPaths=coverage.xml
+            -Dsonar.externalIssuesReportPaths=${{ env.VALGRIND_REPORTS }}
             -Dsonar.cfamily.compile-commands=build/compile_commands.json
 
       # Delete the build directory to make space for the ccache tar which needs more space in order to be created.
