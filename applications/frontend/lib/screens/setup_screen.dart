@@ -41,6 +41,24 @@ class _SetupScreenState extends State<SetupScreen> {
   void initState() {
     super.initState();
     _loadConnectionSettings();
+    _cardCountControllers[0].addListener(_updateState);
+  }
+
+  @override
+  void dispose() {
+    _hostController.dispose();
+    _portController.dispose();
+    for (var controller in _playerControllers) {
+      controller.dispose();
+    }
+    for (var controller in _cardCountControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _updateState() {
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadConnectionSettings() async {
@@ -88,6 +106,22 @@ class _SetupScreenState extends State<SetupScreen> {
 
   Future<void> _startGame() async {
     if (_formKey.currentState!.validate()) {
+      // Validate card count for user
+      final userExpectedCount = int.tryParse(_cardCountControllers[0].text) ?? 0;
+      if (_selectedHand.length != userExpectedCount) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Selected ${_selectedHand.length} cards, but expected $userExpectedCount. Please ensure "My Hand" matches the expected count.',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
       await _saveConnectionSettings();
 
       if (mounted) {
@@ -330,7 +364,27 @@ class _SetupScreenState extends State<SetupScreen> {
               ],
             ),
             const Divider(height: 32),
-            const Text('My Hand', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                const Text(
+                  'My Hand',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '(Selected: ${_selectedHand.length} / ${_cardCountControllers[0].text})',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color:
+                        _selectedHand.length ==
+                                (int.tryParse(_cardCountControllers[0].text) ??
+                                    0)
+                            ? Colors.green
+                            : Colors.orange,
+                  ),
+                ),
+              ],
+            ),
             const Text('Select the cards currently in your hand.'),
             const SizedBox(height: 10),
 

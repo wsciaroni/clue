@@ -100,6 +100,12 @@ void main() {
 
       // Start Game to trigger save
       // Need to fill required fields first (Player name is pre-filled, but let's be sure)
+
+      // Set User Card Count to 0 to pass validation
+      final firstCardInput = find.widgetWithText(TextFormField, 'Cards').first;
+      await tester.enterText(firstCardInput, '0');
+      await tester.pump();
+
       await tester.ensureVisible(find.text('Start Game'));
       await tester.pumpAndSettle();
 
@@ -138,6 +144,12 @@ void main() {
       // Port left empty
 
       // Start Game
+
+      // Set User Card Count to 0 to pass validation
+      final firstCardInput = find.widgetWithText(TextFormField, 'Cards').first;
+      await tester.enterText(firstCardInput, '0');
+      await tester.pump();
+
       await tester.ensureVisible(find.text('Start Game'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Start Game'));
